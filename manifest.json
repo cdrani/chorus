@@ -1,0 +1,41 @@
+{
+    "name": "Chorus",
+    "description": "Listen only to your favourite song sections in Spotify",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "author": "cdrani",
+    "action": {},
+    "icons": {
+        "16": "icons/icon16.png",
+        "24": "icons/icon24.png",
+        "48": "icons/icon48.png",
+        "64": "icons/icon64.png",
+        "128": "icons/icon128.png"
+    },
+    "content_scripts": [
+        {
+            "run_at": "document_idle",
+            "js": ["utils/state.js", "content-script.js"],
+            "css": ["styles.css"],
+            "matches": ["*://open.spotify.com/*"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "matches": ["*://open.spotify.com/*"],
+            "resources": [
+                "utils/*.js",
+                "models/*.js",
+                "events/*.js",
+                "components/*.js",
+                "observers/*.js",
+                "stores/*.js",
+                "actions/*.js"
+            ]
+        }
+    ],
+    "permissions": ["activeTab", "storage", "unlimitedStorage"],
+    "background": {
+        "service_worker": "background.js"
+    }
+}
