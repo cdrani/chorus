@@ -10,11 +10,13 @@ class SliderInputs {
         }
     }
 
-    setInitialValues() {
+    setInitialValues(track) {
         const duration = playback.duration()
         const { inputStart, inputEnd } = this.elements
 
-        inputStart.textContent = '0:00'
-        inputEnd.textContent = secondsToTime(duration)
+        const { startTime, endTime } = track
+
+        inputStart.textContent = secondsToTime(startTime ?? 0)
+        inputEnd.textContent = secondsToTime(endTime ?? duration)
     }
 }

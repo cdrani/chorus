@@ -19,7 +19,7 @@ class SliderControls {
 
     setInitialValues(track) {
         this._slider.setInitialValues(track)
-        this._inputs.setInitialValues()
+        this._inputs.setInitialValues(track)
     }
 
     get isOpen() {
