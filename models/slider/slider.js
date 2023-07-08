@@ -16,13 +16,13 @@ class Slider {
 
         inputLeft.addEventListener('mouseover', () => thumbLeft.classList.add('hover'))
         inputLeft.addEventListener('mouseout', () => thumbLeft.classList.remove('hover'))
-        // inputLeft.addEventListener('mousedown', () => thumbLeft.classList.add('active'))
-        // inputLeft.addEventListener('mouseup', () => thumbLeft.classList.remove('active'))
+        inputLeft.addEventListener('mousedown', () => thumbLeft.classList.add('active'))
+        inputLeft.addEventListener('mouseup', () => thumbLeft.classList.remove('active'))
 
         inputRight.addEventListener('mouseover', () => thumbRight.classList.add('hover'))
         inputRight.addEventListener('mouseout', () => thumbRight.classList.remove('hover'))
-        // inputRight.addEventListener('mousedown', () => thumbRight.classList.add('active'))
-        // inputRight.addEventListener('mouseup', () => thumbRight.classList.remove('active'))
+        inputRight.addEventListener('mousedown', () => thumbRight.classList.add('active'))
+        inputRight.addEventListener('mouseup', () => thumbRight.classList.remove('active'))
     }
 
     setInitialValues() {
@@ -34,8 +34,8 @@ class Slider {
 
     get elements() {
         return {
-            outputRight: document.getElementById('end'),
-            outputLeft: document.getElementById('start'),
+            outputRight: document.getElementById('chorus-end'),
+            outputLeft: document.getElementById('chorus-start'),
             inputLeft: document.getElementById('input-start'),
             inputRight: document.getElementById('input-end'),
             range: document.querySelector('.slider > .range'),

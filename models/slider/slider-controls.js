@@ -7,7 +7,6 @@ class SliderControls {
 
     init() {
         this._slider.init()
-        this._inputs.init()
     }
 
     get slider() {
@@ -19,14 +18,12 @@ class SliderControls {
     }
 
     setInitialValues() {
-        const duration = playback.duration()
-
         this._slider.setInitialValues()
-        this._inputs.setInitialValues(duration)
+        this._inputs.setInitialValues()
     }
 
     get isOpen() {
-        return document.getElementById('chorus-snip-controls')?.style?.display === 'block'
+        return document.getElementById('chorus-snip-controls')?.style?.display == 'block'
     }
 
     updateControls(track) {
