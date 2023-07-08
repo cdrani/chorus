@@ -31,8 +31,10 @@ const createSlider = ({ current, duration }) => `
             </div>
         </div>
 
-        <p class="time end"><span id="end">
-            ${secondsToTime(duration)}
-        </span>
+        <p class="time end">
+              <span id="end">
+                ${secondsToTime(duration)}
+            </span>
+        </p>
     </div>
 `
