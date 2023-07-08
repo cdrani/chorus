@@ -1,7 +1,7 @@
 class App {
     constructor({ video, store }) {
-        this._video = video
         this._store = store
+        this._video = new VideoElement(video)
         // TODO: break this class down? This class may be handling a lot?
 
         this._icon = new Icon()
@@ -58,7 +58,7 @@ class App {
 
 setTimeout(async () => {
     const store = new DataStore()
-    const video = new VideoElement(spotifyVideo.element)
+    const video = spotifyVideo.element
 
     await store.populate()
 
