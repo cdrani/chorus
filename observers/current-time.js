@@ -1,8 +1,7 @@
-class CurrentTimeObserver extends VideoElement {
+class CurrentTimeObserver {
     constructor({ video, snip }) {
-        super(video)
-
         this._snip = snip
+        this._video = video
         this._observer = null
 
         this.observe()

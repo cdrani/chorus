@@ -1,6 +1,6 @@
-class Slider extends VideoElement {
+class Slider {
     constructor(video) {
-        super(video)
+        this._video = video
     }
 
     init() {

@@ -1,7 +1,6 @@
-class Snip extends VideoElement {
+class Snip {
     constructor({ video, store }) {
-        super(video)
-
+        this._video = video
         this._store = store
         this._controls = new SnipControls(video)
     }

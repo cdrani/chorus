@@ -1,7 +1,6 @@
-class SliderControls extends VideoElement {
+class SliderControls {
     constructor(video) {
-        super(video)
-
+        this._video = video
         this._slider = new Slider(video)
         this._inputs = new SliderInputs(this._slider)
     }

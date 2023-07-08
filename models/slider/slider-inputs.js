@@ -1,37 +1,6 @@
 class SliderInputs {
     constructor(slider) {
         this._slider = slider
-        this._delay = 500
-        this._timer = null
-    }
-
-    init() {
-        const { inputStart, inputEnd } = this.elements
-
-        inputStart.onkeydown = e => this._setValue(e)
-        inputStart.oninput = e => this._startTyping(e)
-
-        inputEnd.onkeydown = e => this._setValue(e)
-        inputEnd.oninput = e => this._startTyping(e)
-    }
-
-    _startTyping(e) {
-        clearTimeout(this._timer)
-        const { target } = e
-        this._timer = setTimeout(
-            () => this._validateAndFormat({ target, value: target.value }),
-            this._delay
-        )
-    }
-
-    setInitialValues(duration) {
-        const { inputStart, inputEnd } = this.elements
-
-        inputStart.value = ''
-        inputEnd.value = ''
-
-        inputStart.placeholder = '0:00'
-        inputEnd.placeholder = secondsToTime(duration)
     }
 
     get elements() {
