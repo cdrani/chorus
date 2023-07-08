@@ -17,8 +17,8 @@ class SliderControls {
         return this._inputs
     }
 
-    setInitialValues() {
-        this._slider.setInitialValues()
+    setInitialValues(track) {
+        this._slider.setInitialValues(track)
         this._inputs.setInitialValues()
     }
 
@@ -34,8 +34,6 @@ class SliderControls {
         const current = playback.current()
         const duration = playback.duration()
 
-        this._inputs.setStartValue(startTime ?? current)
-        this._inputs.setEndValue(endTime ?? duration)
         this._slider.updateSliderLeftHalf({ current: startTime ?? current, duration })
         this._slider.updateSliderRightHalf({ duration, current: endTime ?? duration })
     }

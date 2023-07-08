@@ -5,7 +5,6 @@ class Slider {
 
     init() {
         this._setUpEvents()
-        this.setInitialValues()
     }
 
     _setUpEvents() {
@@ -25,15 +24,19 @@ class Slider {
         inputRight.addEventListener('mouseup', () => thumbRight.classList.remove('active'))
     }
 
-    setInitialValues() {
-        const { duration } = this._video
-
-        this.updateSliderLeftHalf({ current: 0, duration })
-        this.updateSliderRightHalf({ current: duration, duration })
+    setInitialValues(track) {
+        const { endTime, startTime } = track
+        const { endDisplay } = this.elements
+        const duration = playback.duration()
+        
+        endDisplay.textContent = secondsToTime(duration)
+        this.updateSliderLeftHalf({ current: startTime ?? 0, duration })
+        this.updateSliderRightHalf({ current: endTime ?? duration, duration })
     }
 
     get elements() {
         return {
+            endDisplay: document.getElementById('end'),
             outputRight: document.getElementById('chorus-end'),
             outputLeft: document.getElementById('chorus-start'),
             inputLeft: document.getElementById('input-start'),
@@ -47,8 +50,9 @@ class Slider {
     _setInputValues(duration) {
         if (!duration) return
 
-        const { inputLeft, inputRight } = this.elements
+        const { inputLeft, inputRight, endDisplay } = this.elements
 
+        endDisplay.textContent = secondsToTime(playback.duration())
         inputLeft.max = duration
         inputRight.max = duration
     }
@@ -70,6 +74,7 @@ class Slider {
         const current = parseInt(inputRight.value)
 
         this.updateSliderRightHalf({ duration, current })
+        this._video.currentTime = inputRight.value
     }
 
     updateSliderLeftHalf({ duration, current }) {

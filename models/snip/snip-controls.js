@@ -11,8 +11,8 @@ class SnipControls {
         return this._controls.slider
     }
 
-    setInitialValues() {
-        this._controls.setInitialValues()
+    setInitialValues(track) {
+        this._controls.setInitialValues(track)
     }
 
     updateControls(track) {

@@ -17,14 +17,4 @@ class SliderInputs {
         inputStart.textContent = '0:00'
         inputEnd.textContent = secondsToTime(duration)
     }
-
-    setStartValue(value) {
-        const { inputStart } = this.elements
-        inputStart.textContent = secondsToTime(value)
-    }
-
-    setEndValue(value) {
-        const { inputEnd } = this.elements
-        inputEnd.textContent = secondsToTime(value)
-    }
 }

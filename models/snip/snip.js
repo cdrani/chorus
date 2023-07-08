@@ -7,7 +7,7 @@ class Snip {
 
     init() {
         this._controls.init()
-        this._controls.setInitialValues()
+        this._controls.setInitialValues(this.read())
         this.toggleRemoveButton()
     }
 
