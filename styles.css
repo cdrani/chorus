@@ -8,6 +8,7 @@
 .chorus-common {
     display: flex;
     flex-wrap: nowrap;
+    justify-content: space-between;
     align-items: center;
     height: 20px;
 }
@@ -32,6 +33,10 @@
     justify-content: center;
     width: 2rem;
     height: 2rem;
+}
+
+#chorus-snip-controls {
+    border: 1px dashed #1ed760;
 }
 
 #chorus-snip-controls,
@@ -75,6 +80,14 @@
     border-color: #e5e7eb;
 }
 
+#chorus-close-button,
+#chorus-close-button:hover {
+    padding: 0;
+    font-size: 1rem;
+    border: none !important;
+    background-color: unset;
+}
+
 #chorus button:disabled {
     cursor: not-allowed;
 }
@@ -115,7 +128,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    border-radius: 2px;
+    border-radius: 5px;
     background-color: #494949;
 }
 
@@ -167,21 +180,19 @@
     pointer-events: all;
     width: 30px;
     height: 30px;
-    border-radius: 0;
-    border: 0 none;
-    background-color: red;
-    -webkit-appearance: none;
+    border-radius: 50%;
 }
 
 .slider > .thumb.hover {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     background-color: #fff;
-    box-shadow: 0 0 0 4px #1ed760;
+    box-shadow: 0 0 0 4px #28e269;
 }
 
 .slider > .thumb.active {
-    box-shadow: 0 0 0 4px #1ed760;
+    box-shadow: 0 0 0 8px #28e269;
+    opacity: .75;
 }
 
 .time {
@@ -198,7 +209,7 @@
 
 .snippy {
     display: flex;
-    padding: 15px 0;
+    margin: 12px 0;
     justify-content: space-evenly;
     align-items: center;
 }

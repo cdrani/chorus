@@ -13,7 +13,7 @@ const scripts = [
     'utils/playback.js',
     'components/buttons.js',
     'components/header.js',
-    'components/inputs.js',
+    'components/labels.js',
     'components/slider.js',
     'components/snip-controls.js',
     'models/video.js',
