@@ -51,12 +51,23 @@ class Snip {
         return this._store.getTrack(this.defaultTrack)
     }
 
+    get nextButton() {
+        return document.querySelector('[data-testid="control-button-skip-forward"]')
+    }
+
     load() {
         this._video.volume = 0
 
         const response = this.read()
+
         if (response?.isSnip) {
-            this.loadSnip(response)
+            // if skippable song
+            if (response?.endTime == 0) {
+                this._video.currentTime = playback.duration() + 1 
+                return this.nextButton?.click()
+            } else {
+                this.loadSnip(response)
+            }
         }
 
         this._video.volume = 1
