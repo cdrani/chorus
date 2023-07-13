@@ -8,12 +8,12 @@ class CacheStore {
     }
 
     getValue({ key, value }) {
-        const result = this._cache.getItem(key)
-        if (result == null) {
+        const result = this.getKey(key)
+        if (!result) {
             this.update({ key, value })
         }
 
-        const refreshedValue = this._cache.getItem(key)
+        const refreshedValue = this.getKey(key)
         return JSON.parse(refreshedValue)
     }
 
@@ -25,7 +25,7 @@ class CacheStore {
     }
 
     removeKey(key) {
-        if (!this._cache.getItem(key)) return
+        if (!this.getKey(key)) return
 
         this._cache.removeItem(key)
     }
