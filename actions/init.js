@@ -5,7 +5,8 @@ class App {
         // TODO: break this class down? This class may be handling a lot?
 
         this._icon = new Icon()
-        this._snip = new Snip({ video: this._video, store: this._store })
+        this._skip = new Skip(store)
+        this._snip = new Snip({ video: this._video, store })
 
         new SkipBackListener(this._snip).listen()
         this._listener = new ButtonListeners(this._snip)
@@ -15,6 +16,7 @@ class App {
             listener: this._listener,
         })
 
+        this._trackListObserver = new TrackListObserver(this._skip)
         this._currentObserver = new CurrentTimeObserver({ video: this._video, snip: this._snip })
         this._nowPlayingObserver = new NowPlayingObserver(this._snip)
 
@@ -31,6 +33,7 @@ class App {
     }
 
     disconnect() {
+        this._trackListObserver.disconnect()
         this._currentObserver.disconnect()
         this._nowPlayingObserver.disconnect()
 
@@ -38,6 +41,7 @@ class App {
     }
 
     connect() {
+        this._trackListObserver.observe()
         this._currentObserver.observe()
         this._nowPlayingObserver.observe()
     }
