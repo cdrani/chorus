@@ -24,6 +24,7 @@ class Snip {
             value: {
                 startTime: 0,
                 isSnip: false,
+                isSkipped: false,
                 endTime: playback.duration(),
             },
         }
@@ -36,6 +37,7 @@ class Snip {
             id: this._video.id,
             value: {
                 isSnip: true,
+                isSkipped: false,
                 startTime: inputLeft.value,
                 endTime: inputRight.value,
             },
@@ -60,10 +62,10 @@ class Snip {
 
         const response = this.read()
 
-        if (response?.isSnip) {
+        if (response?.isSnip || response?.isSkipped) {
             // if skippable song
-            if (response?.endTime == 0) {
-                this._video.currentTime = playback.duration() + 1 
+            if (response?.isSkipped || response?.endTime == 0) {
+                this._video.currentTime = parseInt(playback.duration(), 10) + 1 
                 return this.nextButton?.click()
             } else {
                 this.loadSnip(response)
