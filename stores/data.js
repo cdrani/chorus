@@ -25,8 +25,9 @@ class DataStore {
         this._cache.removeKey(id)
     }
 
-    getTrack({ id, value }) {
-        if (!id) return
+    getTrack({ id, value = {}}) {
+        const result = this._cache.getKey(id)
+        if (result) return result 
 
         return this._cache.getValue({ key: id, value })
     }
