@@ -4,7 +4,6 @@ class DataStore {
         this._dispatcher = new Dispatcher()
     }
 
-    // TODO populate cache from chrome.storage
     async populate() {
         const response = await this._dispatcher.sendEvent({
             eventType: 'storage.populate',
@@ -12,7 +11,13 @@ class DataStore {
         })
 
         Object.keys(response).forEach(key => {
-            this._cache.update({ key, value: JSON.stringify(response[key]) })
+            const value = response[key]
+
+            if (key != 'enabled' && !value.hasOwnProperty('isSkipped')) {
+                value.isSkipped = false
+            }
+
+            this._cache.update({ key, value: JSON.stringify(value) })
         })
     }
 
