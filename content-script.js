@@ -28,6 +28,8 @@ const scripts = [
     'stores/cache.js',
     'stores/data.js',
     'actions/main.js',
+    'models/skip.js',
+    'observers/track-list.js',
     'observers/current-time.js',
     'observers/now-playing.js',
     'actions/init.js',
