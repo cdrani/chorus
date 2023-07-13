@@ -217,3 +217,35 @@
 .end {
    justify-content: flex-end;
 }
+
+[role=blocker][aria-label] {
+    position: relative;
+    display: inline-block;
+}
+
+[role=blocker][aria-label]:after {
+    content: attr(aria-label);
+    display: none;
+    position: absolute;
+    top: -1.5rem;
+    z-index: 99999;
+    transform: translate3d(-2.25rem, -0.75rem, 10rem);
+    pointer-events: none;
+    padding: 8px 10px;
+    line-height: 15px;
+    white-space: nowrap;
+    text-decoration: none;
+    text-indent: 0;
+    overflow: visible;
+    font-size: .9rem;
+    font-weight: normal;
+    color: #ffffffe6;
+    background-color: #282828;
+    border-radius: 2px;
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.3);
+}
+
+[role=blocker][aria-label]:hover:after,
+[role=blocker][aria-label]:focus:after {
+    display: inline-block;
+}
