@@ -1,56 +1,39 @@
 class ButtonListeners {
+    #snip = null
+
     constructor(snip) {
-        this._snip = snip
+        this.#snip = snip
     }
 
     listen() {
-        this._closeListener()
-        this._saveTrackListener()
-        this._deleteTrackListener()
+        this.#closeListener()
+        this.#saveTrackListener()
+        this.#deleteTrackListener()
     }
 
-    _hide() {
+    #hide() {
         const main = document.getElementById('chorus-main')
         main.style.display = 'none'
     }
 
-    _closeListener() {
+    #closeListener() {
         const closeButton = document.getElementById('chorus-close-button')
-        closeButton?.addEventListener('click', () => this._hide())
+        closeButton?.addEventListener('click', () => this.#hide())
     }
 
-    _deleteTrackListener() {
+    #deleteTrackListener() {
         const deleteButton = document.getElementById('chorus-remove-button')
         deleteButton?.addEventListener('click', async () => {
-            await this._snip.delete()
-            this._hide()
+            await this.#snip.delete()
+            this.#hide()
         })
     }
 
-    _saveTrackListener() {
+    #saveTrackListener() {
         const saveButton = document.getElementById('chorus-save-button')
         saveButton?.addEventListener('click', async () => {
-            await this._snip.save()
-            this._hide()
-        })
-    }
-}
-
-class SkipBackListener {
-    constructor(snip) {
-        this._snip = snip
-    }
-
-    listen() {
-        const previousButton = document.querySelector('[data-testid="control-button-skip-back"]')
-
-        previousButton?.addEventListener('click', () => {
-            const currentTime = parseInt(this._snip._video.currentTime)
-            const { startTime, isSnip } = this._snip.read()
-
-            if (Boolean(isSnip) && Math.abs(currentTime - startTime) >= 3) {
-                this._snip.load()
-            }
+            await this.#snip.save()
+            this.#hide()
         })
     }
 }
