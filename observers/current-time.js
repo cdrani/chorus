@@ -65,8 +65,10 @@ class CurrentTimeObserver {
     }
 
     #handleSkippable() {
+        this.#video.pause()
         this.#video.currentTime = 0
         this.#nextButton.click()
+        this.#video.volume = 0
     }
 
     observe() {
@@ -75,6 +77,8 @@ class CurrentTimeObserver {
             const currentDisplayTime = secondsToTime(parseInt(this.#video.currentTime, 10))
 
             this.#playbackPosition.textContent = currentDisplayTime
+
+            if (this.#video.paused) return
             
             if (isSkipped && !this.#muted) {
                 this.#muteButton.click()
@@ -98,10 +102,12 @@ class CurrentTimeObserver {
                     }
                 }
             }
-        }, 1000)
+        }, 500)
     }
 
     disconnect() {
+        if (!this.#observer) return
+
         clearInterval(this.#observer)
         this.#observer = null
     }
