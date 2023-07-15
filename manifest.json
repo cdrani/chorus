@@ -1,7 +1,8 @@
 {
-    "name": "Chorus",
-    "description": "Save your favourite songs/episodes sections in Spotify for easy (re)playability.",
-    "version": "1.0.0",
+    "short_name": "Chorus",
+    "name": "Chorus - Spotify Enhancer",
+    "description": "Enhance Spotify with track snippets and skipping.",
+    "version": "1.1.0",
     "manifest_version": 3,
     "author": "cdrani",
     "action": {},

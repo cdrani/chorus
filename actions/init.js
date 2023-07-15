@@ -1,56 +1,69 @@
 class App {
+    #video
+    #icon
+    #skip
+    #snip
+    #main
+    #listener
+    #intervalId
+    #currentObserver
+    #nowPlayingObserver
+    #trackListObserver
+
     constructor({ video, store }) {
-        this._store = store
-        this._video = new VideoElement(video)
+        this.#video = new VideoElement(video)
         // TODO: break this class down? This class may be handling a lot?
 
-        this._icon = new Icon()
-        this._snip = new Snip({ video: this._video, store: this._store })
+        this.#icon = new Icon()
+        this.#skip = new Skip(store)
+        this.#snip = new Snip({ video: this.#video, store })
 
-        new SkipBackListener(this._snip).listen()
-        this._listener = new ButtonListeners(this._snip)
+        this.#listener = new ButtonListeners(this.#snip)
 
-        this._main = new Main({
-            snip: this._snip,
-            listener: this._listener,
+        this.#main = new Main({
+            snip: this.#snip,
+            listener: this.#listener,
         })
 
-        this._currentObserver = new CurrentTimeObserver({ video: this._video, snip: this._snip })
-        this._nowPlayingObserver = new NowPlayingObserver(this._snip)
+        this.#nowPlayingObserver = new NowPlayingObserver(this.#snip)
+        this.#trackListObserver = new TrackListObserver(this.#skip)
+        this.#currentObserver = new CurrentTimeObserver({ video: this.#video, snip: this.#snip })
 
-        this._intervalId = null
+        this.#intervalId = null
 
-        this._init()
+        this.#init()
     }
 
-    _init() {
-        this._icon.setupToggler(this._main.toggler.bind(this._main))
-        this._snip.load()
+    #init() {
+        this.#icon.setupToggler(this.#main.toggler.bind(this.#main))
+        this.#snip.updateView()
 
-        this._reInit()
+        this.#reInit()
     }
 
     disconnect() {
-        this._currentObserver.disconnect()
-        this._nowPlayingObserver.disconnect()
+        this.#trackListObserver.disconnect()
+        this.#currentObserver.disconnect()
+        this.#nowPlayingObserver.disconnect()
 
-        clearInterval(this._intervalId)
+        clearInterval(this.#intervalId)
     }
 
     connect() {
-        this._currentObserver.observe()
-        this._nowPlayingObserver.observe()
+        this.#trackListObserver.observe()
+        this.#currentObserver.observe()
+        this.#nowPlayingObserver.observe()
     }
 
     // TODO: re-initializes when Spotify Connect switches device from
     // current browser tab to another tab, window, or device.
     // Looking for a better solution.
-    _reInit() {
-        this._intervalId = setInterval(() => {
-            const mainElement = this._main.element
+    #reInit() {
+        this.#intervalId = setInterval(() => {
+            const mainElement = this.#main.element
             if (!mainElement?.children?.length) {
-                this._main.init()
-                this._init()
+                this.#main.init()
+                this.#init()
             }
         }, 5000)
     }

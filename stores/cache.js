@@ -1,32 +1,32 @@
 class CacheStore {
+    #cache
     constructor() {
-        this._cache = sessionStorage
+        this.#cache = sessionStorage
     }
 
     getKey(key) {
-        return JSON.parse(this._cache.getItem(key))
+        return JSON.parse(this.#cache.getItem(key))
     }
 
     getValue({ key, value }) {
-        const result = this._cache.getItem(key)
-        if (result == null) {
+        const result = this.getKey(key)
+        if (!result) {
             this.update({ key, value })
         }
 
-        const refreshedValue = this._cache.getItem(key)
-        return JSON.parse(refreshedValue)
+        return this.getKey(key)
     }
 
     update({ key, value }) {
         if (value?.error) return
 
         const parsedValue = typeof value !== 'string' ? JSON.stringify(value) : value
-        this._cache.setItem(key, parsedValue || {})
+        this.#cache.setItem(key, parsedValue || {})
     }
 
     removeKey(key) {
-        if (!this._cache.getItem(key)) return
+        if (!this.getKey(key)) return
 
-        this._cache.removeItem(key)
+        this.#cache.removeItem(key)
     }
 }

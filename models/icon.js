@@ -1,15 +1,15 @@
 class Icon {
     constructor() {
-        this._init()
+        this.init()
     }
 
-    _init() {
-        this._placeIcon()
+    init() {
+        this.#placeIcon()
     }
 
-    _placeIcon() {
+    #placeIcon() {
         const iconListContainer = document.querySelector('[data-testid="now-playing-widget"]')
-        const root = this._createRootContainer()
+        const root = this.#createRootContainer()
         iconListContainer.insertAdjacentHTML('beforeend', root)
     }
 
@@ -18,16 +18,16 @@ class Icon {
         icon.onclick = () => toggler()
     }
 
-    _createRootContainer() {
+    #createRootContainer() {
         return `
             <div id="chorus">
-                ${this._createIcon()}
+                ${this.#createIcon()}
                 <div id="chorus-main" style="display: none"></div>
             </div>
         `
     }
 
-    _createIcon() {
+    #createIcon() {
         return `
             <div id="chorus-icon" class="chorus-hover-white"">
                 <svg

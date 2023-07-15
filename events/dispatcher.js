@@ -1,7 +1,7 @@
 class Dispatcher {
     constructor() {}
 
-    _responsePromise(eventType) {
+    #responsePromise(eventType) {
         return new Promise(resolve => {
             const resultListener = e => {
                 resolve(e.detail)
@@ -15,6 +15,6 @@ class Dispatcher {
     async sendEvent({ eventType, detail = {} }) {
         document.dispatchEvent(new CustomEvent(eventType, { detail }))
 
-        return await this._responsePromise(`${eventType}.response`)
+        return await this.#responsePromise(`${eventType}.response`)
     }
 }
