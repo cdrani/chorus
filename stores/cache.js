@@ -13,8 +13,7 @@ class CacheStore {
             this.update({ key, value })
         }
 
-        const refreshedValue = this.getKey(key)
-        return JSON.parse(refreshedValue)
+        return this.getKey(key)
     }
 
     update({ key, value }) {
