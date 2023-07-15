@@ -1,26 +1,30 @@
 class Snip {
+    #video
+    #store
+    #controls
+
     constructor({ video, store }) {
-        this._video = video
-        this._store = store
-        this._controls = new SnipControls(video)
+        this.#video = video
+        this.#store = store
+        this.#controls = new SnipControls(video)
     }
 
     init() {
-        this._controls.init()
-        this._controls.setInitialValues(this.read())
-        this.toggleRemoveButton()
+        this.#controls.init()
+        this.#controls.setInitialValues(this.read())
     }
 
-    toggleRemoveButton() {
-        const { isSnip } = this.read()
-
-        const removeButton = document.getElementById('chorus-remove-button')
-        removeButton.style.visibility = isSnip ? 'visible' : 'hidden'
+    read() {
+        return this.#store.getTrack(this.#defaultTrack)
     }
 
-    get defaultTrack() {
+    get video() {
+        return this.#video
+    }
+
+    get #defaultTrack() {
         return {
-            id: this._video.id,
+            id: this.#video.id,
             value: {
                 startTime: 0,
                 isSnip: false,
@@ -31,90 +35,54 @@ class Snip {
     }
 
     async save() {
-        const { inputLeft, inputRight } = this._controls.slider.elements
+        const { inputLeft, inputRight } = this.#controls.slider.elements
 
-        const response = await this._store.saveTrack({
-            id: this._video.id,
+        await this.#store.saveTrack({
+            id: this.#video.id,
             value: {
                 isSnip: true,
-                isSkipped: false,
                 startTime: inputLeft.value,
                 endTime: inputRight.value,
+                isSkipped: inputRight.value == 0,
             },
         })
 
-        this.setUpdateControls(response)
-        this._highlightSnip(response?.isSnip)
-
-        return response
-    }
-
-    read() {
-        return this._store.getTrack(this.defaultTrack)
-    }
-
-    get nextButton() {
-        return document.querySelector('[data-testid="control-button-skip-forward"]')
-    }
-
-    load() {
-        this._video.volume = 0
-
-        const response = this.read()
-
-        if (response?.isSnip || response?.isSkipped) {
-            // if skippable song
-            if (response?.isSkipped || response?.endTime == 0) {
-                this._video.currentTime = parseInt(playback.duration(), 10) + 1 
-                return this.nextButton?.click()
-            } else {
-                this.loadSnip(response)
-            }
-        }
-
-        this._video.volume = 1
-        this.setUpdateControls(response)
-        this._highlightSnip(response?.isSnip)
+        this.updateView()
     }
 
     reset() {
-        this._controls.setInitialValues()
+        this.#controls.setInitialValues()
     }
 
     async delete() {
-        const response = await this._store.deleteTrack(this.defaultTrack)
-
-        this.setUpdateControls(response)
-        this._highlightSnip(response?.isSnip)
-
-        return response
+        await this.#store.deleteTrack(this.#defaultTrack)
+        this.updateView()
     }
 
-    _highlightSnip(isSnip) {
+    updateView() {
+        const response = this.read()
+        this.#setUpdateControls(response)
+        this.#highlightSnip(response?.isSnip)
+        this.#toggleRemoveButton(response?.isSnip)
+    }
+
+    #toggleRemoveButton(isSnip) {
+        const removeButton = document.getElementById('chorus-remove-button')
+
+        if (!removeButton) return
+        removeButton.style.visibility = isSnip ? 'visible' : 'hidden'
+    }
+
+    #highlightSnip(isSnip) {
         const svgElement = document.getElementById('chorus-highlight')
         const fill = Boolean(isSnip) ? '#1ed760' : 'currentColor'
 
         svgElement.style.stroke = fill
     }
 
-    loadSnip(response) {
-        this._video.pause()
-        this._video.volume = 0
-
-        const playPromise = this._video.play()
-        if (playPromise === undefined) return
-
-        playPromise
-            .then(() => {
-                this.setUpdateControls(response)
-                this._video.volume = 1
-            })
-            .catch(e => console.error(e))
-    }
-
-    setUpdateControls(response) {
+    #setUpdateControls(response) {
         const { startTime, endTime, isSnip } = response
-        this._video.setAttributes({ isSnip, startTime, endTime })
-        this._controls.updateControls(response)
+        this.#video.setAttributes({ isSnip, startTime, endTime })
+        this.#controls.updateControls(response)
     }
 }
