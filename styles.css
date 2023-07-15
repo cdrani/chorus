@@ -247,7 +247,6 @@
     box-shadow: 1px 2px 6px rgba(0,0,0,0.3);
 }
 
-[role=blocker][aria-label]:hover:after,
-[role=blocker][aria-label]:focus:after {
+[role=blocker][aria-label]:hover:after {
     display: inline-block;
 }
