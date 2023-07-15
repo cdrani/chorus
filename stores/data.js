@@ -1,11 +1,14 @@
 class DataStore {
+    #cache
+    #dispatcher
+
     constructor() {
-        this._cache = new CacheStore()
-        this._dispatcher = new Dispatcher()
+        this.#cache = new CacheStore()
+        this.#dispatcher = new Dispatcher()
     }
 
     async populate() {
-        const response = await this._dispatcher.sendEvent({
+        const response = await this.#dispatcher.sendEvent({
             eventType: 'storage.populate',
             detail: {},
         })
@@ -14,41 +17,42 @@ class DataStore {
             const value = response[key]
 
             if (key != 'enabled' && !value.hasOwnProperty('isSkipped')) {
-                value.isSkipped = false
+                const endTime = value?.endTime
+                value.isSkipped = endTime == 0
             }
 
-            this._cache.update({ key, value: JSON.stringify(value) })
+            this.#cache.update({ key, value: JSON.stringify(value) })
         })
     }
 
     removeTrack(id) {
-        this._cache.removeKey(id)
+        this.#cache.removeKey(id)
     }
 
     getTrack({ id, value = {}}) {
-        const result = this._cache.getKey(id)
+        const result = this.#cache.getKey(id)
         if (result) return result 
 
-        return this._cache.getValue({ key: id, value })
+        return this.#cache.getValue({ key: id, value })
     }
 
     async saveTrack({ id, value }) {
-        const response = await this._dispatcher.sendEvent({
+        const response = await this.#dispatcher.sendEvent({
             eventType: 'storage.set',
             detail: { key: id, values: value },
         })
 
-        this._cache.update({ key: id, value: response })
-        return this._cache.getKey(id)
+        this.#cache.update({ key: id, value: response })
+        return this.#cache.getKey(id)
     }
 
     async deleteTrack({ id, value }) {
-        await this._dispatcher.sendEvent({
+        await this.#dispatcher.sendEvent({
             eventType: 'storage.delete',
             detail: { key: id },
         })
 
-        this._cache.update({ key: id, value })
-        return this._cache.getKey(id)
+        this.#cache.update({ key: id, value })
+        return this.#cache.getKey(id)
     }
 }
