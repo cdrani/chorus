@@ -128,9 +128,14 @@ class Skip {
         const svg = skipIcon.querySelector('svg')
 
         svg.addEventListener('mouseover', () => {
+            if (isSkipped && svg.style.fill == '#1ed760') return
+
             svg.style.fill = isSkipped ? '#1ed760' : '#fff'
         })
+
         svg.addEventListener('mouseleave', () => {
+            if (isSkipped && svg.style.fill == '#1ed760') return
+
             svg.style.fill = isSkipped ? '#1ed760' : 'currentColor'
         })
     }
