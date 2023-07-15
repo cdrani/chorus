@@ -6,10 +6,10 @@ class Skip {
     }
 
     get #trackRows() {
-        const parent = document.querySelector('[data-testid="track-list"]')
-        const trackRows = parent?.querySelector(
-            '[data-testid="top-sentinel"] + [role="presentation"]'
-        ).children
+        const parents = document.querySelectorAll('[data-testid="track-list"]')
+        const trackRows = Array.from(parents).map(parent => 
+            Array.from(parent?.querySelector('[data-testid="top-sentinel"] + [role="presentation"]').children)
+        ).flat()
         
         return trackRows?.length > 0 ? Array.from(trackRows) : undefined
     }
@@ -43,7 +43,7 @@ class Skip {
     #setSkipIconEvents(row) {
         const skipIcon = row.querySelector('button[role="blocker"]')            
 
-        skipIcon.addEventListener('click', async() => {
+        skipIcon?.addEventListener('click', async() => {
             const { id } = this.#songInfo(row)
             const response = this.#store.getTrack({ id })
 
@@ -86,7 +86,7 @@ class Skip {
 
     setUpBlocking() {
         const trackRows = this.#trackRows
-        if (!trackRows) return
+        if (!trackRows?.length) return
         this.#setRowEvents(trackRows)
     }
 
@@ -105,7 +105,7 @@ class Skip {
     }
 
     #songInfo(row) {
-        const song = row.querySelector('a > div').textContent
+        const song = row.querySelector('a > div')?.textContent || row.querySelector('div[data-encore-id="type"]')?.textContent
         const songLength = row.querySelector('button[data-testid="add-button"] + div').textContent
         const artists = this.#getArtists(row)
 
@@ -119,8 +119,8 @@ class Skip {
         const svg = skipIcon.querySelector('svg')
         if (isSkipped) {
             skipIcon.style.visibility = 'visible'
-            skipIcon.setAttribute('aria-label', 'Unskip Song')
         }
+        skipIcon.setAttribute('aria-label', `${isSkipped ? 'Uns' : 'S'}kip Song`)
         svg.style.fill = isSkipped ? '#1ed760' : 'currentColor'
     }
 
