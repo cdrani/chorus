@@ -25,7 +25,7 @@ class NowPlayingObserver {
     _handler = mutationsList => {
         for (const mutation of mutationsList) {
             if (this._isAnchor(mutation)) {
-                this._snip.load()
+                this._snip.updateView()
             }
         }
     }
