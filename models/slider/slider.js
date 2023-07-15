@@ -30,8 +30,8 @@ class Slider {
         const duration = playback.duration()
         
         endDisplay.textContent = secondsToTime(duration)
-        this.updateSliderLeftHalf({ current: startTime ?? 0, duration })
-        this.updateSliderRightHalf({ current: endTime ?? duration, duration })
+        this.updateSliderLeftHalf(startTime ?? 0)
+        this.updateSliderRightHalf(endTime ?? duration)
     }
 
     get elements() {
@@ -47,43 +47,38 @@ class Slider {
         }
     }
 
-    _setInputValues(duration) {
-        if (!duration) return
-
+    _setInputValues() {
         const { inputLeft, inputRight, endDisplay } = this.elements
+        const duration = playback.duration()
 
-        endDisplay.textContent = secondsToTime(playback.duration())
+        endDisplay.textContent = secondsToTime(duration)
         inputLeft.max = duration
         inputRight.max = duration
     }
 
     setLeftValue() {
         const { inputLeft } = this.elements
+        const currentValue = parseInt(inputLeft.value)
 
-        const current = parseInt(inputLeft.value)
-        const duration = parseInt(inputLeft.max)
-        this.updateSliderLeftHalf({ current, duration })
-
+        this.updateSliderLeftHalf(currentValue)
         this._video.currentTime = inputLeft.value
     }
 
     setRightValue() {
         const { inputRight } = this.elements
+        const currentValue = parseInt(inputRight.value)
 
-        const duration = parseInt(inputRight.max)
-        const current = parseInt(inputRight.value)
-
-        this.updateSliderRightHalf({ duration, current })
+        this.updateSliderRightHalf(currentValue)
         this._video.currentTime = inputRight.value
     }
 
-    updateSliderLeftHalf({ duration, current }) {
+    updateSliderLeftHalf(currentValue) {
         const { inputLeft, inputRight, range, thumbLeft, outputLeft } = this.elements
 
-        this._setInputValues(duration)
+        this._setInputValues()
 
         inputLeft.value = Math.min(
-            parseInt(current ?? inputLeft.value),
+            parseInt(currentValue ?? inputLeft.value),
             parseInt(inputRight.value) - 1
         )
 
@@ -94,21 +89,21 @@ class Slider {
         outputLeft.textContent = secondsToTime(inputLeft.value)
     }
 
-    updateSliderRightHalf({ duration, current }) {
+    updateSliderRightHalf(currentValue) {
         const { inputLeft, inputRight, thumbRight, range, outputRight } = this.elements
 
-        this._setInputValues(duration)
+        this._setInputValues()
 
         inputRight.value = Math.max(
-            parseInt(current ?? inputRight.value),
+            parseInt(currentValue ?? inputRight.value),
             parseInt(inputLeft.value)
         )
 
         const percent =
             ((inputRight.value - inputRight.min) / (inputRight.max - inputRight.min)) * 100
 
-        thumbRight.style.right = 100 - percent + '%'
-        range.style.right = 100 - percent + '%'
+        thumbRight.style.right = (100 - percent) + '%'
+        range.style.right = (100 - percent) + '%'
         outputRight.textContent = secondsToTime(inputRight.value)
     }
 }
