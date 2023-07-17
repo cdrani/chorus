@@ -1,22 +1,26 @@
 class App {
     #video
-    #icon
+    #store
     #skip
     #snip
     #main
     #listener
     #intervalId
-    #currentObserver
+    #currentTimeObserver
     #nowPlayingObserver
     #trackListObserver
 
     constructor({ video, store }) {
+        this.#store = store
         this.#video = new VideoElement(video)
-        // TODO: break this class down? This class may be handling a lot?
+        this.#intervalId = null
 
-        this.#icon = new Icon()
-        this.#skip = new Skip(store)
-        this.#snip = new Snip({ video: this.#video, store })
+        this.#init()
+    }
+
+    #init() {
+        this.#skip = new Skip(this.#store)
+        this.#snip = new Snip({ video: this.#video, store: this.#store })
 
         this.#listener = new ButtonListeners(this.#snip)
 
@@ -27,15 +31,8 @@ class App {
 
         this.#nowPlayingObserver = new NowPlayingObserver(this.#snip)
         this.#trackListObserver = new TrackListObserver(this.#skip)
-        this.#currentObserver = new CurrentTimeObserver({ video: this.#video, snip: this.#snip })
+        this.#currentTimeObserver = new CurrentTimeObserver({ video: this.#video, snip: this.#snip })
 
-        this.#intervalId = null
-
-        this.#init()
-    }
-
-    #init() {
-        this.#icon.setupToggler(this.#main.toggler.bind(this.#main))
         this.#snip.updateView()
 
         this.#reInit()
@@ -43,7 +40,7 @@ class App {
 
     disconnect() {
         this.#trackListObserver.disconnect()
-        this.#currentObserver.disconnect()
+        this.#currentTimeObserver.disconnect()
         this.#nowPlayingObserver.disconnect()
 
         clearInterval(this.#intervalId)
@@ -51,7 +48,7 @@ class App {
 
     connect() {
         this.#trackListObserver.observe()
-        this.#currentObserver.observe()
+        this.#currentTimeObserver.observe()
         this.#nowPlayingObserver.observe()
     }
 
@@ -61,6 +58,8 @@ class App {
     #reInit() {
         this.#intervalId = setInterval(() => {
             const mainElement = this.#main.element
+            if (this.#intervalId) return
+
             if (!mainElement?.children?.length) {
                 this.#main.init()
                 this.#init()

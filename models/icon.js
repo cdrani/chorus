@@ -1,28 +1,10 @@
 class Icon {
-    constructor() {
-        this.init()
-    }
+    constructor() {}
 
-    init() {
-        this.#placeIcon()
-    }
-
-    #placeIcon() {
-        const iconListContainer = document.querySelector('[data-testid="now-playing-widget"]')
-        const root = this.#createRootContainer()
-        iconListContainer.insertAdjacentHTML('beforeend', root)
-    }
-
-    setupToggler(toggler) {
-        const icon = document.getElementById('chorus-icon')
-        icon.onclick = () => toggler()
-    }
-
-    #createRootContainer() {
+    createRootContainer() {
         return `
             <div id="chorus">
                 ${this.#createIcon()}
-                <div id="chorus-main" style="display: none"></div>
             </div>
         `
     }
