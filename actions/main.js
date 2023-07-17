@@ -1,55 +1,97 @@
 class Main {
+    #snip
+    #icon
+    #listener
+
     constructor({ snip, listener }) {
-        this._snip = snip
-        this._listener = listener
-        this._mainElement = document.getElementById('chorus-main')
+        this.#snip = snip
+        this.#icon = new Icon
+        this.#listener = listener
+
+        this.init()
     }
 
     init() {
-        this._insertIntoDOM()
+        this.#placeIcon()
+    }
+
+    #placeIcon() {
+        const root = this.#icon.createRootContainer()
+
+        const interval = setInterval(() => {
+            const iconListContainer = document.querySelector('[data-testid="now-playing-widget"]')
+
+            if (iconListContainer) {
+                iconListContainer.insertAdjacentHTML('beforeend', root)
+                this.#setIconListener()
+
+                clearInterval(interval)
+            }
+        }, 50) 
     }
 
     get element() {
-        return this._mainElement
+        return this.#mainElement
     }
 
-    get _isBlock() {
-        if (!this?._mainElement) return false
-
-        return this._mainElement.style.display === 'block'
+    get #mainElement() {
+        return document.getElementById('chorus-main')
     }
 
-    get _hasControls() {
+    get #isBlock() {
+        if (!this.#mainElement) return false
+
+        return this.#mainElement.style.display === 'block'
+    }
+
+    get #hasControls() {
         const snipControls = document.getElementById('chorus-snip-controls')
 
         return !!snipControls
     }
 
-    _insertIntoDOM() {
-        if (this._hasControls) return
+    #createMainElement() {
+        const div = document.createElement('div')
+        div.id = 'chorus-main'
+
+        const root = document.getElementById('chorus')
+        root?.append(div)
+    }
+
+    #setIconListener() {
+        const icon = document.getElementById('chorus-icon')
+        icon?.addEventListener('click', () => this.#toggler())
+    }
+
+    #insertIntoDOM() {
+        if (this.#hasControls) return
+        if (this.#mainElement) return 
+
+        this.#createMainElement()
 
         const snipControls = createSnipControls({
             current: playback.current(),
             duration: playback.duration(),
         })
-        this._mainElement.insertAdjacentHTML('beforeend', snipControls)
+
+        this.#mainElement.insertAdjacentHTML('beforeend', snipControls)
     }
 
-    _hide() {
-        if (!this?._mainElement) return
+    #hide() {
+        if (!this.#mainElement) return
 
-        this._mainElement.style.display = 'none'
+        this.#mainElement.style.display = 'none'
     }
 
-    _show() {
-        this._insertIntoDOM()
-        this._mainElement.style.display = 'block'
+    #show() {
+        this.#insertIntoDOM()
+        this.#mainElement.style.display = 'block'
 
-        this._snip.init()
-        this._listener.listen()
+        this.#snip.init()
+        this.#listener.listen()
     }
 
-    toggler() {
-        this._isBlock ? this._hide() : this._show()
+    #toggler() {
+        this.#isBlock ? this.#hide() : this.#show()
     }
 }
