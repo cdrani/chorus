@@ -22,8 +22,27 @@ class CurrentTimeObserver {
         }
     }
 
+    #handleClick = (e) => {
+        e.preventDefault()
+        if (!this.#muted) this.#muteButton.click()
+    }
+
+    #setListeners() {
+        this.#nextButton?.addEventListener('click', this.#handleClick)
+        this.#previousButton?.addEventListener('click', this.#handleClick)
+    }
+
+    #clearListeners() {
+        this.#nextButton?.removeEventListener('click', this.#handleClick)
+        this.#previousButton?.removeEventListener('click', this.#handleClick)
+    }
+
     get #playbackPosition() {
         return document.querySelector('[data-testid="playback-position"]')
+    }
+
+    get #previousButton() {
+        return document.querySelector('[data-testid="control-button-skip-back"]')
     }
 
     get #nextButton() {
@@ -81,6 +100,8 @@ class CurrentTimeObserver {
     }
 
     observe() {
+        this.#setListeners()
+
         this.#observer = setInterval(() => {
             const { isSkipped, isSnip, startTime, endTime } = this.#songState
 
@@ -124,6 +145,7 @@ class CurrentTimeObserver {
         if (!this.#observer) return
 
         clearInterval(this.#observer)
+        this.#clearListeners()
         this.#observer = null
     }
 }
