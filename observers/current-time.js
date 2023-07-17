@@ -35,7 +35,7 @@ class CurrentTimeObserver {
     }
 
     get #muted() {
-        return this.#muteButton.ariaLabel == 'Unmute'
+        return this.#muteButton?.ariaLabel == 'Unmute'
     }
 
     get #songState() {
@@ -51,58 +51,73 @@ class CurrentTimeObserver {
         const repeatButton = document.querySelector('[data-testid="control-button-repeat"]') 
         return repeatButton?.ariaLabel === 'Disable repeat'
     }
- 
-    get #atEnd() {
-        const { isSnip, endTime } = this.#songState
-        return Boolean(isSnip) && endTime == parseInt(this.#video.currentTime)
+
+    get #atSongStart() {
+        const { startTime } = this.#songState
+        return startTime == parseInt(this.#video.currentTime)
     }
 
-    get #atSnip()  {
+    get #atSongEnd() {
+        const { endTime } = this.#songState
+        return endTime == parseInt(this.#video.currentTime)
+    }
+ 
+    get #atSnipEnd() {
+        const { isSnip } = this.#songState
+        return isSnip && this.#atSongEnd
+    }
+
+    get #atSnipStart()  {
         const { isSnip, startTime } = this.#songState
         if (!isSnip) return false
 
         return isSnip && parseInt(startTime) >= this.#video.currentTime 
     }
 
-    #handleSkippable() {
-        this.#video.pause()
+    #handleNext() {
         this.#video.currentTime = 0
         this.#nextButton.click()
-        this.#video.volume = 0
+        this.#video.element.load()
     }
 
     observe() {
         this.#observer = setInterval(() => {
-            const { isSkipped, startTime, endTime } = this.#songState
-            const currentDisplayTime = secondsToTime(parseInt(this.#video.currentTime, 10))
+            const { isSkipped, isSnip, startTime, endTime } = this.#songState
 
+            if (!isSkipped && !isSnip) {
+                this.#muted && this.#muteButton.click()
+                return
+            }
+
+            const currentDisplayTime = secondsToTime(parseInt(this.#video.currentTime ?? 0, 10))
             this.#playbackPosition.textContent = currentDisplayTime
 
             if (this.#video.paused) return
-            
+
             if (isSkipped && !this.#muted) {
                 this.#muteButton.click()
             }
 
             if (this.#isSkippable) {
-                this.#handleSkippable()
+                this.#handleNext()
             } else {
-                if (this.#muted) {
-                    this.#muteButton.click()
-                }
-
-                if (this.#atSnip) {
+                if (this.#atSnipStart) {
+                    if (!this.#muted) this.#muteButton.click()
                     this.#video.currentTime = startTime
-                } else if (this.#atEnd && this.#isLooping) {
-                    this.#video.currentTime = startTime + 0.1
-                } else if (this.#video.currentTime >= endTime) {
-                    this.#nextButton.click()
-                    if (!this.#muted) {
-                        this.#muteButton.click()
+                } else if (this.#atSnipEnd) {
+                    if (this.#isLooping) {
+                        this.#video.currentTime = startTime + 0.1
+                    } else {
+                        this.#handleNext()
                     }
+                } else if (this.#atSongEnd || this.#video.currentTime >= endTime) {
+                    if (!this.#muted) this.#muteButton.click()
+                    this.#handleNext()
+                } else {
+                    if (this.#muted) this.#muteButton.click()
                 }
             }
-        }, 500)
+        }, 1000)
     }
 
     disconnect() {

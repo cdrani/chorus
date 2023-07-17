@@ -23,6 +23,8 @@ class Skip {
                 const { isSkipped } = this.#store.getTrack({ id })
                 const skipIcon = row.querySelector('button[role="blocker"]')            
 
+                if (!skipIcon) return
+
                 skipIcon.style.visibility = visibleEvents.includes(event) ? 'visible' : 'hidden'
                 this.#setHighlighted({ isSkipped, skipIcon })
             })
@@ -73,6 +75,7 @@ class Skip {
         }
 
         const skipIcon = row.querySelector('button[role="blocker"]')
+        skipIcon.style.display = 'block'
 
         const { id, endTime } = this.#songInfo(row)
         const { isSkipped } = this.#store.getTrack({ 
@@ -87,7 +90,25 @@ class Skip {
     setUpBlocking() {
         const trackRows = this.#trackRows
         if (!trackRows?.length) return
+
+        this.#toggleBlockDisplay(false)
         this.#setRowEvents(trackRows)
+    }
+
+    #toggleBlockDisplay(hide) {
+        const blockIcons = this.#trackRows.map(row => row.querySelector('button[role="blocker"]'))
+
+        blockIcons.forEach(icon => { 
+            if (!icon) return
+            icon.style.display = hide ? 'none' : 'block'
+        })
+    }
+
+    removeBlocking() {
+        const trackRows = this.#trackRows
+        if (!trackRows?.length) return
+        
+        this.#toggleBlockDisplay(true)
     }
 
     #getArtists(row) {

@@ -77,12 +77,12 @@ class Snip {
         const svgElement = document.getElementById('chorus-highlight')
         const fill = Boolean(isSnip) ? '#1ed760' : 'currentColor'
 
+        if (!svgElement) return
+
         svgElement.style.stroke = fill
     }
 
     #setUpdateControls(response) {
-        const { startTime, endTime, isSnip } = response
-        this.#video.setAttributes({ isSnip, startTime, endTime })
         this.#controls.updateControls(response)
     }
 }
