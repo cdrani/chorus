@@ -35,7 +35,7 @@
             ]
         }
     ],
-    "permissions": ["activeTab", "storage", "unlimitedStorage"],
+    "permissions": ["activeTab", "tabs", "storage", "unlimitedStorage"],
     "background": {
         "service_worker": "background.js"
     }
