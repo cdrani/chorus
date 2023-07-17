@@ -77,10 +77,12 @@ class Skip {
         const skipIcon = row.querySelector('button[role="blocker"]')
         skipIcon.style.display = 'block'
 
-        const { id, endTime } = this.#songInfo(row)
+        const song = this.#songInfo(row)
+        if (!song) return
+
         const { isSkipped } = this.#store.getTrack({ 
-            id,
-            value: { isSkipped: false, isSnip: false, startTime: 0, endTime }
+            id: song.id,
+            value: { isSkipped: false, isSnip: false, startTime: 0, endTime: song.endTime }
         })
 
         this.#setHighlighted({ isSkipped, skipIcon })
@@ -127,7 +129,10 @@ class Skip {
 
     #songInfo(row) {
         const song = row.querySelector('a > div')?.textContent || row.querySelector('div[data-encore-id="type"]')?.textContent
-        const songLength = row.querySelector('button[data-testid="add-button"] + div').textContent
+        const songLength = row.querySelector('button[data-testid="add-button"] + div')?.textContent
+
+        if (!songLength) return
+
         const artists = this.#getArtists(row)
 
         return {
