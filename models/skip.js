@@ -19,8 +19,10 @@ class Skip {
 
         events.forEach(event => {
             row.addEventListener(event, () => {
-                const { id } = this.#songInfo(row)
-                const { isSkipped } = this.#store.getTrack({ id })
+                const song = this.#songInfo(row)
+                if (!song) return
+
+                const { isSkipped } = this.#store.getTrack({ id: song.id })
                 const skipIcon = row.querySelector('button[role="blocker"]')            
 
                 if (!skipIcon) return
@@ -46,11 +48,13 @@ class Skip {
         const skipIcon = row.querySelector('button[role="blocker"]')            
 
         skipIcon?.addEventListener('click', async() => {
-            const { id } = this.#songInfo(row)
-            const response = this.#store.getTrack({ id })
+            const song = this.#songInfo(row)
+            if (!song) return
+
+            const response = this.#store.getTrack({ id: song.id })
 
             const { isSkipped } = await this.#store.saveTrack({ 
-                id,
+                id: song.id,
                 value: { ...response, isSkipped: !response.isSkipped }
             })
 
@@ -75,7 +79,7 @@ class Skip {
         }
 
         const skipIcon = row.querySelector('button[role="blocker"]')
-        skipIcon.style.display = 'block'
+        skipIcon.style.display = 'flex'
 
         const song = this.#songInfo(row)
         if (!song) return
