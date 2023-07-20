@@ -19,11 +19,6 @@ export default class SkipIcon extends TrackListIcon {
         return row.querySelector(this.#selector)            
     }
 
-    // setMouseEvents(row) {
-    //     const icon = this.#getSkipIcon(row)
-    //     super._setMouseEvents(icon)
-    // }
-
     setUI(row) {
         super._setUI(row)
     }
@@ -47,8 +42,8 @@ export default class SkipIcon extends TrackListIcon {
             >
                 <svg 
                     role="img"
-                    width="20px"
-                    height="20px"
+                    width="20"
+                    height="20"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                     stroke-width="1.5"

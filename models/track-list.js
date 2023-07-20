@@ -7,8 +7,8 @@ export default class TrackList {
     #icons
     #snipIcon
     #skipIcon
-    #visibleEvents = ['mouseenter', 'focus']
-    #events = ['mouseenter', 'focus', 'blur', 'mouseleave']
+    #visibleEvents = ['mouseenter']
+    #events = ['mouseenter', 'mouseleave']
     
     constructor(store) {
         this.#skipIcon = new SkipIcon(store)
@@ -22,28 +22,27 @@ export default class TrackList {
     }
 
     setUpBlocking() {
-        const trackRows = this.#trackRows
-        if (!trackRows?.length) return
+        if (!this.#trackRows?.length) return
 
         this.#toggleBlockDisplay(false)
         this.#setRowEvents()
     }
 
     removeBlocking() {
-        if (!this.trackRows?.length) return
+        if (!this.#trackRows?.length) return
         
         this.#toggleBlockDisplay(true)
     }
 
     #toggleBlockDisplay(hide) {
-        const blockIcons = this.#trackRows.map(row => { 
-            return Array.from(row.querySelectorAll(['button[role="blocker"]']))
-        }).flat()
+        const blockIcons = this.#trackRows.map(row => (
+            Array.from(row.querySelectorAll(['button[role="snip"]', 'button[role="skip"]']))
+        )).flat()
 
         blockIcons?.forEach(icon => { 
             if (!icon) return
 
-            icon.style.display = hide ? 'none' : 'block'
+            icon.style.display = hide ? 'none' : 'flex'
         })
     }
 

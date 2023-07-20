@@ -4,8 +4,6 @@ export default class TrackListIcon {
     #key
     #store
     #selector
-    #visibleEvents = ['mouseenter']
-    #events = ['mouseenter', 'mouseleave']
 
     constructor({ key, store, selector }) {
         this.#key = key
@@ -90,9 +88,7 @@ export default class TrackListIcon {
 
         if (icon.role == 'skip') {
             icon.setAttribute('aria-label', `${burn ? 'Uns' : 'S'}kip Song`)
-        } else {
-            icon.setAttribute('aria-label', 'Edit Snip')
-        }
+        } 
 
         const styleProp = this.#getStyleProp(icon)
         svg.style[styleProp] = burn ? '#1ed760' : 'currentColor'

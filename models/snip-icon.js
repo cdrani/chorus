@@ -42,14 +42,14 @@ export default class SnipIcon extends TrackListIcon {
                 <svg
                     role="img"
                     fill="none"
-                    width="16px"
-                    height="16px"
+                    width="16"
+                    height="16"
                     stroke="currentColor"
                     viewBox="0 0 20 20"
                     stroke-width="1.5"
+                    style="margin-bottom:4px;"
                     preserveAspectRatio="xMidYMid meet"
                     xmlns="http://www.w3.org/2000/svg"
-                    style="margin-bottom:4px;"
                 >
                     <path
                         stroke-linecap="round"
