@@ -231,12 +231,14 @@
     justify-content: flex-end;
 }
 
-[role=blocker][aria-label] {
+[rolw=skip][aria-label],
+[role=snip][aria-label] {
     position: relative;
     display: inline-block;
 }
 
-[role=blocker][aria-label]:after {
+[role=skip][aria-label]:after,
+[role=snip][aria-label]:after {
     content: attr(aria-label);
     display: none;
     position: absolute;
@@ -258,6 +260,7 @@
     box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-[role=blocker][aria-label]:hover:after {
+[role=skip][aria-label]:hover:after,
+[role=snip][aria-label]:hover:after {
     display: inline-block;
 }
