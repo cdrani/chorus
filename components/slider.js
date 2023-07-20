@@ -4,7 +4,7 @@ const createSlider = ({ current, duration }) => `
             <span id="start">0:00</span>
         </p>
 
-        <div class="middle">
+        <div class="slider-container">
             <input
               min="0"
               class="input"
