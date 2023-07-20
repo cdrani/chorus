@@ -2,6 +2,7 @@ const loadScripts = scripts => {
     scripts.forEach(script => {
         const s = document.createElement('script')
         s.src = chrome.runtime.getURL(script)
+        s.type = 'module'
         document.body.appendChild(s)
     })
 }
@@ -28,7 +29,10 @@ const scripts = [
     'stores/cache.js',
     'stores/data.js',
     'actions/main.js',
-    'models/skip.js',
+    'models/tracklist-icon.js',
+    'models/skip-icon.js',
+    'models/snip-icon.js',
+    'models/track-list.js',
     'observers/track-list.js',
     'observers/current-time.js',
     'observers/now-playing.js',
