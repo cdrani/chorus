@@ -30,7 +30,7 @@ export default class Slider {
     setInitialValues(track) {
         const { endTime, startTime } = track
         const { endDisplay } = this.elements
-        const duration = playback.duration
+        const duration = playback.duration()
 
         endDisplay.textContent = secondsToTime(duration)
         this.updateSliderLeftHalf(startTime ?? 0)
@@ -52,7 +52,7 @@ export default class Slider {
 
     _setInputValues() {
         const { inputLeft, inputRight, endDisplay } = this.elements
-        const duration = playback.duration
+        const duration = playback.duration()
 
         endDisplay.textContent = secondsToTime(duration)
         inputLeft.max = duration

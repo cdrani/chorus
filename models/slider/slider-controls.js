@@ -36,8 +36,8 @@ export default class SliderControls {
 
         const { startTime, endTime } = track
 
-        const current = playback.current
-        const duration = playback.duration
+        const current = playback.current()
+        const duration = playback.duration()
 
         this._slider.updateSliderLeftHalf(startTime ?? current)
         this._slider.updateSliderRightHalf(endTime ?? duration)

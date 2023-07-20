@@ -75,8 +75,8 @@ export default class Main {
         this.#createMainElement()
 
         const snipControls = createSnipControls({
-            current: playback.current,
-            duration: playback.duration,
+            current: playback.current(),
+            duration: playback.duration(),
         })
 
         this.#mainElement.insertAdjacentHTML('beforeend', snipControls)

@@ -32,7 +32,7 @@ export default class Snip {
                 startTime: 0,
                 isSnip: false,
                 isSkipped: false,
-                endTime: playback.duration,
+                endTime: playback.duration(),
             },
         }
     }
