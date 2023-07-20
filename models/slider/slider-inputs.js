@@ -1,4 +1,7 @@
-class SliderInputs {
+import { playback } from '../../utils/playback.js'
+import { secondsToTime } from '../../utils/time.js'
+
+export default class SliderInputs {
     constructor(slider) {
         this._slider = slider
     }
@@ -11,7 +14,7 @@ class SliderInputs {
     }
 
     setInitialValues(track) {
-        const duration = playback.duration()
+        const duration = playback.duration
         const { inputStart, inputEnd } = this.elements
 
         const { startTime, endTime } = track

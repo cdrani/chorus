@@ -19,25 +19,15 @@ export default class SnipIcon extends TrackListIcon {
         return row.querySelector(this.#selector)            
     }
 
-    setMouseEvents(row) {
-        const icon = this.#getSnipIcon(row)
-        super._setMouseEvents(icon)
-    }
-
     setUI(row) {
         super._setUI(row)
-    }
-
-    setMouseEvents(row)  {
-        const icon = this.#getSnipIcon(row)
-        super._setMouseEvents(icon)
     }
 
     setClickEvent(row) {
         const icon = this.#getSnipIcon(row)
 
         icon?.addEventListener('click', async () => {
-            console.log('click on snip icon')
+            // TODO: open snip modal with clicked row info
         })
     }
 
@@ -47,17 +37,19 @@ export default class SnipIcon extends TrackListIcon {
                 role="snip"
                 type="button"
                 aria-label="Edit Snip"
-                style="visibility:hidden;border:none;background:none;display:flex;align-items:center;"
+                style="visibility:hidden;border:none;background:none;display:flex;align-items:center;cursor:pointer"
             >
                 <svg
+                    role="img"
                     fill="none"
-                    width="20px"
-                    height="20px"
+                    width="16px"
+                    height="16px"
                     stroke="currentColor"
                     viewBox="0 0 20 20"
-                    stroke-width="2"
+                    stroke-width="1.5"
                     preserveAspectRatio="xMidYMid meet"
                     xmlns="http://www.w3.org/2000/svg"
+                    style="margin-bottom:4px;"
                 >
                     <path
                         stroke-linecap="round"

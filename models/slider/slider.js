@@ -1,4 +1,7 @@
-class Slider {
+import { playback } from '../../utils/playback.js'
+import { secondsToTime } from '../../utils/time.js'
+
+export default class Slider {
     constructor(video) {
         this._video = video
     }
@@ -27,8 +30,8 @@ class Slider {
     setInitialValues(track) {
         const { endTime, startTime } = track
         const { endDisplay } = this.elements
-        const duration = playback.duration()
-        
+        const duration = playback.duration
+
         endDisplay.textContent = secondsToTime(duration)
         this.updateSliderLeftHalf(startTime ?? 0)
         this.updateSliderRightHalf(endTime ?? duration)
@@ -49,7 +52,7 @@ class Slider {
 
     _setInputValues() {
         const { inputLeft, inputRight, endDisplay } = this.elements
-        const duration = playback.duration()
+        const duration = playback.duration
 
         endDisplay.textContent = secondsToTime(duration)
         inputLeft.max = duration
@@ -102,8 +105,8 @@ class Slider {
         const percent =
             ((inputRight.value - inputRight.min) / (inputRight.max - inputRight.min)) * 100
 
-        thumbRight.style.right = (100 - percent) + '%'
-        range.style.right = (100 - percent) + '%'
+        thumbRight.style.right = `${100 - percent}%`
+        range.style.right = `${100 - percent}%`
         outputRight.textContent = secondsToTime(inputRight.value)
     }
 }

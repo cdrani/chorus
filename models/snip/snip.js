@@ -1,4 +1,7 @@
-class Snip {
+import SnipControls from './snip-controls.js'
+import { playback } from '../../utils/playback.js'
+
+export default class Snip {
     #video
     #store
     #controls
@@ -29,7 +32,7 @@ class Snip {
                 startTime: 0,
                 isSnip: false,
                 isSkipped: false,
-                endTime: playback.duration(),
+                endTime: playback.duration,
             },
         }
     }

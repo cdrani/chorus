@@ -47,4 +47,5 @@ class SpotifyVideo {
     }
 }
 
-const spotifyVideo = new SpotifyVideo()
+export const spotifyVideo = new SpotifyVideo()
+

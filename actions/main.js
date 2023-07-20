@@ -1,11 +1,16 @@
-class Main {
+import Icon from '../models/icon.js'
+import { createSnipControls } from '../components/snip-controls.js'
+
+import { playback } from '../utils/playback.js'
+
+export default class Main {
     #snip
     #icon
     #listener
 
     constructor({ snip, listener }) {
         this.#snip = snip
-        this.#icon = new Icon
+        this.#icon = new Icon()
         this.#listener = listener
 
         this.init()
@@ -21,13 +26,13 @@ class Main {
         const interval = setInterval(() => {
             const iconListContainer = document.querySelector('[data-testid="now-playing-widget"]')
 
-            if (iconListContainer) {
-                iconListContainer.insertAdjacentHTML('beforeend', root)
-                this.#setIconListener()
+            if (!iconListContainer) return
 
-                clearInterval(interval)
-            }
-        }, 50) 
+            iconListContainer.insertAdjacentHTML('beforeend', root)
+            this.#setIconListener()
+
+            clearInterval(interval)
+        }, 50)
     }
 
     get element() {
@@ -65,13 +70,13 @@ class Main {
 
     #insertIntoDOM() {
         if (this.#hasControls) return
-        if (this.#mainElement) return 
+        if (this.#mainElement) return
 
         this.#createMainElement()
 
         const snipControls = createSnipControls({
-            current: playback.current(),
-            duration: playback.duration(),
+            current: playback.current,
+            duration: playback.duration,
         })
 
         this.#mainElement.insertAdjacentHTML('beforeend', snipControls)

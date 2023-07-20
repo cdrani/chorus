@@ -1,4 +1,6 @@
-class SnipControls {
+import SliderControls from '../slider/slider-controls.js'
+
+export default class SnipControls {
     constructor(video) {
         this._controls = new SliderControls(video)
     }

@@ -1,13 +1,13 @@
 import TrackListIcon from "./tracklist-icon.js"
 
 export default class SkipIcon extends TrackListIcon {
-    #selector = 'button[role="blocker"]'
+    #selector = 'button[role="skip"]'
 
     constructor(store) {
         super({ 
             store, 
             key: 'isSkipped', 
-            selector: 'button[role="blocker"]'
+            selector: 'button[role="skip"]'
         }) 
     }
 
@@ -19,30 +19,13 @@ export default class SkipIcon extends TrackListIcon {
         return row.querySelector(this.#selector)            
     }
 
-    setMouseEvents(row) {
-        const icon = this.#getSkipIcon(row)
-        super._setMouseEvents(icon)
-    }
+    // setMouseEvents(row) {
+    //     const icon = this.#getSkipIcon(row)
+    //     super._setMouseEvents(icon)
+    // }
 
     setUI(row) {
         super._setUI(row)
-    }
-
-    // setUI(row) {
-    //     if (!row) return
-
-    //     if (!this.#getSkipIcon(row)) {
-    //         const heartIcon = row.querySelector('button[data-testid="add-button"]')
-    //         heartIcon.insertAdjacentHTML('beforebegin', this.#iconUI)
-    //     }
-
-    //     const icon = this.#getSkipIcon(row)
-    //     icon.style.display = 'flex'
-    // }
-
-    setMouseEvents(row)  {
-        const icon = this.#getSkipIcon(row)
-        super._setMouseEvents(icon)
     }
 
     setClickEvent(row) {
@@ -57,10 +40,10 @@ export default class SkipIcon extends TrackListIcon {
     get _iconUI() {
         return `
             <button 
+                role="skip"
                 type="button"
-                role="blocker"
                 aria-label="Skip Song"
-                style="visibility:hidden;border:none;background:none;display:flex;align-items:center;"
+                style="visibility:hidden;border:none;background:none;display:flex;align-items:center;cursor:pointer;"
             >
                 <svg 
                     role="img"

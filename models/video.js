@@ -1,4 +1,4 @@
-class VideoElement {
+export default class VideoElement {
     #video
 
     constructor(video) {

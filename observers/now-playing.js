@@ -1,4 +1,4 @@
-class NowPlayingObserver {
+export default class NowPlayingObserver {
     #snip
     #observer
 

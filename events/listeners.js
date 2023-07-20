@@ -1,4 +1,4 @@
-class ButtonListeners {
+export default class ButtonListeners {
     #snip = null
 
     constructor(snip) {

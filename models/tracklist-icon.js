@@ -1,11 +1,11 @@
-import { timeToSeconds } from '../utils/time.js'
+import { songInfo } from '../utils/song.js'
 
 export default class TrackListIcon {
     #key
     #store
     #selector
-    #visibleEvents = ['focus', 'mouseenter']
-    #events = ['focus', 'mouseenter', 'blur', 'mouseleave']
+    #visibleEvents = ['mouseenter']
+    #events = ['mouseenter', 'mouseleave']
 
     constructor({ key, store, selector }) {
         this.#key = key
@@ -37,13 +37,12 @@ export default class TrackListIcon {
     }
 
     #initializeTrack(row) {
-        const songInfo = this._songInfo(row)
-
-        if (!songInfo) return
+        const song = songInfo(row)
+        if (!song) return
 
         return this.#store.getTrack({ 
-            id: songInfo.id, 
-            value: { isSkipped: false, isSnip: false, startTime: 0, endTime: songInfo.endTime }
+            id: song.id, 
+            value: { isSkipped: false, isSnip: false, startTime: 0, endTime: song.endTime }
         })
     }
 
@@ -52,7 +51,7 @@ export default class TrackListIcon {
     }
 
     async _saveTrack(row) {
-        const song = this._songInfo(row)
+        const song = songInfo(row)
         if (!song) return
 
         const snipInfo = this.getTrack(song.id)
@@ -63,42 +62,13 @@ export default class TrackListIcon {
         })
     }
     
-    #getArtists(row) {
-        const artistsList = row.querySelectorAll('span > a')
-
-        if (!artistsList.length) {
-            // Here means we are at artist page and can get name from h1
-            return document.querySelector('span[data-testid="entityTitle"] > h1').textContent
-        }
-
-        return Array.from(artistsList)
-            .filter(artist => artist.href.includes('artist'))
-            .map(artist => artist.textContent)
-            .join(', ')
-    }
-
-    _songInfo(row) {
-        const song = row?.querySelector('a > div')?.textContent || 
-            row?.querySelector('div[data-encore-id="type"]')?.textContent
-        const songLength = row?.querySelector('button[data-testid="add-button"] + div')?.textContent
-
-        if (!songLength) return
-
-        const artists = this.#getArtists(row)
-
-        return {
-            id:  `${song} by ${artists}`,
-            endTime: timeToSeconds(songLength)
-        }
-    }
-
     #getRow(icon) {
         return icon.parentElement.parentElement
     }
 
     _animate(icon) {
         const row = this.#getRow(icon)
-        const song = this._songInfo(row)
+        const song = songInfo(row)
 
         if (!song) return
 
@@ -108,48 +78,40 @@ export default class TrackListIcon {
         this._glow({ icon, glow: snipInfo[this.#key] })
     }
 
+    #getStyleProp(icon) {
+        return icon.role == 'snip' ? 'color' : 'fill'
+    }
+
     _burn({ icon, burn }) {
         const svg = icon.querySelector('svg')
         if (burn) {
             icon.style.visibility = 'visible'
         }
 
-        if (this.#key == 'isSkipped') {
+        if (icon.role == 'skip') {
             icon.setAttribute('aria-label', `${burn ? 'Uns' : 'S'}kip Song`)
+        } else {
+            icon.setAttribute('aria-label', 'Edit Snip')
         }
 
-        svg.style.fill = burn ? '#1ed760' : 'currentColor'
-    }
-
-    _setMouseEvents(icon) {
-        const row = this.#getRow(icon)
-        const song = this._songInfo(row)
-        if (!song) return
-
-        this.#events.forEach(event => {
-            row?.addEventListener(event, () => {
-
-                const snipInfo = this.getTrack(song.id)
-
-                icon.style.visibility = this.#visibleEvents.includes(event) ? 'visible' : 'hidden'
-                this._burn({ icon, burn: snipInfo[this.#key] })
-            })
-        })
+        const styleProp = this.#getStyleProp(icon)
+        svg.style[styleProp] = burn ? '#1ed760' : 'currentColor'
     }
 
     _glow({ icon, glow }) {
         const svg = icon.querySelector('svg')
+        const styleProp = this.#getStyleProp(icon)
 
         svg.addEventListener('mouseover', () => {
-            if (glow && svg.style.fill == '#1ed760') return
+            if (glow && svg.style[styleProp] == '#1ed760') return
 
-            svg.style.fill = glow ? '#1ed760' : '#fff'
+            svg.style[styleProp] = glow ? '#1ed760' : '#fff'
         })
 
         svg.addEventListener('mouseleave', () => {
-            if (glow && svg.style.fill == '#1ed760') return
+            if (glow && svg.style[styleProp] == '#1ed760') return
 
-            svg.style.fill = glow ? '#1ed760' : 'currentColor'
+            svg.style[styleProp] = glow ? '#1ed760' : 'currentColor'
         })
     }
 }
