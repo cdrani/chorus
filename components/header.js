@@ -15,4 +15,3 @@ const createHeader = () => `
             </svg>
         </button>
     </div>
-`
