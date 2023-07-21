@@ -145,7 +145,7 @@
     background-color: #fff;
 }
 
-.snippy:hover .slider>.range {
+.slider-container:hover .slider>.range {
     background-color: #1ed760;
 }
 
@@ -172,10 +172,10 @@
     display: none;
 }
 
-.snippy:hover .slider>.thumb.left,
-.snippy:hover .slider>.thumb.right,
-.snippy:active .slider>.thumb.left,
-.snippy:active .slider>.thumb.right {
+.slider-container:hover .slider>.thumb.left,
+.slider-container:hover .slider>.thumb.right,
+.slider-container:active .slider>.thumb.left,
+.slider-container:active .slider>.thumb.right {
     display: block;
 }
 
