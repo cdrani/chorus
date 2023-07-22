@@ -111,7 +111,7 @@
     border-radius: .125rem
 }
 
-.middle {
+.slider-container {
     position: relative;
     width: 100%;
     margin: 0 8px;
@@ -145,7 +145,7 @@
     background-color: #fff;
 }
 
-.snippy:hover .slider>.range {
+.slider-container:hover .slider>.range {
     background-color: #1ed760;
 }
 
