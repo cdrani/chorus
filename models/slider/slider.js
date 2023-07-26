@@ -1,9 +1,14 @@
+import { spotifyVideo } from '../../actions/overload.js'
+
 import { playback } from '../../utils/playback.js'
 import { secondsToTime } from '../../utils/time.js'
+import { currentSongId } from '../../utils/song.js'
 
 export default class Slider {
-    constructor(video) {
-        this._video = video
+    #isCurrentlyPlaying = true
+
+    constructor() {
+        this._video = spotifyVideo.element
     }
 
     init() {
@@ -28,13 +33,23 @@ export default class Slider {
     }
 
     setInitialValues(track) {
+        this.#isCurrentlyPlaying = !track?.id ? true : track.id == currentSongId()
+
         const { endTime, startTime } = track
         const { endDisplay } = this.elements
-        const duration = playback.duration()
+        const duration = track?.duration ?? playback.duration()
 
         endDisplay.textContent = secondsToTime(duration)
+        this.#setMaxMin(duration)
+
         this.updateSliderLeftHalf(startTime ?? 0)
         this.updateSliderRightHalf(endTime ?? duration)
+    }
+
+    #setMaxMin(duration) {
+        const { inputLeft, inputRight } = this.elements
+        inputLeft.max = duration
+        inputRight.max = duration
     }
 
     get elements() {
@@ -50,21 +65,13 @@ export default class Slider {
         }
     }
 
-    _setInputValues() {
-        const { inputLeft, inputRight, endDisplay } = this.elements
-        const duration = playback.duration()
-
-        endDisplay.textContent = secondsToTime(duration)
-        inputLeft.max = duration
-        inputRight.max = duration
-    }
-
     setLeftValue() {
         const { inputLeft } = this.elements
         const currentValue = parseInt(inputLeft.value)
 
         this.updateSliderLeftHalf(currentValue)
-        this._video.currentTime = inputLeft.value
+
+        if (this.#isCurrentlyPlaying) this._video.currentTime = inputLeft.value
     }
 
     setRightValue() {
@@ -72,13 +79,17 @@ export default class Slider {
         const currentValue = parseInt(inputRight.value)
 
         this.updateSliderRightHalf(currentValue)
-        this._video.currentTime = inputRight.value
+
+        // FIXME: currently causes next song to play instead
+        // if (this.#isCurrentlyPlaying) {
+        //     if (inputRight.value == inputRight.max) return
+
+        //     this._video.currentTime = inputRight.value
+        // }
     }
 
     updateSliderLeftHalf(currentValue) {
         const { inputLeft, inputRight, range, thumbLeft, outputLeft } = this.elements
-
-        this._setInputValues()
 
         inputLeft.value = Math.min(
             parseInt(currentValue ?? inputLeft.value),
@@ -94,8 +105,6 @@ export default class Slider {
 
     updateSliderRightHalf(currentValue) {
         const { inputLeft, inputRight, thumbRight, range, outputRight } = this.elements
-
-        this._setInputValues()
 
         inputRight.value = Math.max(
             parseInt(currentValue ?? inputRight.value),

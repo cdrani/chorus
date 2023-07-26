@@ -1,16 +1,12 @@
 import SliderControls from '../slider/slider-controls.js'
 
 export default class SnipControls {
-    constructor(video) {
-        this._controls = new SliderControls(video)
+    constructor() {
+        this._controls = new SliderControls()
     }
 
     init() {
         this._controls.init()
-    }
-
-    get slider() {
-        return this._controls.slider
     }
 
     setInitialValues(track) {
