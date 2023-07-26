@@ -5,13 +5,6 @@ export default class VideoElement {
         this.#video = video
     }
 
-    get id() {
-        const songName = document.querySelector('[data-testid="now-playing-widget"]')?.ariaLabel
-
-        // Remove 'Now playing: ' prefix
-        return songName?.split(': ')?.at(1)
-    }
-
     get element() {
         return this.#video
     }
