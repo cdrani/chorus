@@ -1,17 +1,15 @@
 import Icon from '../models/icon.js'
-import { createSnipControls } from '../components/snip-controls.js'
-
-import { playback } from '../utils/playback.js'
+import Chorus from '../models/chorus.js'
 
 export default class Main {
-    #snip
     #icon
-    #listener
+    #snip
+    #chorus
 
-    constructor({ snip, listener }) {
+    constructor(snip) {
         this.#snip = snip
         this.#icon = new Icon()
-        this.#listener = listener
+        this.#chorus = new Chorus()
 
         this.init()
     }
@@ -43,60 +41,11 @@ export default class Main {
         return document.getElementById('chorus-main')
     }
 
-    get #isBlock() {
-        if (!this.#mainElement) return false
-
-        return this.#mainElement.style.display === 'block'
-    }
-
-    get #hasControls() {
-        const snipControls = document.getElementById('chorus-snip-controls')
-
-        return !!snipControls
-    }
-
-    #createMainElement() {
-        const div = document.createElement('div')
-        div.id = 'chorus-main'
-
-        const root = document.getElementById('chorus')
-        root?.append(div)
-    }
-
     #setIconListener() {
         const icon = document.getElementById('chorus-icon')
-        icon?.addEventListener('click', () => this.#toggler())
-    }
-
-    #insertIntoDOM() {
-        if (this.#hasControls) return
-        if (this.#mainElement) return
-
-        this.#createMainElement()
-
-        const snipControls = createSnipControls({
-            current: playback.current(),
-            duration: playback.duration(),
+        icon?.addEventListener('click', () => { 
+            this.#chorus.toggle()
+            if (this.#chorus.isShowing) this.#snip.init()
         })
-
-        this.#mainElement.insertAdjacentHTML('beforeend', snipControls)
-    }
-
-    #hide() {
-        if (!this.#mainElement) return
-
-        this.#mainElement.style.display = 'none'
-    }
-
-    #show() {
-        this.#insertIntoDOM()
-        this.#mainElement.style.display = 'block'
-
-        this.#snip.init()
-        this.#listener.listen()
-    }
-
-    #toggler() {
-        this.#isBlock ? this.#hide() : this.#show()
     }
 }
