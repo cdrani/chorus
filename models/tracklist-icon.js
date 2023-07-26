@@ -53,7 +53,6 @@ export default class TrackListIcon {
         if (!song) return
 
         const snipInfo = this.getTrack(song.id)
-        console.log({ snipInfo, song })
 
         await this.#store.saveTrack({
             id: song.id,
