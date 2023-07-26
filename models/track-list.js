@@ -98,6 +98,7 @@ export default class TrackList {
                     if (!this.#previousRowNum || (currentIndex != this.#previousRowNum)) {
                         this.#chorus.show()
                         this.#trackSnip.init(row)
+                        this.#trackSnip.updateView()
                     } else if (currentIndex == this.#previousRowNum) {
                         this.#chorus.toggle()
                     }
