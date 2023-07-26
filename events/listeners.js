@@ -1,11 +1,11 @@
 export default class ButtonListeners {
-    #snip = null
+    #snip
 
     constructor(snip) {
         this.#snip = snip
     }
 
-    listen() {
+    init() {
         this.#closeListener()
         this.#saveTrackListener()
         this.#deleteTrackListener()
