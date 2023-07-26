@@ -2,10 +2,8 @@ import { spotifyVideo } from './overload.js'
 
 import Main from './main.js'
 import DataStore from '../stores/data.js'
-import VideoElement from '../models/video.js'
 import TrackList from '../models/track-list.js'
-import Snip from '../models/snip/snip.js'
-import ButtonListeners from '../events/listeners.js'
+import CurrentSnip from '../models/snip/current-snip.js'
 
 import TrackListObserver from '../observers/track-list.js'
 import NowPlayingObserver from '../observers/now-playing.js'
@@ -16,7 +14,6 @@ class App {
     #store
     #snip
     #main
-    #listener
     #intervalId
     #trackList
     #currentTimeObserver
@@ -25,7 +22,7 @@ class App {
 
     constructor({ video, store }) {
         this.#store = store
-        this.#video = new VideoElement(video)
+        this.#video = video
         this.#intervalId = null
 
         this.#init()
@@ -33,14 +30,9 @@ class App {
 
     #init() {
         this.#trackList = new TrackList(this.#store)
-        this.#snip = new Snip({ video: this.#video, store: this.#store })
+        this.#snip = new CurrentSnip(this.#store)
 
-        this.#listener = new ButtonListeners(this.#snip)
-
-        this.#main = new Main({
-            snip: this.#snip,
-            listener: this.#listener,
-        })
+        this.#main = new Main(this.#snip)
 
         this.#nowPlayingObserver = new NowPlayingObserver(this.#snip)
         this.#trackListObserver = new TrackListObserver(this.#trackList)
