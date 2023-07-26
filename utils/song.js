@@ -1,6 +1,13 @@
 import { timeToSeconds } from './time.js'
 
-export const songInfo = row => {
+export const currentSongId = () => {
+    const songName = document.querySelector('[data-testid="now-playing-widget"]')?.ariaLabel
+
+    // Remove 'Now playing: ' prefix
+    return songName?.split(': ')?.at(1)
+}
+
+export const trackSongInfo = row => {
     const song = row?.querySelector('a > div')?.textContent || 
         row?.querySelector('div[data-encore-id="type"]')?.textContent
     const songLength = row?.querySelector('button[data-testid="add-button"] + div')?.textContent
