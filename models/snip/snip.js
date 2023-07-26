@@ -1,71 +1,36 @@
 import SnipControls from './snip-controls.js'
-import { playback } from '../../utils/playback.js'
+import ButtonListeners from '../../events/listeners.js'
 
 export default class Snip {
-    #video
     #store
-    #controls
 
-    constructor({ video, store }) {
-        this.#video = video
+    constructor(store) {
         this.#store = store
-        this.#controls = new SnipControls(video)
+        this._controls = new SnipControls()
+        this._listeners = new ButtonListeners(this)
     }
 
     init() {
-        this.#controls.init()
-        this.#controls.setInitialValues(this.read())
+        this._listeners.init()
     }
 
     read() {
-        return this.#store.getTrack(this.#defaultTrack)
-    }
-
-    get video() {
-        return this.#video
-    }
-
-    get #defaultTrack() {
-        return {
-            id: this.#video.id,
-            value: {
-                startTime: 0,
-                isSnip: false,
-                isSkipped: false,
-                endTime: playback.duration(),
-            },
-        }
-    }
-
-    async save() {
-        const { inputLeft, inputRight } = this.#controls.slider.elements
-
-        await this.#store.saveTrack({
-            id: this.#video.id,
-            value: {
-                isSnip: true,
-                startTime: inputLeft.value,
-                endTime: inputRight.value,
-                isSkipped: inputRight.value == 0,
-            },
-        })
-
-        this.updateView()
+        return this.#store.getTrack(this._defaultTrack)
     }
 
     reset() {
-        this.#controls.setInitialValues()
+        this._controls.setInitialValues()
     }
 
     async delete() {
-        await this.#store.deleteTrack(this.#defaultTrack)
+        await this.#store.deleteTrack(this._defaultTrack)
         this.updateView()
     }
 
-    updateView() {
+    _updateView() {
         const response = this.read()
         this.#setUpdateControls(response)
-        this.#highlightSnip(response?.isSnip)
+        this._highlightSnip(response?.isSnip)
         this.#toggleRemoveButton(response?.isSnip)
     }
 
@@ -76,16 +41,7 @@ export default class Snip {
         removeButton.style.visibility = isSnip ? 'visible' : 'hidden'
     }
 
-    #highlightSnip(isSnip) {
-        const svgElement = document.getElementById('chorus-highlight')
-        const fill = Boolean(isSnip) ? '#1ed760' : 'currentColor'
-
-        if (!svgElement) return
-
-        svgElement.style.stroke = fill
-    }
-
     #setUpdateControls(response) {
-        this.#controls.updateControls(response)
+        this._controls.updateControls(response)
     }
 }
