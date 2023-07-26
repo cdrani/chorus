@@ -1,8 +1,6 @@
 import TrackListIcon from "./tracklist-icon.js"
 
 export default class SkipIcon extends TrackListIcon {
-    #selector = 'button[role="skip"]'
-
     constructor(store) {
         super({ 
             store, 
@@ -15,21 +13,8 @@ export default class SkipIcon extends TrackListIcon {
         super._setInitialState(row)
     }
 
-    #getSkipIcon(row) {
-        return row.querySelector(this.#selector)            
-    }
-
     setUI(row) {
         super._setUI(row)
-    }
-
-    setClickEvent(row) {
-        const icon = this.#getSkipIcon(row)
-
-        icon?.addEventListener('click', async () => {
-            await super._saveTrack(row)
-            super._animate(icon)
-        })
     }
 
     get _iconUI() {
@@ -41,7 +26,7 @@ export default class SkipIcon extends TrackListIcon {
                 style="visibility:hidden;border:none;background:none;display:flex;align-items:center;cursor:pointer;"
             >
                 <svg 
-                    role="img"
+                    role="skip"
                     width="20"
                     height="20"
                     fill="currentColor"
@@ -49,7 +34,11 @@ export default class SkipIcon extends TrackListIcon {
                     stroke-width="1.5"
                     xmlns="http://www.w3.org/2000/svg"
                 >
-                    <path fill-rule="evenodd" d="M5.965 4.904l9.131 9.131a6.5 6.5 0 00-9.131-9.131zm8.07 10.192L4.904 5.965a6.5 6.5 0 009.131 9.131zM4.343 4.343a8 8 0 1111.314 11.314A8 8 0 014.343 4.343z" clip-rule="evenodd" />
+                    <path 
+                        role="skip"
+                        fill-rule="evenodd"
+                        d="M5.965 4.904l9.131 9.131a6.5 6.5 0 00-9.131-9.131zm8.07 10.192L4.904 5.965a6.5 6.5 0 009.131 9.131zM4.343 4.343a8 8 0 1111.314 11.314A8 8 0 014.343 4.343z" clip-rule="evenodd"
+                    />
                 </svg>
             </button>
         `
