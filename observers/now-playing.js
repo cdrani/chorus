@@ -1,9 +1,14 @@
+import Chorus from '../models/chorus.js'
+
 export default class NowPlayingObserver {
     #snip
+    #chorus
     #observer
 
     constructor(snip) {
         this.#snip = snip
+        this.#chorus = new Chorus()
+
         this.observe()
     }
 
@@ -27,6 +32,7 @@ export default class NowPlayingObserver {
     #handler = mutationsList => {
         for (const mutation of mutationsList) {
             if (this.#isAnchor(mutation)) {
+                if (this.#chorus.isShowing) this.#snip.init()
                 this.#snip.updateView()
             }
         }
