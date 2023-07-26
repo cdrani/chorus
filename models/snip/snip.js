@@ -29,16 +29,18 @@ export default class Snip {
 
     _updateView() {
         const response = this.read()
+        const { isSnip, isSkip } = response
+
         this.#setUpdateControls(response)
-        this._highlightSnip(response?.isSnip)
-        this.#toggleRemoveButton(response?.isSnip)
+        this._highlightSnip(isSnip)
+        this.#toggleRemoveButton(isSnip || isSkip)
     }
 
-    #toggleRemoveButton(isSnip) {
+    #toggleRemoveButton(showRemove) {
         const removeButton = document.getElementById('chorus-remove-button')
 
         if (!removeButton) return
-        removeButton.style.visibility = isSnip ? 'visible' : 'hidden'
+        removeButton.style.visibility = showRemove ? 'visible' : 'hidden'
     }
 
     #setUpdateControls(response) {
