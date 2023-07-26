@@ -1,18 +1,27 @@
 import SkipIcon from './skip-icon.js'
 import SnipIcon from './snip-icon.js'
 
-import { songInfo } from '../utils/song.js'
+import Chorus from './chorus.js'
+import TrackSnip from "./snip/track-snip.js"
+
+import { trackSongInfo } from '../utils/song.js'
 
 export default class TrackList {
     #icons
+    #chorus
     #snipIcon
     #skipIcon
+    #trackSnip
+    #previousRowNum = null
     #visibleEvents = ['mouseenter']
     #events = ['mouseenter', 'mouseleave']
-    
+
     constructor(store) {
+        this.#chorus = new Chorus()
         this.#skipIcon = new SkipIcon(store)
-        this.#snipIcon = new SnipIcon(store)  
+        this.#snipIcon = new SnipIcon(store)
+        this.#trackSnip = new TrackSnip(store)
+        
         this.#icons = [this.#skipIcon, this.#snipIcon]
     }
 
@@ -30,7 +39,7 @@ export default class TrackList {
 
     removeBlocking() {
         if (!this.#trackRows?.length) return
-        
+
         this.#toggleBlockDisplay(true)
     }
 
@@ -39,7 +48,7 @@ export default class TrackList {
             Array.from(row.querySelectorAll(['button[role="snip"]', 'button[role="skip"]']))
         )).flat()
 
-        blockIcons?.forEach(icon => { 
+        blockIcons?.forEach(icon => {
             if (!icon) return
 
             icon.style.display = hide ? 'none' : 'flex'
@@ -51,7 +60,7 @@ export default class TrackList {
     }
 
     #setMouseEvents(row) {
-        const song = songInfo(row)
+        const song = trackSongInfo(row)
         if (!song) return
 
         this.#events.forEach(event => {
@@ -69,15 +78,47 @@ export default class TrackList {
         })
     }
 
+    setTrackListClickEvent() {
+        const trackList = document.querySelector('[data-testid="track-list"]')
+        const container = trackList?.querySelector('[data-testid="top-sentinel"] + [role="presentation"]')
+        if (!container) return
+
+        container.addEventListener('click', async e => {
+            const target = e.target
+
+            if (['snip', 'skip'].includes(target?.role)) {
+                let row = target.parentElement
+                do {
+                    row = row.parentElement
+                } while (row.dataset.testid != 'tracklist-row')
+
+                const currentIndex = row.parentElement.ariaRowIndex
+
+                if (target.role == 'snip') {
+                    if (!this.#previousRowNum || (currentIndex != this.#previousRowNum)) {
+                        this.#chorus.show()
+                        this.#trackSnip.init(row)
+                    } else if (currentIndex == this.#previousRowNum) {
+                        this.#chorus.toggle()
+                    }
+                    
+                    this.#previousRowNum = currentIndex 
+                } else {
+                    const icon = row.querySelector('button[role="skip"]')
+                    await this.#skipIcon._saveTrack(row)
+                    this.#skipIcon._animate(icon)
+                }
+            }
+        })
+    }
+
     #setRowEvents() {
         this.#trackRows.forEach(row => {
             this.#icons.forEach(icon => {
                 icon.setUI(row)
                 icon.setInitialState(row)
-                icon.setClickEvent(row)
             })
-            
             this.#setMouseEvents(row)
-        }) 
+        })
     }
 }

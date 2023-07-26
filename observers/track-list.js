@@ -5,13 +5,13 @@ export default class TrackListObserver {
 
     constructor(trackList) {
         this.#trackList = trackList
-        this.#trackList.setUpBlocking()
 
         this.observe()
     }
 
     observe() {
         this.#showUI()
+        this.#trackList.setTrackListClickEvent()
 
         const target = document.querySelector('main')
         this.#observer = new MutationObserver(this.#mutationHandler)
@@ -50,6 +50,9 @@ export default class TrackListObserver {
     #mutationHandler = (mutationsList) => {
         for (const mutation of mutationsList) {
             if (this.#isQueueView || this.#isMainView(mutation) || this.#isMoreLoaded(mutation)) {
+                if (this.#isMainView(mutation)) {
+                    this.#trackList.setTrackListClickEvent()
+                }
                 this.#isHidden ? this.#trackList.removeBlocking() : this.#trackList.setUpBlocking()         
             }
         }
