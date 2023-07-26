@@ -1,4 +1,5 @@
 import { timeToSeconds, secondsToTime } from '../utils/time.js'
+
 export default class CurrentTimeObserver {
     #snip
     #video

@@ -1,4 +1,4 @@
-import { songInfo } from '../utils/song.js'
+import { trackSongInfo } from '../utils/song.js'
 
 export default class TrackListIcon {
     #key
@@ -7,7 +7,7 @@ export default class TrackListIcon {
 
     constructor({ key, store, selector }) {
         this.#key = key
-        this.#store = store      
+        this.#store = store
         this.#selector = selector
     }
 
@@ -35,12 +35,12 @@ export default class TrackListIcon {
     }
 
     #initializeTrack(row) {
-        const song = songInfo(row)
+        const song = trackSongInfo(row)
         if (!song) return
 
-        return this.#store.getTrack({ 
-            id: song.id, 
-            value: { isSkipped: false, isSnip: false, startTime: 0, endTime: song.endTime }
+        return this.#store.getTrack({
+            id: song.id,
+            value: { isSkipped: false, isSnip: false, startTime: 0, endTime: song.endTime },
         })
     }
 
@@ -49,24 +49,25 @@ export default class TrackListIcon {
     }
 
     async _saveTrack(row) {
-        const song = songInfo(row)
+        const song = trackSongInfo(row)
         if (!song) return
 
         const snipInfo = this.getTrack(song.id)
+        console.log({ snipInfo, song })
 
-        await this.#store.saveTrack({ 
+        await this.#store.saveTrack({
             id: song.id,
-            value: { ...snipInfo, isSkipped: !snipInfo.isSkipped }
+            value: { ...snipInfo, isSkipped: !snipInfo.isSkipped },
         })
     }
-    
+
     #getRow(icon) {
         return icon.parentElement.parentElement
     }
 
     _animate(icon) {
         const row = this.#getRow(icon)
-        const song = songInfo(row)
+        const song = trackSongInfo(row)
 
         if (!song) return
 
@@ -88,7 +89,7 @@ export default class TrackListIcon {
 
         if (icon.role == 'skip') {
             icon.setAttribute('aria-label', `${burn ? 'Uns' : 'S'}kip Song`)
-        } 
+        }
 
         const styleProp = this.#getStyleProp(icon)
         svg.style[styleProp] = burn ? '#1ed760' : 'currentColor'
