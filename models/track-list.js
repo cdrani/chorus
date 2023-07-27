@@ -83,6 +83,8 @@ export default class TrackList {
         const container = trackList?.querySelector('[data-testid="top-sentinel"] + [role="presentation"]')
         if (!container) return
 
+        this.#previousRowNum = null
+
         container.addEventListener('click', async e => {
             const target = e.target
 
