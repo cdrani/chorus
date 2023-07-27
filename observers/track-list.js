@@ -1,17 +1,17 @@
-class TrackListObserver {
-    #skip
+export default class TrackListObserver {
+    #trackList
     #observer
     #isHidden = true
 
-    constructor(skip) {
-        this.#skip = skip
-        this.#skip.setUpBlocking()
+    constructor(trackList) {
+        this.#trackList = trackList
 
         this.observe()
     }
 
     observe() {
         this.#showUI()
+        this.#trackList.setTrackListClickEvent()
 
         const target = document.querySelector('main')
         this.#observer = new MutationObserver(this.#mutationHandler)
@@ -50,19 +50,22 @@ class TrackListObserver {
     #mutationHandler = (mutationsList) => {
         for (const mutation of mutationsList) {
             if (this.#isQueueView || this.#isMainView(mutation) || this.#isMoreLoaded(mutation)) {
-                this.#isHidden ? this.#skip.removeBlocking() : this.#skip.setUpBlocking()         
+                if (this.#isMainView(mutation)) {
+                    this.#trackList.setTrackListClickEvent()
+                }
+                this.#isHidden ? this.#trackList.removeBlocking() : this.#trackList.setUpBlocking()         
             }
         }
     }
 
     #hideUI() {
         this.#isHidden = true
-        this.#skip.removeBlocking()
+        this.#trackList.removeBlocking()
     }
 
     #showUI() {
         this.#isHidden = false
-        this.#skip.setUpBlocking()
+        this.#trackList.setUpBlocking()
     }
 
     disconnect() {

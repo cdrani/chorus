@@ -1,7 +1,11 @@
-class SliderControls {
-    constructor(video) {
-        this._video = video
-        this._slider = new Slider(video)
+import Slider from './slider.js'
+import SliderInputs from './slider-inputs.js'
+
+import { playback } from '../../utils/playback.js'
+
+export default class SliderControls {
+    constructor() {
+        this._slider = new Slider()
         this._inputs = new SliderInputs(this._slider)
     }
 

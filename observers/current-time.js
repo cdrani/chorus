@@ -1,4 +1,6 @@
-class CurrentTimeObserver {
+import { timeToSeconds, secondsToTime } from '../utils/time.js'
+
+export default class CurrentTimeObserver {
     #snip
     #video
     #observer
@@ -22,7 +24,7 @@ class CurrentTimeObserver {
         }
     }
 
-    #handleClick = (e) => {
+    #handleClick = e => {
         e.preventDefault()
         if (!this.#muted) this.#muteButton.click()
     }
@@ -67,7 +69,7 @@ class CurrentTimeObserver {
     }
 
     get #isLooping() {
-        const repeatButton = document.querySelector('[data-testid="control-button-repeat"]') 
+        const repeatButton = document.querySelector('[data-testid="control-button-repeat"]')
         return repeatButton?.ariaLabel === 'Disable repeat'
     }
 
@@ -80,17 +82,17 @@ class CurrentTimeObserver {
         const { endTime } = this.#songState
         return endTime == parseInt(this.#video.currentTime)
     }
- 
+
     get #atSnipEnd() {
         const { isSnip } = this.#songState
         return isSnip && this.#atSongEnd
     }
 
-    get #atSnipStart()  {
+    get #atSnipStart() {
         const { isSnip, startTime } = this.#songState
         if (!isSnip) return false
 
-        return isSnip && parseInt(startTime) >= this.#video.currentTime 
+        return isSnip && parseInt(startTime) >= this.#video.currentTime
     }
 
     #handleNext() {
@@ -121,23 +123,19 @@ class CurrentTimeObserver {
 
             if (this.#isSkippable) {
                 this.#handleNext()
-            } else {
-                if (this.#atSnipStart) {
-                    if (!this.#muted) this.#muteButton.click()
-                    this.#video.currentTime = startTime
-                } else if (this.#atSnipEnd) {
-                    if (this.#isLooping) {
-                        this.#video.currentTime = startTime + 0.1
-                    } else {
-                        this.#handleNext()
-                    }
-                } else if (this.#atSongEnd || this.#video.currentTime >= endTime) {
-                    if (!this.#muted) this.#muteButton.click()
-                    this.#handleNext()
+            } else if (this.#atSnipStart) {
+                if (!this.#muted) this.#muteButton.click()
+                this.#video.currentTime = startTime
+            } else if (this.#atSnipEnd) {
+                if (this.#isLooping) {
+                    this.#video.currentTime = startTime + 0.1
                 } else {
-                    if (this.#muted) this.#muteButton.click()
+                    this.#handleNext()
                 }
-            }
+            } else if (this.#atSongEnd || this.#video.currentTime >= endTime) {
+                if (!this.#muted) this.#muteButton.click()
+                this.#handleNext()
+            } else if (this.#muted) this.#muteButton.click()
         }, 1000)
     }
 

@@ -1,4 +1,4 @@
-class Icon {
+export default class Icon {
     constructor() {}
 
     createRootContainer() {

@@ -1,4 +1,4 @@
-class CacheStore {
+export default class CacheStore {
     #cache
     constructor() {
         this.#cache = sessionStorage

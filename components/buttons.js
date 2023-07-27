@@ -1,4 +1,4 @@
-const createActionButtons = () => `
+export const createActionButtons = () => `
     <div style="display: flex; justify-content: flex-end; margin-top: 12px">
         <div style="justify-content: space-between">
             <button

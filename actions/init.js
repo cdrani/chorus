@@ -1,36 +1,41 @@
+import { spotifyVideo } from './overload.js'
+
+import Main from './main.js'
+import DataStore from '../stores/data.js'
+import TrackList from '../models/track-list.js'
+import CurrentSnip from '../models/snip/current-snip.js'
+
+import TrackListObserver from '../observers/track-list.js'
+import NowPlayingObserver from '../observers/now-playing.js'
+import CurrentTimeObserver from '../observers/current-time.js'
+
 class App {
     #video
     #store
-    #skip
     #snip
     #main
-    #listener
     #intervalId
+    #trackList
     #currentTimeObserver
     #nowPlayingObserver
     #trackListObserver
 
     constructor({ video, store }) {
         this.#store = store
-        this.#video = new VideoElement(video)
+        this.#video = video
         this.#intervalId = null
 
         this.#init()
     }
 
     #init() {
-        this.#skip = new Skip(this.#store)
-        this.#snip = new Snip({ video: this.#video, store: this.#store })
+        this.#trackList = new TrackList(this.#store)
+        this.#snip = new CurrentSnip(this.#store)
 
-        this.#listener = new ButtonListeners(this.#snip)
-
-        this.#main = new Main({
-            snip: this.#snip,
-            listener: this.#listener,
-        })
+        this.#main = new Main(this.#snip)
 
         this.#nowPlayingObserver = new NowPlayingObserver(this.#snip)
-        this.#trackListObserver = new TrackListObserver(this.#skip)
+        this.#trackListObserver = new TrackListObserver(this.#trackList)
         this.#currentTimeObserver = new CurrentTimeObserver({ video: this.#video, snip: this.#snip })
 
         this.#snip.updateView()

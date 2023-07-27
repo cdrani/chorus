@@ -1,4 +1,7 @@
-class DataStore {
+import CacheStore from "./cache.js"
+import Dispatcher from "../events/dispatcher.js"
+
+export default class DataStore {
     #cache
     #dispatcher
 
@@ -31,7 +34,7 @@ class DataStore {
 
     getTrack({ id, value = {}}) {
         const result = this.#cache.getKey(id)
-        if (result) return result 
+        if (result && Object.hasOwn(result, 'endTime')) return result 
 
         return this.#cache.getValue({ key: id, value })
     }

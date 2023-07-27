@@ -1,4 +1,6 @@
-const createSlider = ({ current, duration }) => `
+import { secondsToTime } from '../utils/time.js'
+
+export const createSlider = ({ current, duration }) => `
     <div id="snippy" class="snippy">
         <p class="time">
             <span id="start">0:00</span>
@@ -14,7 +16,7 @@ const createSlider = ({ current, duration }) => `
               value="${current}"
             >
 
-            <input 
+            <input
                 min="0"
                 class="input"
                 type="range"

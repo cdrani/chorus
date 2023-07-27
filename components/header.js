@@ -1,4 +1,4 @@
-const createHeader = () => `
+export const createHeader = () => `
     <div class="chorus-common">
         <span class="chorus-header">chorus</span>
         <button id="chorus-close-button" class="chorus-text-button">

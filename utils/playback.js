@@ -1,4 +1,6 @@
-const playback = {
+import { timeToSeconds } from './time.js'
+
+export const playback = {
     duration: () => {
         const getPlaybackDuration = () =>
             document.querySelector('[data-testid="playback-duration"]')

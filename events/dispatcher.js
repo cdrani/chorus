@@ -1,4 +1,4 @@
-class Dispatcher {
+export default class Dispatcher {
     constructor() {}
 
     #responsePromise(eventType) {

@@ -1,4 +1,4 @@
-const secondsToTime = seconds => {
+export const secondsToTime = seconds => {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
     const remainingSeconds = seconds % 60
@@ -23,7 +23,7 @@ const secondsToTime = seconds => {
     return time
 }
 
-const timeToSeconds = time => {
+export const timeToSeconds = time => {
     if (!time || !time?.includes(':')) return
 
     const timeParts = time.split(":").map(Number)

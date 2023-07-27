@@ -1,40 +1,43 @@
-class SpotifyVideo {
-    constructor() {
-        this._video = null
-        this._tries = 0
-        this.originalCreateElement = document.createElement
+import VideoElement from '../models/video.js'
 
-        this._overloadCreateElement()
-        this._init()
+class SpotifyVideo {
+    #video
+    #tries = 0
+    #originalCreateElement = document.createElement
+
+    constructor() {
+        this.#overloadCreateElement()
+        this.#init()
     }
 
-    _overloadCreateElement() {
+    #overloadCreateElement() {
         const self = this
 
         document.createElement = function (tagName) {
-            const element = self.originalCreateElement.apply(this, arguments)
+            const element = self.#originalCreateElement.apply(this, arguments)
 
             if (tagName === 'video') {
-                self._video = element
-                document.createElement = self.originalCreateElement
+                self.#video = new VideoElement(element)
+                
+                document.createElement = self.#originalCreateElement
             }
             return element
         }
     }
 
-    _init() {
+    #init = () => {
         try {
-            this._tries++
-            this._checkForMainEl()
+            this.#tries++
+            this.#checkForMainEl()
         } catch {
-            if (this._tries <= 20) {
-                setTimeout(this._init, 500)
+            if (this.#tries <= 20) {
+                setTimeout(this.#init, 500)
                 return
             }
         }
     }
 
-    _checkForMainEl() {
+    #checkForMainEl() {
         const mainEl = document.getElementById('main')
 
         if (mainEl === null) {
@@ -43,8 +46,8 @@ class SpotifyVideo {
     }
 
     get element() {
-        return this._video
+        return this.#video
     }
 }
 
-const spotifyVideo = new SpotifyVideo()
+export const spotifyVideo = new SpotifyVideo()
