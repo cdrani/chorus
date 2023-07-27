@@ -40,7 +40,7 @@ export default class Snip {
         const removeButton = document.getElementById('chorus-remove-button')
 
         if (!removeButton) return
-        removeButton.style.visibility = showRemove ? 'visible' : 'hidden'
+        removeButton.style.display = showRemove ? 'block' : 'none'
     }
 
     #setUpdateControls(response) {

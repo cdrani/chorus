@@ -103,12 +103,21 @@
 }
 
 .chorus-text-button {
+    display: flex;
+    align-items: center;
     background-color: #535353;
-    color: white;
+    color: #fff;
     font-weight: 600;
     font-size: .75rem;
     padding: .125rem .25rem;
-    border-radius: .125rem
+    border-radius: .125rem;
+    height: 100%;
+}
+
+.chorus-text-button span {
+    display: inline-block;
+    vertical-align: middle;
+    padding-bottom: 3.5px;
 }
 
 .slider-container {
@@ -218,6 +227,7 @@
     min-width: 30px;
     font-weight: 400;
     color: #b3b3b3;
+    padding-top: 2px;
 }
 
 .snippy {
