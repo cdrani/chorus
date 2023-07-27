@@ -4,7 +4,7 @@ export const createActionButtons = () => `
             <button
                 class="chorus-text-button"
                 id="chorus-remove-button"
-                style="visibility:hidden;padding:0 10px;height:100%;margin-right:0.5rem;font-size:1rem;"
+                style="display:none;padding:0 10px;height:100%;margin-right:0.5rem;font-size:1rem;"
             >
                 remove
             </button>
