@@ -1,8 +1,12 @@
+import Chorus from '../models/chorus.js'
+
 export default class ButtonListeners {
     #snip
+    #chorus
 
     constructor(snip) {
         this.#snip = snip
+        this.#chorus = new Chorus()
     }
 
     init() {
@@ -12,8 +16,7 @@ export default class ButtonListeners {
     }
 
     #hide() {
-        const main = document.getElementById('chorus-main')
-        main.style.display = 'none'
+        this.#chorus.hide()
     }
 
     #closeListener() {
