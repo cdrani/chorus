@@ -2,10 +2,8 @@ import SnipControls from './snip-controls.js'
 import ButtonListeners from '../../events/listeners.js'
 
 export default class Snip {
-    #store
-
     constructor(store) {
-        this.#store = store
+        this._store = store
         this._controls = new SnipControls()
         this._listeners = new ButtonListeners(this)
     }
@@ -15,7 +13,7 @@ export default class Snip {
     }
 
     read() {
-        return this.#store.getTrack(this._defaultTrack)
+        return this._store.getTrack(this._defaultTrack)
     }
 
     reset() {
@@ -23,8 +21,8 @@ export default class Snip {
     }
 
     async delete() {
-        await this.#store.deleteTrack(this._defaultTrack)
-        this.updateView()
+        await this._store.deleteTrack(this._defaultTrack)
+        this._updateView()
     }
 
     _updateView() {
