@@ -48,6 +48,11 @@ export default class TrackSnip extends Snip {
         icon.style.visibility = isSnip ? 'visible' : 'hidden'
     }
 
+    share() {
+        const songInfo = trackSongInfo(this.#row)
+        console.log({ songInfo })
+    }
+
     async save() {
         const { inputLeft, inputRight } = this._controls.slider.elements
         const { isSkipped } = this.read()

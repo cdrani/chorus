@@ -40,6 +40,10 @@ export default class CurrentSnip extends Snip {
         svgElement.style.stroke = fill
     }
 
+    share() {
+        // TODO: implement
+    }
+
     async save() {
         const { inputLeft, inputRight } = this._controls.slider.elements
         const { isSkipped } = this.read()
