@@ -37,12 +37,15 @@ export default class TrackSnip extends Snip {
     }
 
     _highlightSnip(isSnip) {
-        const svgElement = document.getElementById('chorus-highlight')
-        const fill = Boolean(isSnip) ? '#1ed760' : 'currentColor'
+        const svgElement = this.#row.querySelector('svg[role="snip"]')
+        const fill = isSnip ? '#1ed760' : 'currentColor'
 
         if (!svgElement) return
 
-        svgElement.style.stroke = fill
+        svgElement.style.color = fill
+
+        const icon = this.#row.querySelector('button[role="snip"]')
+        icon.style.visibility = isSnip ? 'visible' : 'hidden'
     }
 
     async save() {
