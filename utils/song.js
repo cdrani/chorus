@@ -15,12 +15,25 @@ export const trackSongInfo = row => {
     if (!songLength) return
 
     const artists = getArtists(row)
+    const trackInfo = getTrackId(row)
 
     return {
         id:  `${song} by ${artists}`,
-        endTime: timeToSeconds(songLength)
+        endTime: timeToSeconds(songLength),
+        ...trackInfo && {...trackInfo }
     }
 }    
+
+const getTrackId = row => {
+    const trackIdUrl = row.querySelector('a[data-testid="internal-track-link"]')?.href
+    if (!trackIdUrl) return
+
+    const url = trackIdUrl.split('.com').at(1)
+    return {
+        url,
+        trackId: url.split('/').at(2)
+    }
+}
 
 const getArtists = row => {
     const artistsList = row.querySelectorAll('span > a')
