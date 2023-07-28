@@ -12,6 +12,7 @@ export default class ButtonListeners {
     init() {
         this.#closeListener()
         this.#saveTrackListener()
+        this.#shareTrackListener()
         this.#deleteTrackListener()
     }
 
@@ -36,6 +37,14 @@ export default class ButtonListeners {
         const saveButton = document.getElementById('chorus-save-button')
         saveButton?.addEventListener('click', async () => {
             await this.#snip.save()
+            this.#hide()
+        }, { once: true })
+    }
+
+    #shareTrackListener() {
+        const shareButton = document.getElementById('chorus-share-button')
+        shareButton?.addEventListener('click', () => {
+            this.#snip.share()
             this.#hide()
         }, { once: true })
     }
