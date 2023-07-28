@@ -47,14 +47,15 @@ export default class TrackSnip extends Snip {
 
     async save() {
         const { inputLeft, inputRight } = this._controls.slider.elements
+        const { isSkipped } = this.read()
 
         await this._store.saveTrack({
-            id: trackSongInfo(row).id,
+            id: trackSongInfo(this.#row).id,
             value: {
                 isSnip: true,
                 startTime: inputLeft.value,
                 endTime: inputRight.value,
-                ... inputRight.value == 0 && { isSkipped: true },
+                isSkipped: inputRight.value == 0 || isSkipped,
             },
         })
 

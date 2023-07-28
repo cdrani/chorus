@@ -42,6 +42,7 @@ export default class CurrentSnip extends Snip {
 
     async save() {
         const { inputLeft, inputRight } = this._controls.slider.elements
+        const { isSkipped } = this.read()
 
         await this._store.saveTrack({
             id: currentSongId(),
@@ -49,7 +50,7 @@ export default class CurrentSnip extends Snip {
                 isSnip: true,
                 startTime: inputLeft.value,
                 endTime: inputRight.value,
-                ... inputRight.value == 0 && { isSkipped: true },
+                isSkipped: inputRight.value == 0 || isSkipped,
             },
         })
 
