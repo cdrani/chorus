@@ -21,7 +21,7 @@ export default class ButtonListeners {
 
     #closeListener() {
         const closeButton = document.getElementById('chorus-close-button')
-        closeButton?.addEventListener('click', () => this.#hide())
+        closeButton?.addEventListener('click', () => this.#hide(), { once: true })
     }
 
     #deleteTrackListener() {
@@ -29,7 +29,7 @@ export default class ButtonListeners {
         deleteButton?.addEventListener('click', async () => {
             await this.#snip.delete()
             this.#hide()
-        })
+        }, { once: true })
     }
 
     #saveTrackListener() {
@@ -37,6 +37,6 @@ export default class ButtonListeners {
         saveButton?.addEventListener('click', async () => {
             await this.#snip.save()
             this.#hide()
-        })
+        }, { once: true })
     }
 }
