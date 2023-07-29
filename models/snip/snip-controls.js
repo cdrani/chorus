@@ -9,6 +9,10 @@ export default class SnipControls {
         this._controls.init()
     }
 
+    get slider() {
+        return  this._controls.slider
+    }
+
     setInitialValues(track) {
         this._controls.setInitialValues(track)
     }

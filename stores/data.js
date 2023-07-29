@@ -55,7 +55,7 @@ export default class DataStore {
             detail: { key: id },
         })
 
-        this.#cache.update({ key: id, value })
+        this.#cache.update({ key: id, value: { ...value, isSnip: false } })
         return this.#cache.getKey(id)
     }
 }
