@@ -78,6 +78,36 @@ export default class TrackList {
         })
     }
 
+    #handleClick = async e => {
+        const target = e.target
+
+        if (['snip', 'skip'].includes(target?.role)) {
+            let row = target.parentElement
+            do {
+                row = row.parentElement
+            } while (row.dataset.testid != 'tracklist-row')
+
+            const currentIndex = row.parentElement.ariaRowIndex
+
+            if (target.role == 'snip') {
+                if (!this.#previousRowNum || (currentIndex != this.#previousRowNum)) {
+                    this.#chorus.show()
+                    this.#trackSnip.init(row)
+                } else if (currentIndex == this.#previousRowNum) {
+                    this.#chorus.toggle()
+                }
+                
+                const icon = row.querySelector('button[role="snip"]')
+                this.#snipIcon._animate(icon)
+                this.#previousRowNum = currentIndex 
+            } else {
+                const icon = row.querySelector('button[role="skip"]')
+                await this.#skipIcon._saveTrack(row)
+                this.#skipIcon._animate(icon)
+            }
+        }
+    }
+
     setTrackListClickEvent() {
         const trackLists = Array.from(document.querySelectorAll('[data-testid="track-list"]'))
         const containers = trackLists?.map(trackList => (
@@ -88,33 +118,9 @@ export default class TrackList {
 
         this.#previousRowNum = null
 
-        container.addEventListener('click', async e => {
-            const target = e.target
-
-            if (['snip', 'skip'].includes(target?.role)) {
-                let row = target.parentElement
-                do {
-                    row = row.parentElement
-                } while (row.dataset.testid != 'tracklist-row')
-
-                const currentIndex = row.parentElement.ariaRowIndex
-
-                if (target.role == 'snip') {
-                    if (!this.#previousRowNum || (currentIndex != this.#previousRowNum)) {
-                        this.#chorus.show()
-                        this.#trackSnip.init(row)
-                        this.#trackSnip.updateView()
-                    } else if (currentIndex == this.#previousRowNum) {
-                        this.#chorus.toggle()
-                    }
-                    
-                    this.#previousRowNum = currentIndex 
-                } else {
-                    const icon = row.querySelector('button[role="skip"]')
-                    await this.#skipIcon._saveTrack(row)
-                    this.#skipIcon._animate(icon)
-                }
-            }
+        containers.forEach(container => { 
+            container?.removeEventListener('click', this.#handleClick)
+            container?.addEventListener('click', this.#handleClick)
         })
     }
 
