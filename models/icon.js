@@ -11,7 +11,7 @@ export default class Icon {
 
     #createIcon() {
         return `
-            <div id="chorus-icon" class="chorus-hover-white"">
+            <div id="chorus-icon" class="chorus-hover-white" role="snip" aria-label="Edit Snip">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
