@@ -79,9 +79,12 @@ export default class TrackList {
     }
 
     setTrackListClickEvent() {
-        const trackList = document.querySelector('[data-testid="track-list"]')
-        const container = trackList?.querySelector('[data-testid="top-sentinel"] + [role="presentation"]')
-        if (!container) return
+        const trackLists = Array.from(document.querySelectorAll('[data-testid="track-list"]'))
+        const containers = trackLists?.map(trackList => (
+            trackList.querySelector('[data-testid="top-sentinel"] + [role="presentation"]')
+        ))
+
+        if (!containers?.length) return
 
         this.#previousRowNum = null
 
