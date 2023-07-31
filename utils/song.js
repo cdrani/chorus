@@ -1,10 +1,24 @@
 import { timeToSeconds } from './time.js'
 
-export const currentSongId = () => {
-    const songName = document.querySelector('[data-testid="now-playing-widget"]')?.ariaLabel
+export const currentSongInfo = () => {
+    const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.ariaLabel
+    const trackURL = document.querySelector('[data-testid="CoverSlotCollapsed__container"] > div > a')?.href
 
     // Remove 'Now playing: ' prefix
-    return songName?.split(': ')?.at(1)
+    const id = songLabel.split(': ').at(1)
+
+    if (!trackURL) return { id }
+
+    const params = new URLSearchParams(trackURL)
+
+    const trackId = params.get('uri').split('track:').at(1)
+
+    return  {
+        id,
+        trackId, 
+        url: `${location.origin}/track/${trackId}`
+    }
+
 }
 
 export const trackSongInfo = row => {
