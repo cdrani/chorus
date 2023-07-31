@@ -73,7 +73,15 @@ class App {
     }
 }
 
-setTimeout(async () => {
+const setup = setInterval(async () => {
+    const nowPlayingWidget = document.querySelector('[data-testid="now-playing-widget"]')
+    if (!nowPlayingWidget) return
+
+    await load()
+    clearInterval(setup)
+}, 500)
+
+async function load() {
     const store = new DataStore()
     const video = spotifyVideo.element
 
@@ -85,4 +93,4 @@ setTimeout(async () => {
         const { enabled } = e.detail
         enabled ? app.connect() : app.disconnect()
     })
-}, 2500)
+}
