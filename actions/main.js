@@ -1,6 +1,8 @@
 import Icon from '../models/icon.js'
 import Chorus from '../models/chorus.js'
 
+import { createAlert } from '../components/alert.js'
+
 export default class Main {
     #icon
     #snip
@@ -16,6 +18,7 @@ export default class Main {
 
     init() {
         this.#placeIcon()
+        this.#setupAlert()
     }
 
     #placeIcon() {
@@ -31,6 +34,19 @@ export default class Main {
 
             clearInterval(interval)
         }, 50)
+    }
+
+    #handleAlert({ e, target }) {
+        e.stopPropagation()
+        const container = target.parentElement
+        container.style.display = 'none'
+    }
+
+    #setupAlert() {
+        document.body.insertAdjacentHTML('beforeend', createAlert()) 
+
+        const closeAlert = document.getElementById('chorus-alert-close-button')
+        closeAlert?.addEventListener('click', (e) => this.#handleAlert({ e, target: closeAlert }))
     }
 
     get element() {
