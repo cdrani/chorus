@@ -10,7 +10,7 @@ export default class ButtonListeners {
     }
 
     init() {
-        this.#closeListener()
+        this.#closeModalListener()
         this.#saveTrackListener()
         this.#shareTrackListener()
         this.#deleteTrackListener()
@@ -20,8 +20,8 @@ export default class ButtonListeners {
         this.#chorus.hide()
     }
 
-    #closeListener() {
-        const closeButton = document.getElementById('chorus-close-button')
+    #closeModalListener() {
+        const closeButton = document.getElementById('chorus-modal-close-button')
         closeButton?.addEventListener('click', () => this.#hide(), { once: true })
     }
 
