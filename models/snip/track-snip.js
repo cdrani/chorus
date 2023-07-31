@@ -1,6 +1,7 @@
 import Snip from './snip.js'
 
 import { trackSongInfo } from '../../utils/song.js'
+import { copyToClipBoard } from '../../utils/clipboard.js'
 
 export default class TrackSnip extends Snip {
     #row
@@ -49,8 +50,17 @@ export default class TrackSnip extends Snip {
     }
 
     share() {
-        const songInfo = trackSongInfo(this.#row)
-        console.log({ songInfo })
+        const { url } = trackSongInfo(this.#row)
+        const { startTime, endTime } = this.read()
+        
+        const shareURL = `${location.origin}${url}?startTime=${startTime}&endTime=${endTime}`
+        copyToClipBoard(shareURL)
+
+        const alertBox = document.getElementById('chorus-alert') 
+        const alertMessage = alertBox.querySelector('[id="chorus-alert-message"]')
+        alertMessage.textContent = `Snip copied to clipboard.`
+        alertBox.style.display = 'flex' 
+        setTimeout(() => { alertBox.style.display = 'none' }, 3000)
     }
 
     async save() {

@@ -1,7 +1,8 @@
 import Snip from './snip.js'
 
 import { playback } from '../../utils/playback.js'
-import { currentSongId } from '../../utils/song.js'
+import { currentSongInfo } from '../../utils/song.js'
+import { copyToClipBoard } from '../../utils/clipboard.js'
 
 export default class CurrentSnip extends Snip {
     constructor(store) {
@@ -17,7 +18,7 @@ export default class CurrentSnip extends Snip {
 
     get _defaultTrack() {
         return {
-            id: currentSongId(),
+            id: currentSongInfo().id,
             value: {
                 startTime: 0,
                 isSnip: false,
@@ -41,7 +42,17 @@ export default class CurrentSnip extends Snip {
     }
 
     share() {
-        // TODO: implement
+        const { url } = currentSongInfo()
+        const { startTime, endTime } = this.read()
+        
+        const shareURL = `${url}?startTime=${startTime}&endTime=${endTime}`
+        copyToClipBoard(shareURL)
+
+        const alertBox = document.getElementById('chorus-alert') 
+        const alertMessage = alertBox.querySelector('[id="chorus-alert-message"]')
+        alertMessage.textContent = `Snip copied to clipboard.`
+        alertBox.style.display = 'flex' 
+        setTimeout(() => { alertBox.style.display = 'none' }, 3000)
     }
 
     async save() {
@@ -49,7 +60,7 @@ export default class CurrentSnip extends Snip {
         const { isSkipped } = this.read()
 
         await this._store.saveTrack({
-            id: currentSongId(),
+            id: currentSongInfo().id,
             value: {
                 isSnip: true,
                 startTime: inputLeft.value,
