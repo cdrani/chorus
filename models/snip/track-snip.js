@@ -56,11 +56,7 @@ export default class TrackSnip extends Snip {
         const shareURL = `${location.origin}${url}?startTime=${startTime}&endTime=${endTime}`
         copyToClipBoard(shareURL)
 
-        const alertBox = document.getElementById('chorus-alert') 
-        const alertMessage = alertBox.querySelector('[id="chorus-alert-message"]')
-        alertMessage.textContent = `Snip copied to clipboard.`
-        alertBox.style.display = 'flex' 
-        setTimeout(() => { alertBox.style.display = 'none' }, 3000)
+        super._displayAlert()
     }
 
     async save() {

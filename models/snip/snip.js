@@ -44,4 +44,13 @@ export default class Snip {
     #setUpdateControls(response) {
         this._controls.updateControls(response)
     }
+
+    _displayAlert() {
+        const alertBox = document.getElementById('chorus-alert') 
+        const alertMessage = alertBox.querySelector('[id="chorus-alert-message"]')
+
+        alertMessage.textContent = `Snip copied to clipboard.`
+        alertBox.style.display = 'flex' 
+        setTimeout(() => { alertBox.style.display = 'none' }, 3000)
+    }
 }
