@@ -2,7 +2,7 @@ import { spotifyVideo } from '../../actions/overload.js'
 
 import { playback } from '../../utils/playback.js'
 import { secondsToTime } from '../../utils/time.js'
-import { currentSongId } from '../../utils/song.js'
+import { currentSongInfo } from '../../utils/song.js'
 
 export default class Slider {
     #isCurrentlyPlaying = true
@@ -33,7 +33,7 @@ export default class Slider {
     }
 
     setInitialValues(track) {
-        this.#isCurrentlyPlaying = !track?.id ? true : track.id == currentSongId()
+        this.#isCurrentlyPlaying = !track?.id ? true : track.id == currentSongInfo().id
 
         const { endTime, startTime } = track
         const { endDisplay } = this.elements
