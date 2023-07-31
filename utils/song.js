@@ -18,6 +18,7 @@ export const trackSongInfo = row => {
     const trackInfo = getTrackId(row)
 
     return {
+        startTime: 0,
         id:  `${song} by ${artists}`,
         endTime: timeToSeconds(songLength),
         ...trackInfo && {...trackInfo }
