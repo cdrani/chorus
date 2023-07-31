@@ -1,7 +1,7 @@
 export const createHeader = () => `
     <div class="chorus-common">
         <span class="chorus-header">chorus</span>
-        <button id="chorus-close-button" class="chorus-text-button">
+        <button id="chorus-modal-close-button" class="chorus-close-button">
             <svg 
                 role="img"
                 fill="none"
