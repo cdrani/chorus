@@ -41,11 +41,15 @@ export default class ButtonListeners {
         }, { once: true })
     }
 
+    #handleShare = e => {
+        e.stopPropagation()
+        this.#snip.share()
+        this.#hide()
+    }
+
     #shareTrackListener() {
         const shareButton = document.getElementById('chorus-share-button')
-        shareButton?.addEventListener('click', () => {
-            this.#snip.share()
-            this.#hide()
-        }, { once: true })
+        shareButton?.removeEventListener('click', this.#handleShare)
+        shareButton?.addEventListener('click', this.#handleShare)
     }
 }
