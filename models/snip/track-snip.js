@@ -1,6 +1,7 @@
 import Snip from './snip.js'
 
 import { trackSongInfo } from '../../utils/song.js'
+import { copyToClipBoard } from '../../utils/clipboard.js'
 
 export default class TrackSnip extends Snip {
     #row
@@ -46,6 +47,16 @@ export default class TrackSnip extends Snip {
 
         const icon = this.#row.querySelector('button[role="snip"]')
         icon.style.visibility = isSnip ? 'visible' : 'hidden'
+    }
+
+    share() {
+        const { url } = trackSongInfo(this.#row)
+        const { startTime, endTime } = this.read()
+        
+        const shareURL = `${location.origin}${url}?startTime=${startTime}&endTime=${endTime}`
+        copyToClipBoard(shareURL)
+
+        super._displayAlert()
     }
 
     async save() {

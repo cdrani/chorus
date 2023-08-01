@@ -12,6 +12,7 @@ const scripts = [
     'actions/overload.js',
     'utils/time.js',
     'utils/playback.js',
+    'utils/clipboard.js',
     'components/buttons.js',
     'components/header.js',
     'components/labels.js',

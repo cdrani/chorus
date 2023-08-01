@@ -1,24 +1,28 @@
+import Chorus from '../models/chorus.js'
+
 export default class ButtonListeners {
     #snip
+    #chorus
 
     constructor(snip) {
         this.#snip = snip
+        this.#chorus = new Chorus()
     }
 
     init() {
-        this.#closeListener()
+        this.#closeModalListener()
         this.#saveTrackListener()
+        this.#shareTrackListener()
         this.#deleteTrackListener()
     }
 
     #hide() {
-        const main = document.getElementById('chorus-main')
-        main.style.display = 'none'
+        this.#chorus.hide()
     }
 
-    #closeListener() {
-        const closeButton = document.getElementById('chorus-close-button')
-        closeButton?.addEventListener('click', () => this.#hide())
+    #closeModalListener() {
+        const closeButton = document.getElementById('chorus-modal-close-button')
+        closeButton?.addEventListener('click', () => this.#hide(), { once: true })
     }
 
     #deleteTrackListener() {
@@ -26,7 +30,7 @@ export default class ButtonListeners {
         deleteButton?.addEventListener('click', async () => {
             await this.#snip.delete()
             this.#hide()
-        })
+        }, { once: true })
     }
 
     #saveTrackListener() {
@@ -34,6 +38,18 @@ export default class ButtonListeners {
         saveButton?.addEventListener('click', async () => {
             await this.#snip.save()
             this.#hide()
-        })
+        }, { once: true })
+    }
+
+    #handleShare = e => {
+        e.stopPropagation()
+        this.#snip.share()
+        this.#hide()
+    }
+
+    #shareTrackListener() {
+        const shareButton = document.getElementById('chorus-share-button')
+        shareButton?.removeEventListener('click', this.#handleShare)
+        shareButton?.addEventListener('click', this.#handleShare)
     }
 }

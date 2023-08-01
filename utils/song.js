@@ -1,10 +1,24 @@
 import { timeToSeconds } from './time.js'
 
-export const currentSongId = () => {
-    const songName = document.querySelector('[data-testid="now-playing-widget"]')?.ariaLabel
+export const currentSongInfo = () => {
+    const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.ariaLabel
+    const trackURL = document.querySelector('[data-testid="CoverSlotCollapsed__container"] > div > a')?.href
 
     // Remove 'Now playing: ' prefix
-    return songName?.split(': ')?.at(1)
+    const id = songLabel.split(': ').at(1)
+
+    if (!trackURL) return { id }
+
+    const params = new URLSearchParams(trackURL)
+
+    const trackId = params.get('uri').split('track:').at(1)
+
+    return  {
+        id,
+        trackId, 
+        url: `${location.origin}/track/${trackId}`
+    }
+
 }
 
 export const trackSongInfo = row => {
@@ -15,12 +29,26 @@ export const trackSongInfo = row => {
     if (!songLength) return
 
     const artists = getArtists(row)
+    const trackInfo = getTrackId(row)
 
     return {
+        startTime: 0,
         id:  `${song} by ${artists}`,
-        endTime: timeToSeconds(songLength)
+        endTime: timeToSeconds(songLength),
+        ...trackInfo && {...trackInfo }
     }
 }    
+
+const getTrackId = row => {
+    const trackIdUrl = row.querySelector('a[data-testid="internal-track-link"]')?.href
+    if (!trackIdUrl) return
+
+    const url = trackIdUrl.split('.com').at(1)
+    return {
+        url,
+        trackId: url.split('/').at(2)
+    }
+}
 
 const getArtists = row => {
     const artistsList = row.querySelectorAll('span > a')

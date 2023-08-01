@@ -1,3 +1,4 @@
+import { currentSongInfo } from '../utils/song.js'
 import { timeToSeconds, secondsToTime } from '../utils/time.js'
 
 export default class CurrentTimeObserver {
@@ -14,7 +15,13 @@ export default class CurrentTimeObserver {
     }
 
     #init() {
-        const { isSnip } = this.#songState
+        const { isSnip, isShared, startTime } = this.#songState
+
+        if (isShared) {
+            this.#video.currentTime = startTime
+            this.#playTrack()
+        }
+
         if (!isSnip) return
 
         const currentTime = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
@@ -22,6 +29,11 @@ export default class CurrentTimeObserver {
         if (currentTime > 0) {
             this.#video.currentTime = currentTime
         }
+    }
+
+    #playTrack() {
+        const playButton = document.querySelector('[data-testid="play-button"]')
+        playButton.click()
     }
 
     #handleClick = e => {
@@ -59,8 +71,32 @@ export default class CurrentTimeObserver {
         return this.#muteButton?.ariaLabel == 'Unmute'
     }
 
+    get #sharedSnipValues() {
+        if (!location?.search) return null
+        
+        const params = new URLSearchParams(location.search)
+        return { 
+            endTime: parseInt(params.get('endTime'), 10),
+            startTime: parseInt(params.get('startTime'), 10)
+        }
+    }
+
     get #songState() {
-        return this.#snip.read()
+        const state = this.#snip.read()
+        const sharedSnipState = this.#sharedSnipValues
+        if (!sharedSnipState) return state
+        const { trackId } = currentSongInfo()
+
+        return {
+            trackId,
+            isShared: true,
+            ...state,
+            ...sharedSnipState
+        }
+    }
+
+    #clearSearchParams() {
+        history.pushState(null, '', location.pathname)
     }
 
     get #isSkippable() {
@@ -96,6 +132,8 @@ export default class CurrentTimeObserver {
     }
 
     #handleNext() {
+        if (location?.search) this.#clearSearchParams()
+
         this.#video.currentTime = 0
         this.#nextButton.click()
         this.#video.element.load()
@@ -105,13 +143,18 @@ export default class CurrentTimeObserver {
         this.#setListeners()
 
         this.#observer = setInterval(() => {
-            const { isSkipped, isSnip, startTime, endTime } = this.#songState
-
+            const { trackId, isSkipped, isShared, isSnip, startTime, endTime } = this.#songState
+            
             if (!isSkipped && !isSnip) {
                 this.#muted && this.#muteButton.click()
                 return
             }
 
+            if (isShared && trackId !== location.pathname.split('track/').at(1)) {
+                this.#video.currentTime = startTime
+                this.#playTrack()
+            }
+            
             const currentDisplayTime = secondsToTime(parseInt(this.#video.currentTime ?? 0, 10))
             this.#playbackPosition.textContent = currentDisplayTime
 
