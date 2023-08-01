@@ -109,7 +109,12 @@ export default class TrackList {
     }
 
     setTrackListClickEvent() {
-        const trackLists = Array.from(document.querySelectorAll('[data-testid="track-list"]'))
+        const trackLists = Array.from(
+            document.querySelectorAll([
+                '[data-testid="track-list"]', 
+                '[data-testid="playlist-tracklist"]'
+            ])
+        )
         const containers = trackLists?.map(trackList => (
             trackList.querySelector('[data-testid="top-sentinel"] + [role="presentation"]')
         ))
