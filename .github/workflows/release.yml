@@ -53,16 +53,18 @@ jobs:
         run: git tag ${{ steps.version.outputs.version }}
 
       - name: Push changes and tag
-        uses: ad-m/github-push-action@v3
+        uses: ad-m/github-push-action@v0.6.0
         with:
+          branch: ${{ github.ref }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          tags: true
 
       - name: Archive Extension files
         run: |
           zip -r Chorus.zip . -x "*.git*" "*.md"
 
       - name: Create release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ env.version }}
           name: ${{ env.version }}
