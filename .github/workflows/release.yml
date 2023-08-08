@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Get current version from manifest.json
+        id: get_version
+        run: echo "version=$(jq -r '.version' manifest.json)" >> $GITHUB_ENV
+
+      - name: Determine version bump
+        id: version
+        run: |
+          version="${{ env.version }}"
+          commit_message="$(git log --format=%B -n 1 ${{ github.event.pull_request.merge_commit_sha }})"
+          if [[ $commit_message == *!:* ]]; then
+            version_parts=(${version//./ })
+            version="$((version_parts[0] + 1)).0.0"
+          elif [[ $commit_message == feat:* ]]; then
+            version_parts=(${version//./ })
+            version="${version_parts[0]}.$((version_parts[1] + 1)).${version_parts[2]}"
+          else
+            version_parts=(${version//./ })
+            version="${version_parts[0]}.${version_parts[1]}.$((version_parts[2] + 1))"
+          fi
+          echo "version=$version" >> $GITHUB_ENV
+
+      - name: Update manifest.json version
+        run: jq --arg version "${{ env.version }}" '.version = $version' manifest.json > tmp && mv tmp manifest.json
+
+      - name: Commit version change
+        run: |
+          git config --local user.name "Github Action"
+          git config user.email "action@github.com"
+          git commit -a -m "doc: update version to v${{ env.version }}"
+
+      - name: Create tag
+        run: git tag ${{ steps.version.outputs.version }}
+
+      - name: Push changes and tag
+        uses: ad-m/github-push-action@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Archive Extension files
+        run: |
+          zip -r Chorus.zip . -x "*.git*" "*.md"
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.version }}
+          name: ${{ env.version }}
+          artifacts: 'Chorus.zip'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+              ${{ github.event.pull_request.title }}
+              
+              ${{ github.event.pull_request.body }}
