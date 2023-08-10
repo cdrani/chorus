@@ -10,13 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Develop Branch Check
-        run: |
-          if [ "$GITHUB_REF" != "refs/heads/develop" ]; then
-            echo "Not on the develop branch. Exiting workflow."
-            exit 0
-          fi
-          
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
@@ -28,12 +21,10 @@ jobs:
         uses: cdrani/action-semantic-release-info@fix/current-branch
           
       - name: Early Exit
+        if: steps.semver.outputs.version == ''
         run: |
-          version="${{ steps.semver.outputs.version }}"
-          if [[ $version == '' ]]; then
             echo "No version update needed. Exiting workflow."
             exit 0
-          fi  
           
       - name: Update Version
         run: jq --arg version "${{ steps.semver.outputs.version }}" '.version = $version' manifest.json > tmp && mv tmp manifest.json
