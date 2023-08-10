@@ -1,8 +1,8 @@
-name: Release
+name: Release & Deploy
 
 on:
   schedule:
-    - cron: '30 9 * * *'
+    - cron: '30 9 * * 3,6'
   workflow_dispatch:
 
 jobs:
@@ -23,8 +23,8 @@ jobs:
       - name: Early Exit
         if: steps.semver.outputs.version == ''
         run: |
-            echo "No version update needed. Exiting workflow."
-            exit 0
+          echo "No version update needed. Exiting workflow."
+          exit 0
           
       - name: Update Version
         run: jq --arg version "${{ steps.semver.outputs.version }}" '.version = $version' manifest.json > tmp && mv tmp manifest.json
@@ -34,7 +34,7 @@ jobs:
           git config --local user.name "Github Action"
           git config user.email "action@github.com"
           git commit -a -m "docs: bump version to v${{ steps.semver.outputs.git_tag }}"
-          git tag ${{ steps.semver.outputs.git_tag }}
+          git tag v${{ steps.semver.outputs.git_tag }}
 
       - name: Push Changes
         uses: ad-m/github-push-action@master
@@ -52,3 +52,12 @@ jobs:
           tag: $${{ steps.semver.outputs.git_tag }}
           name: ${{ steps.semver.outputs.git_tag }}
           body: ${{ steps.semver.outputs.notes }}
+          
+      - name: Upload & Publish
+        uses: mnao305/chrome-extension-upload@v4.0.1
+        with:
+          file-path: Chorus.zip
+          client-id: ${{ secrets.CLIENT_ID }}
+          extension-id: ${{ secrets.EXTENSION_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          refresh-token: ${{ secrets.REFRESH_TOKEN }}
