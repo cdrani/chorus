@@ -25,7 +25,7 @@ jobs:
       
       - name: Semver Info
         id: semver
-        uses: fingerprintjs/action-semantic-release-info@v1
+        uses: cdrani/action-semantic-release-info@fix/current-branch
           
       - name: Early Exit
         run: |
