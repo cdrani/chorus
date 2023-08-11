@@ -43,7 +43,7 @@ jobs:
           tags: true
 
       - name: Archive Extension Files
-        run: zip -r Chorus.zip . -x "*.git*" "*.md"
+        run: zip -r Chorus.zip . -x "*.git*" "*.*rc" "*.md"
 
       - name: Create Release Archive & Notes
         uses: ncipollo/release-action@v1.12.0
