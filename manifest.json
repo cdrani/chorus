@@ -2,8 +2,8 @@
   "short_name": "Chorus",
   "name": "Chorus - Spotify Enhancer",
   "description": "Enhance Spotify with track snippets and skipping.",
-  "version": "",
-  "manifest_version": 1.3.4,
+  "version": "1.3.4",
+  "manifest_version": 3,
   "author": "cdrani",
   "action": {},
   "icons": {
