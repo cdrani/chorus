@@ -19,3 +19,5 @@ jobs:
         ff_only: true
         stable_branch: 'develop'
         development_branch: 'main'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
