@@ -28,8 +28,8 @@ jobs:
         run: |
           git config --local user.name "Github Action"
           git config user.email "action@github.com"
-          git commit -a -m "docs: bump version to v${{ steps.semver.outputs.git_tag }}"
-          git tag v${{ steps.semver.outputs.git_tag }}
+          git commit -a -m "docs: bump version to ${{ steps.semver.outputs.git_tag }}"
+          git tag ${{ steps.semver.outputs.git_tag }}
 
       - name: Push Changes
         if: steps.semver.outputs.version != ''
