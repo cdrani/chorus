@@ -15,8 +15,15 @@ export default class TrackSnip extends Snip {
 
         this.#row = row
         this._controls.init()
+        this.#displayTrackInfo()
         const { id, endTime: duration } = trackSongInfo(row)
         this._controls.setInitialValues({ ...this.read(), id, duration })
+    }
+
+    #displayTrackInfo() {
+        const { id } = trackSongInfo(this.#row) 
+        const [title, artists] = id.split(' by ')
+        super._setTrackInfo({ title, artists })
     }
 
     get _defaultTrack() {
