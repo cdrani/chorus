@@ -40,7 +40,7 @@ jobs:
 
       - name: Archive Extension Files
         if: steps.semver.outputs.version != ''
-        run: zip -r Chorus.zip . -x "*.git*" "*.md"
+        run: zip -r Chorus.zip . -x "*.git*" "*.*rc" "*.md"
 
       - name: Create Release Archive & Notes
         if: steps.semver.outputs.version != ''
