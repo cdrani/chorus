@@ -38,6 +38,16 @@ jobs:
           branch: ${{ github.ref }}
           tags: true
 
+      - name: Nightly Merge
+        uses: robotology/gh-action-nightly-merge@v1.4.0
+        with:
+          allow_ff: true
+          ff_only: true
+          stable_branch: 'main'
+          development_branch: 'develop'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Archive Extension Files
         if: steps.semver.outputs.version != ''
         run: zip -r Chorus.zip . -x "*.git*" "*.*rc" "*.md"
