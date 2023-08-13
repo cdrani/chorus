@@ -13,7 +13,14 @@ export default class CurrentSnip extends Snip {
         super.init()
 
         this._controls.init()
+        this.#displayTrackInfo()
         this._controls.setInitialValues(this.read())
+    }
+
+    #displayTrackInfo() {
+        const { id } = currentSongInfo() 
+        const [title, artists] = id.split(' by ')
+        super._setTrackInfo({ title, artists })
     }
 
     get _defaultTrack() {
