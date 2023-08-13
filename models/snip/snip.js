@@ -53,4 +53,12 @@ export default class Snip {
         alertBox.style.display = 'flex' 
         setTimeout(() => { alertBox.style.display = 'none' }, 3000)
     }
+
+    _setTrackInfo({ title, artists }) {
+        const titleElement = document.getElementById('track-title')
+        const artistsElement = document.getElementById('track-artists')
+
+        titleElement.textContent = title
+        artistsElement.textContent = artists
+    }
 }

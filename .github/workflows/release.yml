@@ -13,39 +13,37 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
+          ref: main
       
       - name: Semver Info
         id: semver
         uses: cdrani/action-semantic-release-info@fix/current-branch
           
-      - name: Early Exit
-        if: steps.semver.outputs.version == ''
-        run: |
-          echo "No version update needed. Exiting workflow."
-          exit 0
-          
       - name: Update Version
+        if: steps.semver.outputs.version != ''
         run: jq --arg version "${{ steps.semver.outputs.version }}" '.version = $version' manifest.json > tmp && mv tmp manifest.json
 
       - name: Commit Changes
+        if: steps.semver.outputs.version != ''
         run: |
           git config --local user.name "Github Action"
           git config user.email "action@github.com"
-          git commit -a -m "docs: bump version to v${{ steps.semver.outputs.git_tag }}"
-          git tag v${{ steps.semver.outputs.git_tag }}
+          git commit -a -m "docs: bump version to ${{ steps.semver.outputs.git_tag }}"
+          git tag ${{ steps.semver.outputs.git_tag }}
 
       - name: Push Changes
+        if: steps.semver.outputs.version != ''
         uses: ad-m/github-push-action@master
         with:
           branch: ${{ github.ref }}
           tags: true
 
       - name: Archive Extension Files
+        if: steps.semver.outputs.version != ''
         run: zip -r Chorus.zip . -x "*.git*" "*.*rc" "*.md"
 
       - name: Create Release Archive & Notes
+        if: steps.semver.outputs.version != ''
         uses: ncipollo/release-action@v1.12.0
         with:
           artifacts: 'Chorus.zip'
@@ -54,6 +52,7 @@ jobs:
           body: ${{ steps.semver.outputs.notes }}
           
       - name: Upload & Publish
+        if: steps.semver.outputs.version != ''
         uses: mnao305/chrome-extension-upload@v4.0.1
         with:
           file-path: Chorus.zip
