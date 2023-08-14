@@ -255,7 +255,8 @@
     position: absolute;
     top: -1.25rem;
     z-index: 99999;
-    transform: translate3d(-2.25rem, -1.5rem, 10rem);
+    right: 50%;
+    transform: translate3d(calc(50%), -1.5rem, 10rem);
     pointer-events: none;
     padding: 8px;
     padding-top: 7px;
