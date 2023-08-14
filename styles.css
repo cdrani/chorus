@@ -27,15 +27,6 @@
     position: absolute;
 }
 
-#chorus-icon {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    cursor: pointer;
-}
-
 #chorus-snip-controls {
     border: 1px dashed #1ed760;
 }
