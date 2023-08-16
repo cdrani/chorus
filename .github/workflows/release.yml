@@ -28,8 +28,14 @@ jobs:
         run: |
           git config --local user.name "Github Action"
           git config user.email "action@github.com"
-          git commit -a -m "docs: bump version to ${{ steps.semver.outputs.git_tag }}"
-          git tag ${{ steps.semver.outputs.git_tag }}
+
+          # Check for changes
+          if ! git diff-index --quiet HEAD --; then
+            git commit -a -m "docs: bump version to ${{ steps.semver.outputs.git_tag }}"
+            git tag ${{ steps.semver.outputs.git_tag }}
+          else
+            echo "No changes detected. Skipping commit and tag."
+          fi
 
       - name: Push Changes
         if: steps.semver.outputs.version != ''
@@ -39,6 +45,7 @@ jobs:
           tags: true
 
       - name: Nightly Merge
+        if: steps.semver.outputs.version != ''
         uses: robotology/gh-action-nightly-merge@v1.4.0
         with:
           allow_ff: true
