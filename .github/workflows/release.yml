@@ -2,7 +2,7 @@ name: Release & Deploy
 
 on:
   schedule:
-    - cron: '30 9 * * 3,6'
+    - cron: '0 12 * * *'
   workflow_dispatch:
 
 jobs:
@@ -63,8 +63,9 @@ jobs:
           
       - name: Upload & Publish
         if: steps.semver.outputs.version != ''
-        uses: mnao305/chrome-extension-upload@v4.0.1
+        uses: cdrani/chrome-extension-upload@ci/silent-update-fail
         with:
+          slient-fail: true
           file-path: Chorus.zip
           client-id: ${{ secrets.CLIENT_ID }}
           extension-id: ${{ secrets.EXTENSION_ID }}
