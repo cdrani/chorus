@@ -66,7 +66,7 @@ jobs:
         if: steps.semver.outputs.version != ''
         uses: cdrani/chrome-extension-upload@ci/silent-update-fail
         with:
-          slient-fail: true
+          silent-fail: true
           file-path: Chorus.zip
           client-id: ${{ secrets.CLIENT_ID }}
           extension-id: ${{ secrets.EXTENSION_ID }}
