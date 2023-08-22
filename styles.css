@@ -27,12 +27,11 @@
     position: absolute;
 }
 
-#chorus-snip-controls {
+#chorus-controls {
     border: 1px dashed #1ed760;
 }
 
-#chorus-snip-controls,
-#chorus-speed-controls {
+#chorus-controls {
     position: fixed;
     left: 80px;
     bottom: 80px;

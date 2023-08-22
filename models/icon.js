@@ -1,3 +1,5 @@
+import { createControls } from '../components/controls.js'
+
 export default class Icon {
     constructor() {}
 
@@ -5,6 +7,9 @@ export default class Icon {
         return `
             <div id="chorus">
                 ${this.#createIcon()}
+                <div id="chorus-main" style="display: none">
+                    ${createControls()}
+                </div>
             </div>
         `
     }
