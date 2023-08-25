@@ -175,15 +175,21 @@ export default class CurrentTimeObserver {
                 if (!this.#muted) this.#muteButton.click()
                 this.#video.currentTime = startTime
             } else if (this.#atSnipEnd) {
-                if (this.#isLooping) {
+                if (this.#snip.isEditing) {
+                    // no-op
+                } else if (this.#isLooping) {
                     if (!this.#muted) this.#muteButton.click()
                     this.#video.currentTime = startTime
                 } else {
                     this.#handleNext()
                 }
             } else if (this.#atSongEnd || this.#video.currentTime >= endTime) {
-                if (!this.#muted) this.#muteButton.click()
-                this.#handleNext()
+                if (this.#snip.isEditing) {
+                    // no-op
+                } else {
+                    if (!this.#muted) this.#muteButton.click()
+                    this.#handleNext()
+                }
             } else if (this.#muted) this.#muteButton.click()
         }, 1000)
     }

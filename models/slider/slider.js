@@ -5,6 +5,8 @@ import { secondsToTime } from '../../utils/time.js'
 import { currentSongInfo } from '../../utils/song.js'
 
 export default class Slider {
+    #leftDebouncer
+    #rightDebouncer
     #isCurrentlyPlaying = true
 
     constructor() {
@@ -66,26 +68,29 @@ export default class Slider {
     }
 
     setLeftValue() {
-        const { inputLeft } = this.elements
-        const currentValue = parseInt(inputLeft.value)
+        if (this.#leftDebouncer) clearTimeout(this.#leftDebouncer)
 
-        this.updateSliderLeftHalf(currentValue)
+        this.#leftDebouncer = setTimeout(() => {
+            const { inputLeft } = this.elements
+            const currentValue = parseInt(inputLeft.value)
 
-        if (this.#isCurrentlyPlaying) this._video.currentTime = inputLeft.value
+            this.updateSliderLeftHalf(currentValue)
+
+            if (this.#isCurrentlyPlaying) this._video.currentTime = inputLeft.value
+        }, 100)
     }
 
     setRightValue() {
-        const { inputRight } = this.elements
-        const currentValue = parseInt(inputRight.value)
+        if (this.#rightDebouncer) clearTimeout(this.#rightDebouncer)
 
-        this.updateSliderRightHalf(currentValue)
+        this.#rightDebouncer = setTimeout(() => {
+            const { inputRight } = this.elements
+            const currentValue = parseInt(inputRight.value)
 
-        // FIXME: currently causes next song to play instead
-        // if (this.#isCurrentlyPlaying) {
-        //     if (inputRight.value == inputRight.max) return
+            this.updateSliderRightHalf(currentValue)
 
-        //     this._video.currentTime = inputRight.value
-        // }
+            if (this.#isCurrentlyPlaying) this._video.currentTime = inputRight.value
+        }, 100)
     }
 
     updateSliderLeftHalf(currentValue) {

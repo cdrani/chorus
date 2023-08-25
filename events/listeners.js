@@ -18,6 +18,7 @@ export default class ButtonListeners {
 
     #hide() {
         this.#chorus.hide()
+        this.#snip.isEditing = false
     }
 
     #closeModalListener() {
