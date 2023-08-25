@@ -125,8 +125,8 @@ export default class CurrentTimeObserver {
     }
 
     get #atSnipEnd() {
-        const { isSnip } = this.#songState
-        return isSnip && this.#atSongEnd
+        const { isSnip, endTime } = this.#songState
+        return isSnip && endTime == parseInt(this.#video.currentTime)
     }
 
     get #atSnipStart() {
@@ -176,7 +176,8 @@ export default class CurrentTimeObserver {
                 this.#video.currentTime = startTime
             } else if (this.#atSnipEnd) {
                 if (this.#isLooping) {
-                    this.#video.currentTime = startTime + 0.1
+                    if (!this.#muted) this.#muteButton.click()
+                    this.#video.currentTime = startTime
                 } else {
                     this.#handleNext()
                 }
