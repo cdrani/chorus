@@ -10,6 +10,7 @@ export default class Snip {
 
     init() {
         this._listeners.init()
+        this.isEditing = true
     }
 
     read() {
