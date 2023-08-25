@@ -72,9 +72,12 @@ export default class CurrentTimeObserver {
     }
 
     get #sharedSnipValues() {
-        if (!location?.search) return null
+        if (!location?.search) return
         
         const params = new URLSearchParams(location.search)
+
+        if (!params.get('startTime') || !params.get('endTime')) return
+
         return { 
             endTime: parseInt(params.get('endTime'), 10),
             startTime: parseInt(params.get('startTime'), 10)
@@ -84,7 +87,9 @@ export default class CurrentTimeObserver {
     get #songState() {
         const state = this.#snip.read()
         const sharedSnipState = this.#sharedSnipValues
+
         if (!sharedSnipState) return state
+
         const { trackId } = currentSongInfo()
 
         return {
