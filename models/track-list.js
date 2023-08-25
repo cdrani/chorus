@@ -22,7 +22,9 @@ export default class TrackList {
         this.#snipIcon = new SnipIcon(store)
         this.#trackSnip = new TrackSnip(store)
         
-        this.#icons = [this.#skipIcon, this.#snipIcon]
+        this.#icons = [
+            this.#skipIcon //, this.#snipIcon
+        ]
     }
 
     get #trackRows() {
