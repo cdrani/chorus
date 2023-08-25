@@ -19,7 +19,7 @@ export default class DataStore {
         Object.keys(response).forEach(key => {
             const value = response[key]
 
-            if (key != 'enabled' && !value.hasOwnProperty('isSkipped')) {
+            if (!['enabled', 'globals'].includes(key) && !value.hasOwnProperty('isSkipped')) {
                 const endTime = value?.endTime
                 value.isSkipped = endTime == 0
             }
