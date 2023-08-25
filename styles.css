@@ -75,6 +75,7 @@
 .chorus-close-button,
 .chorus-close-button:hover {
     padding: 0;
+    max-height: 22px;
     font-size: 1rem;
     border: none !important;
     background-color: unset;
@@ -93,6 +94,22 @@
     color: #fff;
 }
 
+.chorus-text {
+    color: #fff;
+    font-weight: 600;
+    font-size: .75rem;
+}
+
+.chorus-pill {
+    padding: 0 .25rem;
+    min-width: 18px;
+    max-width: 20px;
+    min-height: 18px;
+    max-height: 20px;
+    text-align: center;
+    background-color: #535353;
+}
+
 .chorus-text-button {
     display: flex;
     align-items: center;
@@ -108,7 +125,7 @@
 .chorus-text-button span {
     display: inline-block;
     vertical-align: middle;
-    padding-bottom: 3.5px;
+    height: 100%;
 }
 
 .slider-container {
@@ -219,6 +236,11 @@
     font-weight: 400;
     color: #b3b3b3;
     padding-top: 2px;
+}
+
+.chorus-icon-active,
+.chorus-icon-active:hover {
+    color: #2edb64 !important;
 }
 
 .snippy {
