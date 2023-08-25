@@ -1,6 +1,6 @@
 import { createSlider } from './slider.js'
-import { createRangeLabels } from './labels.js'
-import { createActionButtons } from './buttons.js'
+import { createRangeLabels } from './snip-labels.js'
+import { createSnipButtons } from './snip-buttons.js'
 
 import { playback } from '../utils/playback.js'
 
@@ -12,7 +12,7 @@ export const createSnipControls = () => {
         <div id="chorus-snip-controls" style="display: block">
             ${createSlider({ current, duration })}
             ${createRangeLabels()}
-            ${createActionButtons()}
+            ${createSnipButtons()}
         </div>
     `
 }
