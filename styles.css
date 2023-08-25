@@ -233,13 +233,15 @@
 }
 
 [role=skip][aria-label],
-[role=snip][aria-label] {
+[role=snip][aria-label], 
+[role=speed][aria-label] {
     position: relative;
     display: inline-block;
 }
 
 [role=skip][aria-label]:after,
-[role=snip][aria-label]:after {
+[role=snip][aria-label]:after, 
+[role=speed][aria-label]:after {
     content: attr(aria-label);
     display: none;
     position: absolute;
@@ -264,6 +266,7 @@
 }
 
 [role=skip][aria-label]:hover:after,
-[role=snip][aria-label]:hover:after {
+[role=snip][aria-label]:hover:after, 
+[role=speed][aria-label]:hover:after {
     display: inline-block;
 }
