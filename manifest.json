@@ -40,7 +40,8 @@
         "components/*.js",
         "observers/*.js",
         "stores/*.js",
-        "actions/*.js"
+        "actions/*.js",
+        "data/*.js"
       ]
     }
   ],
