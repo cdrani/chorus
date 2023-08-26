@@ -27,7 +27,7 @@ export default class ButtonListeners {
     }
 
     #deleteTrackListener() {
-        const deleteButton = document.getElementById('chorus-remove-button')
+        const deleteButton = document.getElementById('chorus-snip-remove-button')
         deleteButton?.addEventListener('click', async () => {
             await this.#snip.delete()
             this.#hide()
@@ -35,7 +35,7 @@ export default class ButtonListeners {
     }
 
     #saveTrackListener() {
-        const saveButton = document.getElementById('chorus-save-button')
+        const saveButton = document.getElementById('chorus-snip-save-button')
         saveButton?.addEventListener('click', async () => {
             await this.#snip.save()
             this.#hide()
@@ -49,7 +49,7 @@ export default class ButtonListeners {
     }
 
     #shareTrackListener() {
-        const shareButton = document.getElementById('chorus-share-button')
+        const shareButton = document.getElementById('chorus-snip-share-button')
         shareButton?.removeEventListener('click', this.#handleShare)
         shareButton?.addEventListener('click', this.#handleShare)
     }
