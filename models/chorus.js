@@ -1,4 +1,5 @@
-import { createSnipControls } from "../components/snip-controls.js"
+import { createSnipControls } from '../components/snip-controls.js'
+import { createSpeedControls } from '../components/speed-controls.js'
 
 export default class Chorus {
     get isShowing() {
@@ -27,7 +28,10 @@ export default class Chorus {
         if (this.#hasSnipControls) return
 
         const snipControls = createSnipControls()
+        const speedControls = createSpeedControls()
+
         this.chorusControls.insertAdjacentHTML('beforeend', snipControls)
+        this.chorusControls.insertAdjacentHTML('beforeend', speedControls)
     }
 
     hide() {
