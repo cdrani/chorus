@@ -36,7 +36,7 @@ export default class Snip {
     }
 
     #toggleRemoveButton(showRemove) {
-        const removeButton = document.getElementById('chorus-remove-button')
+        const removeButton = document.getElementById('chorus-snip-remove-button')
 
         if (!removeButton) return
         removeButton.style.display = showRemove ? 'block' : 'none'
