@@ -1,7 +1,7 @@
 import { spotifyVideo } from './overload.js'
 
 import Main from './main.js'
-import DataStore from '../stores/data.js'
+import { store } from '../stores/data.js'
 import TrackList from '../models/track-list.js'
 import CurrentSnip from '../models/snip/current-snip.js'
 
@@ -16,6 +16,7 @@ class App {
     #main
     #intervalId
     #trackList
+    #active = true
     #currentTimeObserver
     #nowPlayingObserver
     #trackListObserver
@@ -23,7 +24,6 @@ class App {
     constructor({ video, store }) {
         this.#store = store
         this.#video = video
-        this.#intervalId = null
 
         this.#init()
     }
@@ -34,42 +34,60 @@ class App {
 
         this.#main = new Main(this.#snip)
 
-        this.#nowPlayingObserver = new NowPlayingObserver(this.#snip)
+        this.#nowPlayingObserver = new NowPlayingObserver({ snip: this.#snip, video: this.#video })
         this.#trackListObserver = new TrackListObserver(this.#trackList)
         this.#currentTimeObserver = new CurrentTimeObserver({ video: this.#video, snip: this.#snip })
 
         this.#snip.updateView()
 
+        this.#resetInterval()    
+
         this.#reInit()
     }
 
+    #resetInterval() {
+        if (!this.#intervalId) return 
+
+        clearInterval(this.#intervalId)
+        this.#intervalId = null
+    }
+
     disconnect() {
+        this.#active = false
+        this.#video.reset()
+
         this.#trackListObserver.disconnect()
         this.#currentTimeObserver.disconnect()
         this.#nowPlayingObserver.disconnect()
-
-        clearInterval(this.#intervalId)
+        
+        this.#resetInterval()
     }
 
-    connect() {
+    async connect() {
+        this.#active = true
+
         this.#trackListObserver.observe()
         this.#currentTimeObserver.observe()
         this.#nowPlayingObserver.observe()
+
+        this.#resetInterval()
+        await this.#video.activate()
+
+        this.#reInit()
     }
 
-    // TODO: re-initializes when Spotify Connect switches device from
-    // current browser tab to another tab, window, or device.
-    // Looking for a better solution.
     #reInit() {
-        this.#intervalId = setInterval(() => {
-            const mainElement = this.#main.element
-            if (this.#intervalId) return
+        this.#intervalId = setInterval(async () => {
+            if (!this.#active) return
+            if (!this.#intervalId) return
 
-            if (!mainElement?.children?.length) {
+            const chorus = document.querySelectorAll('#chorus')
+
+            if (chorus?.length == 0) {
                 this.#main.init()
-                this.#init()
+                await this.#video.activate()
             }
-        }, 5000)
+        }, 3000)
     }
 }
 
@@ -82,15 +100,14 @@ const setup = setInterval(async () => {
 }, 500)
 
 async function load() {
-    const store = new DataStore()
     const video = spotifyVideo.element
 
     await store.populate()
 
     const app = new App({ video, store })
 
-    document.addEventListener('app.enabled', e => {
+    document.addEventListener('app.enabled', async e => {
         const { enabled } = e.detail
-        enabled ? app.connect() : app.disconnect()
+        enabled ? await app.connect() : app.disconnect()
     })
 }

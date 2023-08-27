@@ -2,11 +2,13 @@ import Chorus from '../models/chorus.js'
 
 export default class NowPlayingObserver {
     #snip
+    #video
     #chorus
     #observer
 
-    constructor(snip) {
+    constructor({ snip, video }) {
         this.#snip = snip
+        this.#video = video
         this.#chorus = new Chorus()
 
         this.observe()
@@ -29,11 +31,13 @@ export default class NowPlayingObserver {
         )
     }
 
-    #handler = mutationsList => {
+    #handler = async mutationsList => {
         for (const mutation of mutationsList) {
             if (this.#isAnchor(mutation)) {
                 if (this.#chorus.isShowing) this.#snip.init()
+
                 this.#snip.updateView()
+                await this.#video.activate() 
             }
         }
     }

@@ -27,12 +27,11 @@
     position: absolute;
 }
 
-#chorus-snip-controls {
+#chorus-controls {
     border: 1px dashed #1ed760;
 }
 
-#chorus-snip-controls,
-#chorus-speed-controls {
+#chorus-controls {
     position: fixed;
     left: 80px;
     bottom: 80px;
@@ -76,6 +75,7 @@
 .chorus-close-button,
 .chorus-close-button:hover {
     padding: 0;
+    max-height: 22px;
     font-size: 1rem;
     border: none !important;
     background-color: unset;
@@ -94,6 +94,22 @@
     color: #fff;
 }
 
+.chorus-text {
+    color: #fff;
+    font-weight: 600;
+    font-size: .75rem;
+}
+
+.chorus-pill {
+    padding: 0 .25rem;
+    min-width: 18px;
+    max-width: 20px;
+    min-height: 18px;
+    max-height: 20px;
+    text-align: center;
+    background-color: #535353;
+}
+
 .chorus-text-button {
     display: flex;
     align-items: center;
@@ -109,7 +125,7 @@
 .chorus-text-button span {
     display: inline-block;
     vertical-align: middle;
-    padding-bottom: 3.5px;
+    height: 100%;
 }
 
 .slider-container {
@@ -222,6 +238,11 @@
     padding-top: 2px;
 }
 
+.chorus-icon-active,
+.chorus-icon-active:hover {
+    color: #2edb64 !important;
+}
+
 .snippy {
     display: flex;
     margin: 12px 0;
@@ -234,13 +255,15 @@
 }
 
 [role=skip][aria-label],
-[role=snip][aria-label] {
+[role=snip][aria-label], 
+[role=speed][aria-label] {
     position: relative;
     display: inline-block;
 }
 
 [role=skip][aria-label]:after,
-[role=snip][aria-label]:after {
+[role=snip][aria-label]:after, 
+[role=speed][aria-label]:after {
     content: attr(aria-label);
     display: none;
     position: absolute;
@@ -265,6 +288,7 @@
 }
 
 [role=skip][aria-label]:hover:after,
-[role=snip][aria-label]:hover:after {
+[role=snip][aria-label]:hover:after, 
+[role=speed][aria-label]:hover:after {
     display: inline-block;
 }

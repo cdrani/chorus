@@ -5,7 +5,7 @@ export const currentSongInfo = () => {
     const trackURL = document.querySelector('[data-testid="CoverSlotCollapsed__container"] > div > a')?.href
 
     // Remove 'Now playing: ' prefix
-    const id = songLabel.split(': ').at(1)
+    const id = songLabel?.split(': ')?.at(1)
 
     if (!trackURL) return { id }
 

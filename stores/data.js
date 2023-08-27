@@ -1,13 +1,13 @@
 import CacheStore from "./cache.js"
 import Dispatcher from "../events/dispatcher.js"
 
-export default class DataStore {
+class DataStore {
     #cache
     #dispatcher
 
-    constructor() {
-        this.#cache = new CacheStore()
-        this.#dispatcher = new Dispatcher()
+    constructor({ cache, dispatcher }) {
+        this.#cache = cache
+        this.#dispatcher = dispatcher
     }
 
     async populate() {
@@ -19,7 +19,7 @@ export default class DataStore {
         Object.keys(response).forEach(key => {
             const value = response[key]
 
-            if (key != 'enabled' && !value.hasOwnProperty('isSkipped')) {
+            if (!['enabled', 'globals'].includes(key) && !value.hasOwnProperty('isSkipped')) {
                 const endTime = value?.endTime
                 value.isSkipped = endTime == 0
             }
@@ -59,3 +59,5 @@ export default class DataStore {
         return this.#cache.getKey(id)
     }
 }
+
+export const store = new DataStore({ cache: new CacheStore(), dispatcher: new Dispatcher() })
