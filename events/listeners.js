@@ -98,13 +98,14 @@ export default class ButtonListeners {
         saveButton?.addEventListener('click', async () => {
             await this.#snip.save()
             this.#hide()
-        }, { once: true })
+        })
     }
 
     #saveSpeedListener() {
         const speedSaveButton = document.getElementById('chorus-speed-save-button')
         speedSaveButton?.addEventListener('click', async () => {
             await this.#speed.save()
+            this.#hide()
         })
     }
 
