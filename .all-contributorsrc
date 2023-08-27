@@ -42,6 +42,7 @@
   ],
   "contributorsPerLine": 7,
   "skipCi": true,
+  "commit": true,
   "repoType": "github",
   "repoHost": "https://github.com",
   "projectName": "chorus",
