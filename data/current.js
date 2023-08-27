@@ -41,10 +41,8 @@ class CurrentData {
         const track = await this.readTrack()
         const globals = await this.readGlobals()
 
-        const preferredRate = track?.playbackRate || globals?.playbackRate
-        const preferredPitch = track?.playbackRate 
-            ? (track?.preservesPitch ?? true) 
-            : (globals?.preservesPitch ?? true)
+        const preferredRate = track?.playbackRate ?? globals?.playbackRate ?? 1
+        const preferredPitch = track?.preservesPitch ?? globals.preservesPitch ?? true
 
         return {
             preferredRate,
