@@ -34,7 +34,7 @@ class App {
 
         this.#main = new Main(this.#snip)
 
-        this.#nowPlayingObserver = new NowPlayingObserver(this.#snip)
+        this.#nowPlayingObserver = new NowPlayingObserver({ snip: this.#snip, video: this.#video })
         this.#trackListObserver = new TrackListObserver(this.#trackList)
         this.#currentTimeObserver = new CurrentTimeObserver({ video: this.#video, snip: this.#snip })
 
@@ -44,6 +44,9 @@ class App {
     }
 
     disconnect() {
+        this.#active = false
+        this.#video.reset()
+
         this.#trackListObserver.disconnect()
         this.#currentTimeObserver.disconnect()
         this.#nowPlayingObserver.disconnect()
@@ -51,10 +54,17 @@ class App {
         clearInterval(this.#intervalId)
     }
 
-    connect() {
+    async connect() {
+        this.#active = true
+
         this.#trackListObserver.observe()
         this.#currentTimeObserver.observe()
         this.#nowPlayingObserver.observe()
+
+        this.#resetInterval()
+        await this.#video.activate()
+
+        this.#reInit()
     }
 
     // TODO: re-initializes when Spotify Connect switches device from
@@ -67,7 +77,7 @@ class App {
 
             if (!mainElement?.children?.length) {
                 this.#main.init()
-                this.#init()
+                await this.#video.activate()
             }
         }, 5000)
     }
@@ -88,8 +98,8 @@ async function load() {
 
     const app = new App({ video, store })
 
-    document.addEventListener('app.enabled', e => {
+    document.addEventListener('app.enabled', async e => {
         const { enabled } = e.detail
-        enabled ? app.connect() : app.disconnect()
+        enabled ? await app.connect() : app.disconnect()
     })
 }
