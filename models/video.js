@@ -2,11 +2,23 @@ import { currentData } from '../data/current.js'
 
 export default class VideoElement {
     #video
+    #active = false
 
     constructor(video) {
         this.#video = video
         this.#listenForTrackChange()
         this.#setPlaybackRateProtection()
+    }
+
+    async activate() {
+        this.#active = true
+        await this.#handleTrackChange()
+    }
+
+    reset() {
+        this.#active = false
+        this.clearCurrentSpeed()
+        this.preservesPitch = true
     }
 
     get element() {
@@ -46,8 +58,10 @@ export default class VideoElement {
     }
 
     set playbackRate(value) {
-        if (this.#video) {
+        if (this.#active) {
             this.#video.playbackRate = { source: 'chorus', value: value }
+        } else {
+            this.#video.playbackRate = value
         }
     }
 
@@ -55,12 +69,19 @@ export default class VideoElement {
         return this.#video ? this.#video.playbackRate : 1
     }
 
+    async #handleTrackChange() {
+        if (!this.#active) return
+
+        const { preferredRate, preferredPitch } = await currentData.getPlaybackValues()
+
+        this.currentSpeed = preferredRate
+        this.#video.playbackRate = preferredRate
+        this.#video.preservesPitch = preferredPitch
+    }
+
     #listenForTrackChange() {
-        this.#video.addEventListener('loadedmetadata', async () => {
-            const { preferredRate, preferredPitch } = await currentData.getPlaybackValues()
-            this.currentSpeed = preferredRate
-            this.#video.playbackRate = preferredRate
-            this.#video.preservesPitch = preferredPitch
+        this.#video.addEventListener('loadeddata', async () => {
+            await this.#handleTrackChange()
         })
     }
 
@@ -77,7 +98,9 @@ export default class VideoElement {
                 if (value?.source !== 'chorus') {
                     if (self.currentSpeed) return self.currentSpeed
 
-                    const { preferredRate } = await currentData.getPlaybackValues()
+                    const { preferredRate, preferredPitch } = await currentData.getPlaybackValues()
+                    self.preservesPitch = preferredPitch
+
                     return isValidPlaybackRate(preferredRate) ? preferredRate : 1
                 }
                 return isValidPlaybackRate(value.value) ? value.value : 1
@@ -91,7 +114,7 @@ export default class VideoElement {
             if (!playbackRateDescriptor._isOverridden) {
                 Object.defineProperty(HTMLMediaElement.prototype, 'playbackRate', {
                     async set(value) {
-                        const newRate = await handlePlaybackRateSetting(value)
+                        const newRate = self.#active ? await handlePlaybackRateSetting(value) : value
                         playbackRateDescriptor.set.call(this, newRate)
                     },
                     get: playbackRateDescriptor.get,
