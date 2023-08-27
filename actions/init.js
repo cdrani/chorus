@@ -1,7 +1,7 @@
 import { spotifyVideo } from './overload.js'
 
 import Main from './main.js'
-import DataStore from '../stores/data.js'
+import { store } from '../stores/data.js'
 import TrackList from '../models/track-list.js'
 import CurrentSnip from '../models/snip/current-snip.js'
 
@@ -82,7 +82,6 @@ const setup = setInterval(async () => {
 }, 500)
 
 async function load() {
-    const store = new DataStore()
     const video = spotifyVideo.element
 
     await store.populate()

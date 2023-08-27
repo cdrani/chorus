@@ -1,4 +1,4 @@
-import DataStore from '../stores/data.js'
+import { store } from '../stores/data.js'
 
 import { playback } from '../utils/playback.js'
 import { currentSongInfo } from '../utils/song.js'
@@ -84,4 +84,4 @@ class CurrentData {
     }
 }
  
-export const currentData = new CurrentData(new DataStore())
+export const currentData = new CurrentData(store)

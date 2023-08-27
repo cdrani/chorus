@@ -1,13 +1,13 @@
 import CacheStore from "./cache.js"
 import Dispatcher from "../events/dispatcher.js"
 
-export default class DataStore {
+class DataStore {
     #cache
     #dispatcher
 
-    constructor() {
-        this.#cache = new CacheStore()
-        this.#dispatcher = new Dispatcher()
+    constructor({ cache, dispatcher }) {
+        this.#cache = cache
+        this.#dispatcher = dispatcher
     }
 
     async populate() {
@@ -59,3 +59,5 @@ export default class DataStore {
         return this.#cache.getKey(id)
     }
 }
+
+export const store = new DataStore({ cache: new CacheStore(), dispatcher: new Dispatcher() })
