@@ -29,6 +29,14 @@
       "contributions": [
         "code",
         "a11y"
+      ],
+      "login": "geraldopmj",
+      "name": "Geraldo PMJ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81118137?v=4",
+      "profile": "https://github.com/geraldopmj",
+      "contributions": [
+        "code",
+        "a11y"
       ]
     }
   ],
@@ -37,5 +45,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "projectName": "chorus",
-  "projectOwner": "cdrani"
+  "projectOwner": "cdrani",
+  "contributorsSortAlphabetically": true,
 }
