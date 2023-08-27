@@ -1,0 +1,33 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "cdrani",
+      "name": "charles",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18746599?v=4",
+      "profile": "http://cdrani.dev",
+      "contributions": [
+        "ideas",
+        "infra",
+        "design",
+        "review",
+        "bug",
+        "doc",
+        "code",
+        "a11y"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "chorus",
+  "projectOwner": "cdrani"
+}
