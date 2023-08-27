@@ -19,13 +19,18 @@ export default class RangeSlider {
         input.value = preferredRate
         this.#setSpeedValue({ playbackRate: preferredRate, preservesPitch: preferredPitch })
 
-        speedCheckbox.checked = !track?.playbackRate
-        pitchCheckbox.checked = track?.preservesPitch ?? preferredPitch
+        const speedChecked = track?.playbackRate ? false : true
+        const pitchChecked = track?.preservesPitch ?? preferredPitch
+
+        speedCheckbox.checked = speedChecked
+        pitchCheckbox.checked = pitchChecked
+
+        this.#setCheckedUI({ speedChecked, pitchChecked })
 
         speedTrackValue.textContent = `${this.#padValue(track?.playbackRate || 1)}x`
         speedGlobalValue.textContent = `${this.#padValue(globals?.playbackRate || 1)}x`
 
-        this.#hightlightSpeedValue(speedCheckbox.checked)
+        this.#hightlightSpeedValue(speedChecked)
 
         this.#data = data
     }
@@ -33,10 +38,9 @@ export default class RangeSlider {
     // TODO: move into utils
     #padValue(value, decimalPlace = 2) {
         if (isNaN(parseFloat(value))) {
-           return value // If not a valid number, return the input value.
+           return value
         }
 
-        // Convert the value to a number and then format it with two decimal places.
         return parseFloat(value).toFixed(decimalPlace);
     }
     
@@ -56,17 +60,34 @@ export default class RangeSlider {
         pitchToggleButton.onclick = () => this.#togglePitchCheckbox()
     }
 
+    #setCheckedUI({ speedChecked, pitchChecked }) {
+        const { 
+            speedLabel, 
+            speedCheckbox, speedToggleOn, speedToggleOff, 
+            pitchCheckbox, pitchToggleOn, pitchToggleOff
+        } = this.elements
+
+        speedToggleOn.style.display = speedChecked ? 'block' : 'none'
+        speedToggleOff.style.display = speedChecked ? 'none' : 'block'
+
+        pitchToggleOn.style.display = pitchChecked ? 'block' : 'none'
+        pitchToggleOff.style.display = pitchChecked ? 'none' : 'block'
+
+        speedLabel.textContent = speedChecked ? 'Global Speed' : 'Track Speed'
+
+        speedCheckbox.checked = speedChecked
+        pitchCheckbox.checked = pitchChecked
+    }
+
     #toggleSpeedCheckbox() {
         const { 
-            input, speedCheckbox, speedToggleOn, speedToggleOff,
-            speedLabel, speedTrackValue, speedGlobalValue
+            input, speedCheckbox, speedTrackValue, speedGlobalValue,
+            pitchCheckbox
         } = this.elements
         speedCheckbox.checked = !speedCheckbox.checked
 
         const { checked } = speedCheckbox
-        speedToggleOn.style.display = checked ? 'block' : 'none'
-        speedToggleOff.style.display = checked ? 'none' : 'block'
-        speedLabel.textContent = checked ? 'Global Speed' : 'Track Speed'
+        this.#setCheckedUI({ speedChecked: checked, pitchChecked: pitchCheckbox.checked })
 
         const { track, globals } = this.#data
         
