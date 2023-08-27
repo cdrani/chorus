@@ -19,7 +19,8 @@
         "review",
         "bug",
         "doc",
-        "code"
+        "code",
+        "a11y"
       ]
     }
   ],
