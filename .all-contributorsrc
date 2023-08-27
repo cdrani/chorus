@@ -8,6 +8,20 @@
   "commitConvention": "angular",
   "contributors": [
     {
+      "login": "cdrani",
+      "name": "charles",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18746599?v=4",
+      "profile": "http://cdrani.dev",
+      "contributions": [
+        "ideas",
+        "infra",
+        "design",
+        "review",
+        "bug",
+        "doc",
+        "a11y",
+        "code"
+      ],
       "login": "Piyush-Deshmukh",
       "name": "Piyush Deshmukh",
       "avatar_url": "https://avatars.githubusercontent.com/u/99667276?v=4",
