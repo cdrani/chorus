@@ -1,14 +1,18 @@
 import RangeSlider from '../range/range.js'
-import { spotifyVideo } from '../../actions/overload.js'
+
+import { store } from '../../stores/data.js'
 import { currentData } from '../../data/current.js'
+
+import { spotifyVideo } from '../../actions/overload.js'
 
 export default class Speed {
     #store
+    #video
     #controls
-    #video = spotifyVideo.element
 
-    constructor(store) {
+    constructor() {
         this.#store = store
+        this.#video = spotifyVideo.element
         this.#controls = new RangeSlider(this.#video)
     }
 
