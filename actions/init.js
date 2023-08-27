@@ -16,6 +16,7 @@ class App {
     #main
     #intervalId
     #trackList
+    #active = true
     #currentTimeObserver
     #nowPlayingObserver
     #trackListObserver
@@ -23,7 +24,6 @@ class App {
     constructor({ video, store }) {
         this.#store = store
         this.#video = video
-        this.#intervalId = null
 
         this.#init()
     }
@@ -40,7 +40,16 @@ class App {
 
         this.#snip.updateView()
 
+        this.#resetInterval()    
+
         this.#reInit()
+    }
+
+    #resetInterval() {
+        if (!this.#intervalId) return 
+
+        clearInterval(this.#intervalId)
+        this.#intervalId = null
     }
 
     disconnect() {
@@ -50,8 +59,8 @@ class App {
         this.#trackListObserver.disconnect()
         this.#currentTimeObserver.disconnect()
         this.#nowPlayingObserver.disconnect()
-
-        clearInterval(this.#intervalId)
+        
+        this.#resetInterval()
     }
 
     async connect() {
@@ -67,19 +76,18 @@ class App {
         this.#reInit()
     }
 
-    // TODO: re-initializes when Spotify Connect switches device from
-    // current browser tab to another tab, window, or device.
-    // Looking for a better solution.
     #reInit() {
-        this.#intervalId = setInterval(() => {
-            const mainElement = this.#main.element
-            if (this.#intervalId) return
+        this.#intervalId = setInterval(async () => {
+            if (!this.#active) return
+            if (!this.#intervalId) return
 
-            if (!mainElement?.children?.length) {
+            const chorus = document.querySelectorAll('#chorus')
+
+            if (chorus?.length == 0) {
                 this.#main.init()
                 await this.#video.activate()
             }
-        }, 5000)
+        }, 3000)
     }
 }
 
