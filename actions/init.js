@@ -2,7 +2,7 @@ import { spotifyVideo } from './overload.js'
 
 import Main from './main.js'
 import { store } from '../stores/data.js'
-import TrackList from '../models/track-list.js'
+import TrackList from '../models/tracklist/track-list.js'
 import CurrentSnip from '../models/snip/current-snip.js'
 
 import TrackListObserver from '../observers/track-list.js'

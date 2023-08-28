@@ -1,4 +1,4 @@
-import { trackSongInfo } from '../utils/song.js'
+import { trackSongInfo } from '../../utils/song.js'
 
 export default class TrackListIcon {
     #key
