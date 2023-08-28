@@ -1,15 +1,16 @@
-import SnipControls from './snip-controls.js'
 import ButtonListeners from '../../events/listeners.js'
+import SliderControls from '../slider/slider-controls.js'
 
 export default class Snip {
     constructor(store) {
         this._store = store
-        this._controls = new SnipControls()
+        this._controls = new SliderControls()
         this._listeners = new ButtonListeners(this)
     }
 
     init() {
         this._listeners.init()
+        this._controls.init()
         this.isEditing = true
     }
 
@@ -44,6 +45,13 @@ export default class Snip {
 
     #setUpdateControls(response) {
         this._controls.updateControls(response)
+    }
+
+    get _elements() {
+        return {
+            inputRight: document.getElementById('input-end'),
+            inputLeft: document.getElementById('input-start'),
+        }
     }
 
     _displayAlert() {

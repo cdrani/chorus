@@ -5,23 +5,24 @@ import { secondsToTime } from '../../utils/time.js'
 import { currentSongInfo } from '../../utils/song.js'
 
 export default class Slider {
+    #video
     #leftDebouncer
     #rightDebouncer
     #isCurrentlyPlaying = true
 
     constructor() {
-        this._video = spotifyVideo.element
+        this.#video = spotifyVideo.element
     }
 
     init() {
-        this._setUpEvents()
+        this.#setUpEvents()
     }
 
-    _setUpEvents() {
-        const { inputLeft, inputRight, thumbLeft, thumbRight } = this.elements
+    #setUpEvents() {
+        const { inputLeft, inputRight, thumbLeft, thumbRight } = this.#elements
 
-        inputLeft.oninput = () => this.setLeftValue()
-        inputRight.oninput = () => this.setRightValue()
+        inputLeft.oninput = () => this.#setLeftValue()
+        inputRight.oninput = () => this.#setRightValue()
 
         inputLeft.addEventListener('mouseover', () => thumbLeft.classList.add('hover'))
         inputLeft.addEventListener('mouseout', () => thumbLeft.classList.remove('hover'))
@@ -38,7 +39,7 @@ export default class Slider {
         this.#isCurrentlyPlaying = !track?.id ? true : track.id == currentSongInfo().id
 
         const { endTime, startTime } = track
-        const { endDisplay } = this.elements
+        const { endDisplay } = this.#elements
         const duration = track?.duration ?? playback.duration()
 
         endDisplay.textContent = secondsToTime(duration)
@@ -49,12 +50,12 @@ export default class Slider {
     }
 
     #setMaxMin(duration) {
-        const { inputLeft, inputRight } = this.elements
+        const { inputLeft, inputRight } = this.#elements
         inputLeft.max = duration
         inputRight.max = duration
     }
 
-    get elements() {
+    get #elements() {
         return {
             endDisplay: document.getElementById('end'),
             outputRight: document.getElementById('chorus-end'),
@@ -67,34 +68,34 @@ export default class Slider {
         }
     }
 
-    setLeftValue() {
+    #setLeftValue() {
         if (this.#leftDebouncer) clearTimeout(this.#leftDebouncer)
 
         this.#leftDebouncer = setTimeout(() => {
-            const { inputLeft } = this.elements
+            const { inputLeft } = this.#elements
             const currentValue = parseInt(inputLeft.value)
 
             this.updateSliderLeftHalf(currentValue)
 
-            if (this.#isCurrentlyPlaying) this._video.currentTime = inputLeft.value
-        }, 100)
+            if (this.#isCurrentlyPlaying) this.#video.currentTime = inputLeft.value
+        }, 50)
     }
 
-    setRightValue() {
+    #setRightValue() {
         if (this.#rightDebouncer) clearTimeout(this.#rightDebouncer)
 
         this.#rightDebouncer = setTimeout(() => {
-            const { inputRight } = this.elements
+            const { inputRight } = this.#elements
             const currentValue = parseInt(inputRight.value)
 
             this.updateSliderRightHalf(currentValue)
 
-            if (this.#isCurrentlyPlaying) this._video.currentTime = inputRight.value
-        }, 100)
+            if (this.#isCurrentlyPlaying) this.#video.currentTime = inputRight.value
+        }, 50)
     }
 
     updateSliderLeftHalf(currentValue) {
-        const { inputLeft, inputRight, range, thumbLeft, outputLeft } = this.elements
+        const { inputLeft, inputRight, range, thumbLeft, outputLeft } = this.#elements
 
         inputLeft.value = Math.min(
             parseInt(currentValue ?? inputLeft.value),
@@ -109,7 +110,7 @@ export default class Slider {
     }
 
     updateSliderRightHalf(currentValue) {
-        const { inputLeft, inputRight, thumbRight, range, outputRight } = this.elements
+        const { inputLeft, inputRight, thumbRight, range, outputRight } = this.#elements
 
         inputRight.value = Math.max(
             parseInt(currentValue ?? inputRight.value),

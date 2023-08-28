@@ -1,5 +1,5 @@
-import { createSnipControls } from '../components/snip-controls.js'
-import { createSpeedControls } from '../components/speed-controls.js'
+import { createSnipControls } from '../components/snip/snip-controls.js'
+import { createSpeedControls } from '../components/speed/speed-controls.js'
 
 export default class Chorus {
     get isShowing() {

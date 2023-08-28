@@ -67,7 +67,7 @@ export default class TrackSnip extends Snip {
     }
 
     async save() {
-        const { inputLeft, inputRight } = this._controls.slider.elements
+        const { inputLeft, inputRight } = this._elements
         const { isSkipped } = this.read()
 
         await this._store.saveTrack({

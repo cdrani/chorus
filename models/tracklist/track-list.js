@@ -1,10 +1,10 @@
 import SkipIcon from './skip-icon.js'
 import SnipIcon from './snip-icon.js'
 
-import Chorus from './chorus.js'
-import TrackSnip from "./snip/track-snip.js"
+import Chorus from '../chorus.js'
+import TrackSnip from '../snip/track-snip.js'
 
-import { trackSongInfo } from '../utils/song.js'
+import { trackSongInfo } from '../../utils/song.js'
 
 export default class TrackList {
     #icons
