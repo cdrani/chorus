@@ -1,4 +1,4 @@
-import { secondsToTime } from '../utils/time.js'
+import { secondsToTime } from '../../utils/time.js'
 
 export const createSlider = ({ current, duration }) => `
     <div id="snippy" class="snippy">

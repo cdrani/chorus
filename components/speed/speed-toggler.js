@@ -1,4 +1,4 @@
-import { createToggleButton } from './toggle-button.js'
+import { createToggleButton } from '../toggle-button.js'
 
 export const createSpeedToggler = () => `
     <div style="display:flex;justify-content:space-between;align-items:center;width:100%">

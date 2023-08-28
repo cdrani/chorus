@@ -1,8 +1,8 @@
-import { createSlider } from './slider.js'
+import { createSlider } from './snip-slider.js'
 import { createRangeLabels } from './snip-labels.js'
 import { createSnipButtons } from './snip-buttons.js'
 
-import { playback } from '../utils/playback.js'
+import { playback } from '../../utils/playback.js'
 
 export const createSnipControls = () => {
     const current = playback.current()
