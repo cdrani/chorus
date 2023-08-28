@@ -47,6 +47,13 @@ export default class Snip {
         this._controls.updateControls(response)
     }
 
+    get _elements() {
+        return {
+            inputRight: document.getElementById('input-end'),
+            inputLeft: document.getElementById('input-start'),
+        }
+    }
+
     _displayAlert() {
         const alertBox = document.getElementById('chorus-alert') 
         const alertMessage = alertBox.querySelector('[id="chorus-alert-message"]')
