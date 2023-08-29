@@ -2,7 +2,7 @@ import { currentData } from '../data/current.js'
 
 export default class VideoElement {
     #video
-    #active = false
+    #active = sessionStorage.getItem('enabled') == 'true'
 
     constructor(video) {
         this.#video = video
@@ -10,14 +10,17 @@ export default class VideoElement {
         this.#setPlaybackRateProtection()
     }
 
+    set active(value) {
+        this.#active = value
+    }
+
     async activate() {
-        this.#active = true
         await this.#handleTrackChange()
     }
 
     reset() {
-        this.#active = false
         this.clearCurrentSpeed()
+        this.playbackRate = 1
         this.preservesPitch = true
     }
 

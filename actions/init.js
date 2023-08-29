@@ -105,9 +105,15 @@ async function load() {
     await store.populate()
 
     const app = new App({ video, store })
+    const enabled = sessionStorage.getItem('enabled') == 'true'
+    video.active = enabled
 
     document.addEventListener('app.enabled', async e => {
         const { enabled } = e.detail
+        
+        sessionStorage.setItem('enabled', enabled)
+        video.active = enabled
+
         enabled ? await app.connect() : app.disconnect()
     })
 }
