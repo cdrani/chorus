@@ -1,4 +1,5 @@
 import { trackSongInfo } from '../../utils/song.js'
+import { parseNodeString } from '../../utils/parser.js'
 
 export default class TrackListIcon {
     #key
@@ -20,7 +21,8 @@ export default class TrackListIcon {
 
         if (!this.#getIcon(row)) {
             const heartIcon = row.querySelector('button[data-testid="add-button"]')
-            heartIcon.insertAdjacentHTML('beforebegin', this._iconUI)
+            const iconEl = parseNodeString(this._iconUI)
+            heartIcon.parentNode.insertBefore(iconEl, heartIcon) 
         }
 
         const icon = this.#getIcon(row)
