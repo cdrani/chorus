@@ -1,20 +1,34 @@
 export default class Dispatcher {
-    constructor() {}
+    constructor() {
+        this.#initListener()
+    }
 
-    #responsePromise(eventType) {
-        return new Promise(resolve => {
-            const resultListener = e => {
-                resolve(e.detail)
-                document.removeEventListener(eventType, resultListener)
+    #initListener() {
+        window.addEventListener('message', (event) => {
+            if (event.origin !== window.location.origin) return
+
+            if (event?.data?.type === 'FROM_CONTENT_SCRIPT') {
+                document.dispatchEvent(
+                    new CustomEvent(event.data.requestType, { detail: event.data.payload })
+                )
             }
-
-            document.addEventListener(eventType, resultListener)
         })
     }
 
-    async sendEvent({ eventType, detail = {} }) {
-        document.dispatchEvent(new CustomEvent(eventType, { detail }))
+    sendEvent({ eventType, detail = {} }) {
+        window.postMessage({
+            type: 'FROM_PAGE_SCRIPT',
+            requestType: eventType,
+            payload: detail
+        }, window.location.origin)
 
-        return await this.#responsePromise(`${eventType}.response`)
+        return new Promise((resolve) => {
+            const resultListener = (e) => {
+                resolve(e.detail)
+                document.removeEventListener(`${eventType}.response`, resultListener)
+            }
+
+            document.addEventListener(`${eventType}.response`, resultListener)
+        })
     }
 }

@@ -7,31 +7,46 @@ const loadScript = filePath => {
 
 loadScript('actions/init.js')
 
-const sendEvent = ({ eventType, detail }) => {
-    document.dispatchEvent(new CustomEvent(eventType, { detail }))
+
+const sendEventToPage = ({ eventType, detail }) => {
+    window.postMessage({
+        type: 'FROM_CONTENT_SCRIPT',
+        requestType: eventType,
+        payload: detail
+    }, window.location.origin)
 }
 
-document.addEventListener('storage.set', async e => {
-    const { key, values } = e.detail
-    const response = await setState({ key, values })
-    sendEvent({ eventType: 'storage.set.response', detail: response })
-})
+window.addEventListener('message', async (event) => {
+    if (event.origin !== window.location.origin) return
+    if (event.data.type !== 'FROM_PAGE_SCRIPT') return
 
-document.addEventListener('storage.get', async e => {
-    const response = await getState(e.detail)
-    sendEvent({ eventType: 'storage.get.response', detail: response })
-})
+    const { requestType, payload } = event.data
+    let response
 
-document.addEventListener('storage.delete', async e => {
-    const response = await removeState(e.detail.key)
-    sendEvent({ eventType: 'storage.delete.response', detail: response })
-})
+    switch (requestType) {
+        case 'storage.set':
+            const { key, values } = payload
+            response = await setState({ key, values })
+            sendEventToPage({ eventType: 'storage.set.response', detail: response })
+            break
 
-document.addEventListener('storage.populate', async () => {
-    const response = await getState(null)
-    sendEvent({ eventType: 'storage.populate.response', detail: response })
+        case 'storage.get':
+            response = await getState(payload)
+            sendEventToPage({ eventType: 'storage.get.response', detail: response })
+            break
+
+        case 'storage.delete':
+            response = await removeState(payload.key)
+            sendEventToPage({ eventType: 'storage.delete.response', detail: response })
+            break
+
+        case 'storage.populate':
+            response = await getState(null)
+            sendEventToPage({ eventType: 'storage.populate.response', detail: response })
+            break
+    }
 })
 
 chrome.runtime.onMessage.addListener(message => {
-    sendEvent({ eventType: 'app.enabled', detail: { enabled: message.enabled } })
+    sendEventToPage({ eventType: 'app.enabled', detail: { enabled: message.enabled } })
 })
