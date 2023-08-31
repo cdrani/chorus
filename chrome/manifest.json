@@ -52,12 +52,6 @@
     "unlimitedStorage"
   ],
   "background": {
-    "scripts": ["background.js"]
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "chorus@cdrani.dev",
-      "strict_min_version": "116.0"
-    }
+    "service_worker": "background.js"
   }
 }
