@@ -91,11 +91,17 @@ class App {
     }
 }
 
+let loaded = false
+const video = spotifyVideo.element
+
 const setup = setInterval(async () => {
     const nowPlayingWidget = document.querySelector('[data-testid="now-playing-widget"]')
-    if (!nowPlayingWidget) return
+    if (!video && !nowPlayingWidget) return
 
-    await load()
+    if (!loaded) {
+        await load()
+        loaded = true
+    }
     clearInterval(setup)
 }, 500)
 
