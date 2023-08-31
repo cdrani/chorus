@@ -1,7 +1,7 @@
 import { timeToSeconds } from './time.js'
 
 export const currentSongInfo = () => {
-    const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.ariaLabel
+    const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.getAttribute('aria-label')
     const trackURL = document.querySelector('[data-testid="CoverSlotCollapsed__container"] > div > a')?.href
 
     // Remove 'Now playing: ' prefix

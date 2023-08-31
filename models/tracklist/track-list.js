@@ -73,8 +73,9 @@ export default class TrackList {
 
                 icons.forEach(icon => {
                       icon.style.visibility = this.#visibleEvents.includes(event) ? 'visible' : 'hidden'
-                      this.#snipIcon._burn({ icon, burn: snipInfo[keys[icon.role]] })
-                      this.#snipIcon._glow({ icon, glow: snipInfo[keys[icon.role]] })
+                      const role = icon.getAttribute('role')
+                      this.#snipIcon._burn({ icon, burn: snipInfo[keys[role]] })
+                      this.#snipIcon._glow({ icon, glow: snipInfo[keys[role]] })
                 })
             })
         })
@@ -82,16 +83,17 @@ export default class TrackList {
 
     #handleClick = async e => {
         const target = e.target
+        const role = target?.getAttribute('role')
 
-        if (['snip', 'skip'].includes(target?.role)) {
+        if (['snip', 'skip'].includes(role)) {
             let row = target.parentElement
             do {
                 row = row.parentElement
             } while (row.dataset.testid != 'tracklist-row')
 
-            const currentIndex = row.parentElement.ariaRowIndex
+            const currentIndex = row.parentElement.getAttribute('aria-row-index')
 
-            if (target.role == 'snip') {
+            if (role == 'snip') {
                 if (!this.#previousRowNum || (currentIndex != this.#previousRowNum)) {
                     this.#chorus.show()
                     this.#trackSnip.init(row)

@@ -68,7 +68,7 @@ export default class CurrentTimeObserver {
     }
 
     get #muted() {
-        return this.#muteButton?.ariaLabel == 'Unmute'
+        return this.#muteButton?.getAttribute('aria-label') == 'Unmute'
     }
 
     get #sharedSnipValues() {
@@ -111,7 +111,7 @@ export default class CurrentTimeObserver {
 
     get #isLooping() {
         const repeatButton = document.querySelector('[data-testid="control-button-repeat"]')
-        return repeatButton?.ariaLabel === 'Disable repeat'
+        return repeatButton?.getAttribute('aria-label') === 'Disable repeat'
     }
 
     get #atSongStart() {
