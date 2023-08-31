@@ -216,6 +216,7 @@
     position: absolute;
     pointer-events: none;
     -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
     z-index: 2;
     margin: 0;
@@ -224,6 +225,7 @@
     opacity: 0;
 }
 
+.input[type="range"]::-moz-range-thumb,
 .input[type="range"]::-webkit-slider-thumb {
     pointer-events: all;
     background-color: #fff;
