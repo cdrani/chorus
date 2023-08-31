@@ -15,6 +15,17 @@
 Enhance Spotify with controls to save favourite track section and auto-skip. Save sections can be used for infinite looping of a chorus, verse, etc. Snips can be shared with others. Auto-skip tracks in a playlists or albums and never hear them again. Additionally set global playback speed and per track speed! More features to come!
 
 
+## ⬇️ **Install** ⬇️
+
+[link-chrome]: https://chrome.google.com/webstore/detail/cdrani/jfnjmnapkhdbaidedlbdcmhiphfjljcd 'Version published on Chrome Web Store'
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/jfnjmnapkhdbaidedlbdcmhiphfjljcd.svg?label=%20">][link-chrome] and other Chromium browsers (Edge, Opera, Brave, Vivaldi, etc)
+
+
+[link-firefox]: https://addons.mozilla.org/firefox/addon/chorus-spotify-enhancer/ 'Version published on Mozilla Add-ons'
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/firefox/firefox.svg" width="48" alt="Firefox" valign="middle">][link-firefox] [<img valign="middle" src="https://img.shields.io/amo/v/chorus-spotify-enhancer-.svg?label=%20">][link-firefox] (Coming Soon. In Progress)
+
+
+
 ## **🎉 Chorus Features 🎉**
 
 ⭐ Save your favourite section of a Spotify track or podcast episode. That section then will the only part played for that track or episode. This can be used to play (or replay) a favourite chorus, sample, or a verse infinitely (if looped).
