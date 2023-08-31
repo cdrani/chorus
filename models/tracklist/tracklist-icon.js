@@ -22,11 +22,14 @@ export default class TrackListIcon {
         if (!this.#getIcon(row)) {
             const heartIcon = row.querySelector('button[data-testid="add-button"]')
             const iconEl = parseNodeString(this._iconUI)
-            heartIcon.parentNode.insertBefore(iconEl, heartIcon) 
+            heartIcon?.parentNode?.insertBefore(iconEl, heartIcon) 
         }
 
         const icon = this.#getIcon(row)
-        icon.style.display = 'flex'
+
+        if (icon) {
+            icon.style.display = 'flex'
+        }
     }
 
     _setInitialState(row) {
@@ -36,25 +39,25 @@ export default class TrackListIcon {
         this._animate(icon)
     }
 
-    #initializeTrack(row) {
+    async #initializeTrack(row) {
         const song = trackSongInfo(row)
         if (!song) return
 
-        return this.#store.getTrack({
+        return await this.#store.getTrack({
             id: song.id,
             value: { isSkipped: false, isSnip: false, startTime: 0, endTime: song.endTime },
         })
     }
 
-    getTrack(id) {
-        return this.#store.getTrack({ id })
+    async getTrack(id) {
+        return await this.#store.getTrack({ id })
     }
 
     async _saveTrack(row) {
         const song = trackSongInfo(row)
         if (!song) return
 
-        const snipInfo = this.getTrack(song.id)
+        const snipInfo = await this.getTrack(song.id)
 
         await this.#store.saveTrack({
             id: song.id,
@@ -63,16 +66,16 @@ export default class TrackListIcon {
     }
 
     #getRow(icon) {
-        return icon.parentElement.parentElement
+        return icon?.parentElement?.parentElement
     }
 
-    _animate(icon) {
+    async _animate(icon) {
         const row = this.#getRow(icon)
         const song = trackSongInfo(row)
 
         if (!song) return
 
-        const snipInfo = this.getTrack(song.id)
+        const snipInfo = await this.getTrack(song.id)
 
         this._burn({ icon, burn: snipInfo[this.#key] })
         this._glow({ icon, glow: snipInfo[this.#key] })

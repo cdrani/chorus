@@ -66,8 +66,8 @@ export default class TrackList {
         if (!song) return
 
         this.#events.forEach(event => {
-            row?.addEventListener(event, () => {
-                const snipInfo = this.#snipIcon.getTrack(song.id)
+            row?.addEventListener(event, async () => {
+                const snipInfo = await this.#snipIcon.getTrack(song.id)
                 const icons = this.#getRowIcons(row)
                 const keys = { snip: 'isSnip', skip: 'isSkipped' }
 
