@@ -3,6 +3,8 @@ import Chorus from '../models/chorus.js'
 
 import { createAlert } from '../components/alert.js'
 
+import { parseNodeString } from '../utils/parser.js'
+
 export default class Main {
     #icon
     #snip
@@ -29,9 +31,10 @@ export default class Main {
 
             if (!iconListContainer) return
 
-            iconListContainer.insertAdjacentHTML('beforeend', root)
-            this.#setIconListener()
+            const rootEl = parseNodeString(root)
+            iconListContainer.appendChild(rootEl)
 
+            this.#setIconListener()
             clearInterval(interval)
         }, 50)
     }
@@ -43,10 +46,13 @@ export default class Main {
     }
 
     #setupAlert() {
-        document.body.insertAdjacentHTML('beforeend', createAlert()) 
+        const alertEl = parseNodeString(createAlert())
+        document.body.appendChild(alertEl) 
 
-        const closeAlert = document.getElementById('chorus-alert-close-button')
-        closeAlert?.addEventListener('click', (e) => this.#handleAlert({ e, target: closeAlert }))
+        const closeAlertButton = document.getElementById('chorus-alert-close-button')
+        closeAlertButton?.addEventListener('click', (e) =>  { 
+            this.#handleAlert({ e, target: closeAlertButton })
+        })
     }
 
     get element() {

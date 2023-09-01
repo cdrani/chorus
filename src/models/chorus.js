@@ -1,6 +1,8 @@
 import { createSnipControls } from '../components/snip/snip-controls.js'
 import { createSpeedControls } from '../components/speed/speed-controls.js'
 
+import { parseNodeString } from '../utils/parser.js'
+
 export default class Chorus {
     get isShowing() {
         if (!this.mainElement) return false
@@ -27,11 +29,11 @@ export default class Chorus {
     #insertIntoDOM() {
         if (this.#hasSnipControls) return
 
-        const snipControls = createSnipControls()
-        const speedControls = createSpeedControls()
+        const snipControlsEl = parseNodeString(createSnipControls())
+        const speedControlsEl = parseNodeString(createSpeedControls())
 
-        this.chorusControls.insertAdjacentHTML('beforeend', snipControls)
-        this.chorusControls.insertAdjacentHTML('beforeend', speedControls)
+        this.chorusControls.appendChild(snipControlsEl)
+        this.chorusControls.appendChild(speedControlsEl)
     }
 
     hide() {
