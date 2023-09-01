@@ -21,7 +21,14 @@ jobs:
           
       - name: Update Version
         if: steps.semver.outputs.version != ''
-        run: jq --arg version "${{ steps.semver.outputs.version }}" '.version = $version' manifest.json > tmp && mv tmp manifest.json
+        run: |
+          jq --arg version "${{ steps.semver.outputs.version }}" \ 
+            '.version = $version' chrome/manifest.json > chrome/tmp && \ 
+            mv chrome/tmp chrome/manifest.json
+
+          jq --arg version "${{ steps.semver.outputs.version }}" \
+            '.version = $version' firefox/manifest.json > firefox/tmp && \
+            mv firefox/tmp firefox/manifest.json
 
       - name: Commit Changes
         if: steps.semver.outputs.version != ''
@@ -51,23 +58,28 @@ jobs:
 
       - name: Archive Extension Files
         if: steps.semver.outputs.version != ''
-        run: zip -r Chorus.zip . -x "*.git*" "*.*rc" "*.md"
+        run: |
+          (cd src && zip -r ../Chorus-Chrome.zip .)
+          (cd chrome && zip -j ../Chorus-Chrome.zip manifest.json)
+
+          (cd src && zip -r ../Chorus-FireFox.zip .)
+          (cd firefox && zip -j ../Chorus-FireFox.zip manifest.json)
 
       - name: Create Release Archive & Notes
         if: steps.semver.outputs.version != ''
         uses: ncipollo/release-action@v1.12.0
         with:
-          artifacts: 'Chorus.zip'
           tag: ${{ steps.semver.outputs.git_tag }}
           name: ${{ steps.semver.outputs.git_tag }}
           body: ${{ steps.semver.outputs.notes }}
+          artifacts: 'Chorus-Chrome.zip,Chorus-FireFox.zip'
           
       - name: Upload & Publish
         if: steps.semver.outputs.version != ''
         uses: cdrani/chrome-extension-upload@ci/silent-update-fail
         with:
           silent-fail: true
-          file-path: Chorus.zip
+          file-path: Chorus-Chrome.zip
           client-id: ${{ secrets.CLIENT_ID }}
           extension-id: ${{ secrets.EXTENSION_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
