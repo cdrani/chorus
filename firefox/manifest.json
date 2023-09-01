@@ -57,7 +57,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "chorus@cdrani.dev",
-      "strict_min_version": "116.0"
+      "strict_min_version": "109.0"
     }
   }
 }
