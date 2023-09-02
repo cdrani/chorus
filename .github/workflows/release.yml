@@ -22,12 +22,12 @@ jobs:
       - name: Update Version
         if: steps.semver.outputs.version != ''
         run: |
-          jq --arg version "${{ steps.semver.outputs.version }}" \ 
-            '.version = $version' chrome/manifest.json > chrome/tmp && \ 
+          jq --arg chromeVersion "${{ steps.semver.outputs.version }}" \ 
+            '.version = $chromeVersion' chrome/manifest.json > chrome/tmp && \ 
             mv chrome/tmp chrome/manifest.json
 
-          jq --arg version "${{ steps.semver.outputs.version }}" \
-            '.version = $version' firefox/manifest.json > firefox/tmp && \
+          jq --arg firefoxVersion "${{ steps.semver.outputs.version }}" \
+            '.version = $firefoxVersion' firefox/manifest.json > firefox/tmp && \
             mv firefox/tmp firefox/manifest.json
 
       - name: Commit Changes
