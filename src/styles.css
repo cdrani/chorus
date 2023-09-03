@@ -44,14 +44,12 @@
 }
 
 #chorus-controls {
-    border: 1px dashed #1ed760;
-}
-
-#chorus-controls {
+    border: 3px solid #1ed760;
+    padding: 1rem;
+    border-radius: 8px;
     position: fixed;
     left: 80px;
     bottom: 80px;
-    padding: .5rem .75rem;
     background-color: #171717;
     width: 320px;
 }
