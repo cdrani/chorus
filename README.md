@@ -7,7 +7,7 @@
     <img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/chorus-spotify-enchancer?label=Firefox%20users">
     <img alt="Mozilla Add-on" src="https://img.shields.io/amo/rating/chorus-spotify-enchancer">
   -->
-  <img alt="GitHub manifest version" src="https://img.shields.io/github/manifest-json/v/cdrani/chorus/firefox">
+  <img alt="GitHub manifest version" src="https://img.shields.io/github/manifest-json/v/cdrani/chorus?filename=firefox%2Fmanifest.json">
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/cdrani/chorus">
   <img alt="GitHub" src="https://img.shields.io/github/license/cdrani/chorus">
 <p/>
