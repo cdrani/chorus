@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Chorus - Spotify Enhancer",
+  "version": "1.6.1",
+  "description": "Enhance Spotify with controls to save favorite snips, auto-skip tracks, and set global and custom speed. More to come!",
+  "permissions": ["activeTab", "tabs", "storage", "unlimitedStorage"],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://open.spotify.com/*"],
+      "js": ["utils/state.js", "content-script.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": ["*://open.spotify.com/*"],
+      "resources": [
+        "utils/*.js",
+        "models/*.js",
+        "events/*.js",
+        "components/*.js",
+        "observers/*.js",
+        "stores/*.js",
+        "actions/*.js",
+        "data/*.js"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
