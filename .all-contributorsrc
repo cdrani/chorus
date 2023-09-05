@@ -22,18 +22,22 @@
         "a11y",
         "code"
       ],
-      "login": "Piyush-Deshmukh",
-      "name": "Piyush Deshmukh",
-      "avatar_url": "https://avatars.githubusercontent.com/u/99667276?v=4",
-      "profile": "https://github.com/Piyush-Deshmukh",
-      "contributions": [
-        "code",
-        "a11y"
-      ],
+    },
+    {
       "login": "geraldopmj",
       "name": "Geraldo PMJ",
       "avatar_url": "https://avatars.githubusercontent.com/u/81118137?v=4",
       "profile": "https://github.com/geraldopmj",
+      "contributions": [
+        "code",
+        "a11y"
+      ]
+    },
+    {
+      "login": "Piyush-Deshmukh",
+      "name": "Piyush Deshmukh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/99667276?v=4",
+      "profile": "https://github.com/Piyush-Deshmukh",
       "contributions": [
         "code",
         "a11y"
@@ -46,6 +50,5 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "projectName": "chorus",
-  "projectOwner": "cdrani",
-  "contributorsSortAlphabetically": true,
+  "projectOwner": "cdrani"
 }
