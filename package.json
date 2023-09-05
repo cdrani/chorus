@@ -2,6 +2,7 @@
   "name": "chorus",
   "private": true,
   "type": "module",
+  "version": "1.6.1",
   "scripts": {
     "build:chrome": "TARGET=chrome rollup -c",
     "watch:chrome": "TARGET=chrome rollup -c -w",
