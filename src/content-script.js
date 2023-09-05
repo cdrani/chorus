@@ -1,3 +1,5 @@
+import { getState, setState, removeState } from './utils/state.js'
+
 const loadScript = filePath => {
     const script = document.createElement('script')
     script.src = chrome.runtime.getURL(filePath)
@@ -6,7 +8,6 @@ const loadScript = filePath => {
 }
 
 loadScript('actions/init.js')
-
 
 const sendEventToPage = ({ eventType, detail }) => {
     window.postMessage({

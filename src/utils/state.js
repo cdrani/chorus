@@ -10,7 +10,7 @@ const stateResolver = ({ resolve, reject, result, key, values }) => {
     return resolve(result)
 }
 
-const getState = key => {
+export const getState = key => {
     return new Promise((resolve, reject) => {
         chrome.storage.local.get(key, result => {
             return stateResolver({ key, resolve, reject, result })
@@ -18,7 +18,7 @@ const getState = key => {
     })
 }
 
-const removeState = key => {
+export const removeState = key => {
     return new Promise((resolve, reject) => {
         chrome.storage.local.remove(key, result => {
             return stateResolver({ key, resolve, reject, result })
@@ -26,7 +26,7 @@ const removeState = key => {
     })
 }
 
-const setState = ({ key, values }) => {
+export const setState = ({ key, values }) => {
     return new Promise((resolve, reject) => {
         chrome.storage.local.set({ [key]: values }, result => {
             return stateResolver({ resolve, reject, result, values })

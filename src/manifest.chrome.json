@@ -17,7 +17,6 @@
     {
       "run_at": "document_idle",
       "js": [
-        "utils/state.js",
         "content-script.js"
       ],
       "css": [
@@ -34,6 +33,7 @@
         "*://open.spotify.com/*"
       ],
       "resources": [
+        "styles.css",
         "utils/*.js",
         "models/*.js",
         "events/*.js",
@@ -52,14 +52,6 @@
     "unlimitedStorage"
   ],
   "background": {
-    "scripts": [
-      "background.js"
-    ]
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "chorus@cdrani.dev",
-      "strict_min_version": "109.0"
-    }
+    "service_worker": "background.js"
   }
 }
