@@ -1,15 +1,16 @@
 <h1 align="center">💃 Chorus - Spotify Enhancer 💃</h1>
 
 <p align="center">
-  <img alt="Chrome Web Store # Users" src="https://img.shields.io/chrome-web-store/users/jfnjmnapkhdbaidedlbdcmhiphfjljcd?label=Chrome%20users">
-  <img alt="Chrome Web Store Rating" src="https://img.shields.io/chrome-web-store/rating/jfnjmnapkhdbaidedlbdcmhiphfjljcd">
-  <!-- 
-    <img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/chorus-spotify-enchancer?label=Firefox%20users">
-    <img alt="Mozilla Add-on" src="https://img.shields.io/amo/rating/chorus-spotify-enchancer">
-  -->
-  <img alt="GitHub manifest version" src="https://img.shields.io/github/manifest-json/v/cdrani/chorus?filename=firefox%2Fmanifest.json">
-  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/cdrani/chorus">
-  <img alt="GitHub" src="https://img.shields.io/github/license/cdrani/chorus">
+  <img alt="All Contributors" src="https://img.shields.io/github/all-contributors/cdrani/chorus/develop?style=flat-square">
+  <img alt="GitHub manifest version" src="https://img.shields.io/github/package-json/v/cdrani/chorus?style=flat-square">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/cdrani/chorus?style=flat-square">
+  <img alt="GitHub" src="https://img.shields.io/github/license/cdrani/chorus?style=flat-square">
+  
+  <img alt="Chrome WebStore # Users" src="https://img.shields.io/chrome-web-store/users/jfnjmnapkhdbaidedlbdcmhiphfjljcd?label=Chrome%20Users&style=flat-square">
+  <img alt="Chrome WebStore Rating" src="https://img.shields.io/chrome-web-store/rating/jfnjmnapkhdbaidedlbdcmhiphfjljcd?label=Chrome%20Rating&style=flat-square">
+
+  <img alt="Mozilla Add-on # Users" src="https://img.shields.io/amo/users/chorus-spotify-enhancer?label=FireFox%20Users&style=flat-square">
+  <img alt="Mozilla Add-on Rating" src="https://img.shields.io/amo/rating/chorus-spotify-enhancer?label=FireFox%20Rating&style=flat-square">
 <p/>
 
 Enhance Spotify with controls to save favourite track section and auto-skip. Save sections can be used for infinite looping of a chorus, verse, etc. Snips can be shared with others. Auto-skip tracks in a playlists or albums and never hear them again. Additionally set global playback speed and per track speed! More features to come!
@@ -18,11 +19,11 @@ Enhance Spotify with controls to save favourite track section and auto-skip. Sav
 ## ⬇️ **Install** ⬇️
 
 [link-chrome]: https://chrome.google.com/webstore/detail/cdrani/jfnjmnapkhdbaidedlbdcmhiphfjljcd 'Version published on Chrome Web Store'
-[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/jfnjmnapkhdbaidedlbdcmhiphfjljcd.svg?label=%20">][link-chrome] and other Chromium browsers (Edge, Opera, Brave, Vivaldi, etc)
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/jfnjmnapkhdbaidedlbdcmhiphfjljcd?label=%20">][link-chrome] and other Chromium browsers (Edge, Opera, Brave, Vivaldi, [etc](https://en.wikipedia.org/wiki/Chromium_(web_browser)#Active))
 
 
 [link-firefox]: https://addons.mozilla.org/firefox/addon/chorus-spotify-enhancer/ 'Version published on Mozilla Add-ons'
-[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/firefox/firefox.svg" width="48" alt="Firefox" valign="middle">][link-firefox] [<img valign="middle" src="https://img.shields.io/amo/v/chorus-spotify-enhancer-.svg?label=%20">][link-firefox] (Coming Soon. In Progress)
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/firefox/firefox.svg" width="48" alt="Firefox" valign="middle">][link-firefox] [<img valign="middle" src="https://img.shields.io/amo/v/chorus-spotify-enhancer.svg?label=%20">][link-firefox] (Will be behind until I setup auto-publishing to Addons. Bare with me. 🐻)
 
 
 
@@ -42,7 +43,7 @@ Set left and right thumbs at 0 to skip a track completely, or better yet...
 
 ## 📆 **Upcoming Features** 📆
 
-◀ ▶️ Custom Skip Forward & Back. Currently only available for podcasts (may audiobooks(?)), but would like something like fast-forward 10secs and skip-back 5secs.
+⏪ ⏩ Custom Fast Forward & Rewind. Currently only available for podcasts (may audiobooks(?)), but would like something like fast-forward 10 secs and fast-rewind 5 secs.
 
 ✂️ Multi-Snips. More snips in a track. For example, snips to only play a chorus and the second verse of a track.
 
@@ -58,22 +59,17 @@ Set left and right thumbs at 0 to skip a track completely, or better yet...
 
 ## ⚙️ **Releases** ⚙️
 
-Releases are automated based on semantic releases and tagged as such in the [Releases](https://github.com/cdrani/chorus/releases) page. Releases have the newest features, bug fixes, etc, but the Web Store version is most likely on a day or two behind due to Chrome's review cycle. If you want the latest and greatest, the download the `Chorus.zip` file from the newest release.
+Releases are automated based on semantic releases and tagged as such in the [Releases](https://github.com/cdrani/chorus/releases) page. Releases have the newest features, bug fixes, etc, but the Web Store / Addons versions are most likely a day or two behind due to Chrome/Mozilla review cycle. If you want the latest and greatest, the download the `chorus-chrome.zip` or `chorus-firefox.zip` file from the newest release.
 
 
 
 ## 👋 **Closing Remarks** 👋
 
-Please give a ⭐ if you like and/or use this project. [Contributions](./contributing.md) are wholeheartedly welcome if they adhere to the [coc](./code_of_conduct.md)
+Please give a ⭐ if you like and/or use this project. [Contributions](./contributing.md) are wholeheartedly welcome if they adhere to the [Code of Conduct](./code_of_conduct.md)
 
 For issues, questions, feature suggestions, etc please report it [here](https://github.com/cdrani/chorus/issues/new/choose).
 
 [Kofi Page](https://ko-fi.com/cdrani) if you are inclined. No obligation - in fact I might take it as an offence. This project is about adding some missing features in Spotify that I deem might warrant the price hikes. Just giving it a :star: here and rating on the Web Store is sufficient for me to keep adding features, fixing bugs, and maintaining it. Thanks!
-
-
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 
 ## 👷‍♀️ **Contributors** 👷‍♂️
