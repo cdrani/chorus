@@ -3,7 +3,7 @@
     "README.md"
   ],
   "imageSize": 100,
-  "commit": false,
+  "commit": true,
   "commitType": "docs",
   "commitConvention": "angular",
   "contributors": [
@@ -42,11 +42,20 @@
         "code",
         "a11y"
       ]
+    },
+    {
+      "login": "ahmohil",
+      "name": "Abdul Hanan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53046043?v=4",
+      "profile": "http://ahmohil.github.io/portfolio",
+      "contributions": [
+        "design",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "skipCi": true,
-  "commit": true,
   "repoType": "github",
   "repoHost": "https://github.com",
   "projectName": "chorus",
