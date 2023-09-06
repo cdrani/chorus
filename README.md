@@ -72,7 +72,7 @@ For issues, questions, feature suggestions, etc please report it [here](https://
 
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 
@@ -86,9 +86,10 @@ For issues, questions, feature suggestions, etc please report it [here](https://
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://cdrani.dev"><img src="https://avatars.githubusercontent.com/u/18746599?v=4?s=100" width="100px;" alt="charles"/><br /><sub><b>charles</b></sub></a><br /><a href="#ideas-cdrani" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-cdrani" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#design-cdrani" title="Design">🎨</a> <a href="https://github.com/cdrani/chorus/pulls?q=is%3Apr+reviewed-by%3Acdrani" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/cdrani/chorus/issues?q=author%3Acdrani" title="Bug reports">🐛</a> <a href="https://github.com/cdrani/chorus/commits?author=cdrani" title="Documentation">📖</a> <a href="https://github.com/cdrani/chorus/commits?author=cdrani" title="Code">💻</a> <a href="#a11y-cdrani" title="Accessibility">️️️️♿️</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Piyush-Deshmukh"><img src="https://avatars.githubusercontent.com/u/99667276?v=4?s=100" width="100px;" alt="Piyush Deshmukh"/><br /><sub><b>Piyush Deshmukh</b></sub></a><br /><a href="https://github.com/cdrani/chorus/commits?author=Piyush-Deshmukh" title="Code">💻</a> <a href="#a11y-Piyush-Deshmukh" title="Accessibility">️️️️♿️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://cdrani.dev"><img src="https://avatars.githubusercontent.com/u/18746599?v=4?s=100" width="100px;" alt="charles"/><br /><sub><b>charles</b></sub></a><br /><a href="#ideas-cdrani" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-cdrani" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#design-cdrani" title="Design">🎨</a> <a href="https://github.com/cdrani/chorus/pulls?q=is%3Apr+reviewed-by%3Acdrani" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/cdrani/chorus/issues?q=author%3Acdrani" title="Bug reports">🐛</a> <a href="https://github.com/cdrani/chorus/commits?author=cdrani" title="Documentation">📖</a> <a href="#a11y-cdrani" title="Accessibility">️️️️♿️</a> <a href="https://github.com/cdrani/chorus/commits?author=cdrani" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/geraldopmj"><img src="https://avatars.githubusercontent.com/u/81118137?v=4?s=100" width="100px;" alt="Geraldo PMJ"/><br /><sub><b>Geraldo PMJ</b></sub></a><br /><a href="https://github.com/cdrani/chorus/commits?author=geraldopmj" title="Code">💻</a> <a href="#a11y-geraldopmj" title="Accessibility">️️️️♿️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Piyush-Deshmukh"><img src="https://avatars.githubusercontent.com/u/99667276?v=4?s=100" width="100px;" alt="Piyush Deshmukh"/><br /><sub><b>Piyush Deshmukh</b></sub></a><br /><a href="https://github.com/cdrani/chorus/commits?author=Piyush-Deshmukh" title="Code">💻</a> <a href="#a11y-Piyush-Deshmukh" title="Accessibility">️️️️♿️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://ahmohil.github.io/portfolio"><img src="https://avatars.githubusercontent.com/u/53046043?v=4?s=100" width="100px;" alt="Abdul Hanan"/><br /><sub><b>Abdul Hanan</b></sub></a><br /><a href="#design-ahmohil" title="Design">🎨</a> <a href="https://github.com/cdrani/chorus/commits?author=ahmohil" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
