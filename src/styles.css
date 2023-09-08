@@ -116,10 +116,6 @@
 
 .chorus-pill {
     padding: 0 .25rem;
-    min-width: 18px;
-    max-width: 20px;
-    min-height: 18px;
-    max-height: 20px;
     text-align: center;
     background-color: #535353;
 }
@@ -134,6 +130,19 @@
     padding: .125rem .25rem;
     border-radius: .125rem;
     height: 100%;
+}
+
+input[type=number], 
+input[type=number]::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #fff;
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    opacity: 1; /* Firefox */
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
 }
 
 .chorus-text-button span {
@@ -268,6 +277,7 @@
 
 .snippy {
     display: flex;
+    height: 1.5rem;
     margin: 12px 0;
     justify-content: space-evenly;
     align-items: center;
