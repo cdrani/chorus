@@ -14,12 +14,22 @@ export const createHeader = () => `
                     role="speed"
                     id="chorus-speed-button"
                     ariaLabel="Speed Controls"
-                    style="height:21px;padding:0 .25rem;padding-bottom:.125rem;margin:0 .75rem;font-size:14px"
+                    style="height:21px;padding:0 .25rem;padding-bottom:.125rem;margin-left:.5rem;font-size:14px"
                     class="chorus-text-button"
                 >
-                    speed
+                    <span>speed</span>
+                </button>
+                <button 
+                    role="seek"
+                    id="chorus-seek-button"
+                    ariaLabel="Seek Controls"
+                    style="height:21px;padding:0 .25rem;padding-bottom:.125rem;margin:0 .5rem;font-size:14px"
+                    class="chorus-text-button"
+                >
+                    seek
                 </button>
             </div>
+
             <button id="chorus-modal-close-button" class="chorus-close-button">
                 <svg 
                     role="img"
