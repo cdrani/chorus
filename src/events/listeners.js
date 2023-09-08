@@ -15,6 +15,7 @@ export default class ButtonListeners {
 
     init() {
         this.#snipViewToggle()
+        this.#seekViewToggle()
         this.#speedViewToggle()
         this.#closeModalListener()
         this.#saveTrackListener()
@@ -33,6 +34,7 @@ export default class ButtonListeners {
         this.#chorus.hide()
         this.#snip.isEditing = false
         this.#snipContainer.style.display = 'block'
+        this.#seekContainer.style.display = 'none'
         this.#speedContainer.style.display = 'none'
     }
 
@@ -44,6 +46,24 @@ export default class ButtonListeners {
         return document.getElementById('chorus-speed-controls')
     }
 
+    get #seekContainer() {
+        return document.getElementById('chorus-seek-controls')
+    }
+
+    #seekViewToggle() {
+        const seekButton = document.getElementById('chorus-seek-button')
+
+        seekButton?.addEventListener('click', () => {
+            const showingSeekControls = this.#seekContainer?.style?.display == 'block'
+            if (showingSeekControls) return
+
+            this.#currentView = 'seek'
+            this.#speedContainer.style.display = 'none'
+            this.#snipContainer.style.display = 'none'
+            this.#seekContainer.style.display = 'block'
+        })
+    }
+
     #snipViewToggle() {
         const snipButton = document.getElementById('chorus-snip-button')
 
@@ -53,6 +73,7 @@ export default class ButtonListeners {
 
             this.#currentView = 'snip'
             this.#speedContainer.style.display = 'none'
+            this.#seekContainer.style.display = 'none'
             this.#snipContainer.style.display = 'block'
         })
     }
@@ -65,6 +86,7 @@ export default class ButtonListeners {
 
             this.#currentView = 'speed'
             this.#snipContainer.style.display = 'none'
+            this.#seekContainer.style.display = 'none'
             this.#speedContainer.style.display = 'block'
             await this.#speed.init()
         })
