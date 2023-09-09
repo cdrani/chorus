@@ -60,6 +60,18 @@ class CurrentData {
         }
     }
 
+    async getSeekValues() {
+        const seekValues = await this.#store.getTrack({
+            id: 'chorus-seek',
+            value: {
+                shows: { ff: 15, rw: 15 }, // audiobooks, podcasts, (longform audio)
+                global: { ff: 10, rw: 10 }, // albums, playlists, tracks (shortform audio)
+            }
+        })
+
+        return seekValues
+    }
+
     async readTrack() {
         const track = await this.#store.getTrack({
             id: this.#songId,
