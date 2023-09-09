@@ -91,12 +91,14 @@ export default class Speed {
         }
     }
 
+    // TODO: Remove? I think this method is duplicated in CurrentData?
     get #songId() {
         const title = document.getElementById('track-title')?.textContent
         const artists = document.getElementById('track-artists')?.textContent
         return `${title} by ${artists}`
     }
 
+    // TODO: Remove? I think this method is duplicated in CurrentData?
     async readTrack() {
         const track = await this.#store.getTrack({
             id: this.#songId,
@@ -106,6 +108,7 @@ export default class Speed {
         return track
     }
 
+    // TODO: Remove? I think this method is duplicated in CurrentData?
     async readGlobals() {
         const globals = await this.#store.getTrack({
             id: 'globals',
