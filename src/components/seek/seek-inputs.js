@@ -2,8 +2,8 @@ export const createSeekInputs = () => `
     <div style="display:flex;justify-content:space-between">
         <div style="display:flex;flex-wrap:wrap;">
             <div class="chorus-common" style="height:unset;width: 100%">
-                <button class="chorus-pill" style="width:2rem;height:2rem;">
-                    <span class="chorus-text" style="display:inline-block;font-size:x-large;">&#8722;</span>
+                <button id="seek-rw-down-button" class="chorus-pill" style="width:2rem;height:2rem;">
+                    <span id="rw-down" class="chorus-text" style="display:inline-block;font-size:x-large;">&#8722;</span>
                 </button>
 
                 <div style="position:relative;height:3rem;margin:0 .5rem;">
@@ -12,17 +12,16 @@ export const createSeekInputs = () => `
                         max="60"
                         step="1"
                         type="number"
-                        placeholder="5"
-                        id="chorus-seek-back"
+                        id="seek-rw-input"
                         name="chorus-seek-back"
                         style="position:absolute;width:2rem;background:transparent;font-size:larger;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;"
                     >
 
                     <svg 
                         fill="none" 
+                        style="height:100%"
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
-                        style="height:100%"
                     >
                         <g
                             stroke="#1ed760"
@@ -36,16 +35,16 @@ export const createSeekInputs = () => `
                     </svg>
                 </div>
 
-                <button class="chorus-pill" style="width:2rem;height:2rem;">
-                    <span class="chorus-text" style="display:inline-block;font-size:x-large;">&#43;</span>
+                <button id="seek-rw-up-button" class="chorus-pill" style="width:2rem;height:2rem;">
+                    <span id="rw-up" class="chorus-text" style="display:inline-block;font-size:x-large;">&#43;</span>
                 </button>
             </div>
         </div>
 
         <div style="display:flex;flex-wrap:wrap;">
             <div class="chorus-common" style="height:unset;width:100%">
-                <button class="chorus-pill" style="width:2rem;height:2rem;">
-                    <span class="chorus-text" style="display:inline-block;font-size:x-large;">&#8722;</span>
+                <button id="seek-ff-down-button" class="chorus-pill" style="width:2rem;height:2rem;">
+                    <span id="ff-down" class="chorus-text" style="display:inline-block;font-size:x-large;">&#8722;</span>
                 </button>
 
                 <div style="position:relative;height:3rem;margin:0 .5rem;">
@@ -54,10 +53,9 @@ export const createSeekInputs = () => `
                         max="60"
                         step="1"
                         type="number"
-                        placeholder="5"
-                        id="chorus-seek-forward"
+                        id="seek-ff-input"
                         name="chorus-seek-forward"
-                        style="position:absolute;width:2rem;background:transparent;font-size:larger;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;"
+                        style="z-index:1;position:absolute;width:2rem;background:transparent;font-size:larger;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;"
                     >
                     <svg 
                         fill="none" 
@@ -77,8 +75,8 @@ export const createSeekInputs = () => `
                     </svg>
                 </div>
 
-                <button class="chorus-pill" style="width:2rem;height:2rem;">
-                    <span class="chorus-text" style="display:inline-block;font-size:x-large;">&#43;</span>
+                <button id="seek-ff-up-button" class="chorus-pill" style="width:2rem;height:2rem;">
+                    <span id="ff-up" class="chorus-text" style="display:inline-block;font-size:x-large;">&#43;</span>
                 </button>
             </div>
         </div>

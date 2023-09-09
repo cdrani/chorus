@@ -4,11 +4,11 @@ export const createSeekToggler = () => `
     <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
         <div style="display:flex;justify-content:space-between;">
             <div style="display:flex;align-items:center;">
-                <span class="chorus-text chorus-pill" style="background:green">D</span>
+                <span id="seek-global-label" class="chorus-text chorus-pill" style="background:green">G</span>
             </div>
 
             <div style="display:flex;align-items:center;">
-                <span class="chorus-text chorus-pill">P</span>
+                <span id="seek-shows-label" class="chorus-text chorus-pill">PA</span>
             </div>
         </div>
 
@@ -17,11 +17,11 @@ export const createSeekToggler = () => `
                 ${
                     createToggleButton({ 
                         labelId: 'seek-label',
-                        labelText: 'Podcast Seeking',
+                        labelText: 'Global',
                         onPathId: 'seek-toggle-on',
-                        offPathId: 'speed-toggle-off',
-                        checkboxId: 'speed-checkbox',
-                        buttonId: 'speed-toggle-button',
+                        offPathId: 'seek-toggle-off',
+                        checkboxId: 'seek-checkbox',
+                        buttonId: 'seek-toggle-button',
                     })
                 }
             </div>

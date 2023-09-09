@@ -1,6 +1,5 @@
 import { createSeekInputs } from './seek-inputs.js'
 import { createSeekButtons } from './seek-buttons.js'
-import { createToggleButton } from '../toggle-button.js'
 import { createSeekToggler } from './seek-toggler.js'
 
 export const createSeekControls = () => `
