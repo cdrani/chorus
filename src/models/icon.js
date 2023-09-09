@@ -3,6 +3,7 @@ import { createControls } from '../components/controls.js'
 export default class Icon {
     constructor() {}
 
+    // TODO: Icon should not be concerned with creating the main UI
     createRootContainer() {
         return `
             <div id="chorus">
