@@ -36,7 +36,9 @@ export default class SeekController {
     #handleButtonPress(event) {
         const { target }  = event
         const { rwInput, ffInput } = this.elements
-        const [seekAction, direction] = target.id.split('-') // ex. ff-up
+        console.log({ target })
+        const [seekAction, direction] = target.getAttribute('role').split('-') // ex. ff-up
+        console.log({ target, seekAction, direction })
 
         if (seekAction == 'ff') {
             const currentFFValue = parseInt(ffInput.value)

@@ -2,8 +2,8 @@ export const createSeekInputs = () => `
     <div style="display:flex;justify-content:space-between">
         <div style="display:flex;flex-wrap:wrap;">
             <div class="chorus-common" style="height:unset;width: 100%">
-                <button id="seek-rw-down-button" class="chorus-pill" style="width:2rem;height:2rem;">
-                    <span id="rw-down" class="chorus-text" style="display:inline-block;font-size:x-large;">&#8722;</span>
+                <button role="rw-down" id="seek-rw-down-button" class="chorus-pill" style="z-index:10;width:2rem;height:2rem;">
+                    <span class="chorus-text" style="position:relative;z-index:-1;display:inline-block;font-size:x-large;">&#8722;</span>
                 </button>
 
                 <div style="position:relative;height:3rem;margin:0 .5rem;">
@@ -35,16 +35,16 @@ export const createSeekInputs = () => `
                     </svg>
                 </div>
 
-                <button id="seek-rw-up-button" class="chorus-pill" style="width:2rem;height:2rem;">
-                    <span id="rw-up" class="chorus-text" style="display:inline-block;font-size:x-large;">&#43;</span>
+                <button role="rw-up" id="seek-rw-up-button" class="chorus-pill" style="z-index:10;width:2rem;height:2rem;">
+                    <span class="chorus-text" style="position:relative;z-index:-1;display:inline-block;font-size:x-large;">&#43;</span>
                 </button>
             </div>
         </div>
 
         <div style="display:flex;flex-wrap:wrap;">
             <div class="chorus-common" style="height:unset;width:100%">
-                <button id="seek-ff-down-button" class="chorus-pill" style="width:2rem;height:2rem;">
-                    <span id="ff-down" class="chorus-text" style="display:inline-block;font-size:x-large;">&#8722;</span>
+                <button role="ff-down" id="seek-ff-down-button" class="chorus-pill" style="z-index:10;width:2rem;height:2rem;">
+                    <span class="chorus-text" style="position:relative;z-index:-1;display:inline-block;font-size:x-large;">&#8722;</span>
                 </button>
 
                 <div style="position:relative;height:3rem;margin:0 .5rem;">
@@ -75,8 +75,8 @@ export const createSeekInputs = () => `
                     </svg>
                 </div>
 
-                <button id="seek-ff-up-button" class="chorus-pill" style="width:2rem;height:2rem;">
-                    <span id="ff-up" class="chorus-text" style="display:inline-block;font-size:x-large;">&#43;</span>
+                <button role="ff-up" id="seek-ff-up-button" class="chorus-pill" style="z-index:10;width:2rem;height:2rem;">
+                    <span class="chorus-text" style="position:relative;z-index:-1;display:inline-block;font-size:x-large;">&#43;</span>
                 </button>
             </div>
         </div>
