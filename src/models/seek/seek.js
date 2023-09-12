@@ -1,3 +1,4 @@
+import SeekIcons from './seek-icon.js'
 import SeekController from './seek-controller.js'
 
 import { store } from '../../stores/data.js'
@@ -6,9 +7,11 @@ import { currentData } from '../../data/current.js'
 export default class Seek {
     #store
     #controls
+    #seekIcons
 
     constructor() {
         this.#store = store
+        this.#seekIcons = new SeekIcons()
         this.#controls = new SeekController()
     }
 
@@ -48,5 +51,7 @@ export default class Seek {
                 }
             },
         })
+        
+        await this.#seekIcons.setSeekLabels()
     }
 }
