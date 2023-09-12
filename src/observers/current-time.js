@@ -1,3 +1,5 @@
+import SeekIcons from '../models/seek/seek-icon.js'
+
 import { currentSongInfo } from '../utils/song.js'
 import { timeToSeconds, secondsToTime } from '../utils/time.js'
 
@@ -5,10 +7,12 @@ export default class CurrentTimeObserver {
     #snip
     #video
     #observer
+    #seekIcons
 
     constructor({ video, snip }) {
         this.#snip = snip
         this.#video = video
+        this.#seekIcons = new SeekIcons()
 
         this.#init()
         this.observe()
@@ -141,6 +145,7 @@ export default class CurrentTimeObserver {
 
     observe() {
         this.#setListeners()
+        this.#seekIcons.init()
 
         this.#observer = setInterval(() => {
             const { trackId, isSkipped, isShared, isSnip, startTime, endTime } = this.#songState
@@ -194,6 +199,7 @@ export default class CurrentTimeObserver {
 
         clearInterval(this.#observer)
         this.#clearListeners()
+        this.#seekIcons.removeIcons()
         this.#observer = null
     }
 }

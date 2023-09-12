@@ -1,15 +1,18 @@
 import Chorus from '../models/chorus.js'
+import SeekIcons from '../models/seek/seek-icon.js'
 
 export default class NowPlayingObserver {
     #snip
     #video
     #chorus
     #observer
+    #seekIcons
 
     constructor({ snip, video }) {
         this.#snip = snip
         this.#video = video
         this.#chorus = new Chorus()
+        this.#seekIcons = new SeekIcons()
 
         this.observe()
     }
@@ -37,6 +40,7 @@ export default class NowPlayingObserver {
                 if (this.#chorus.isShowing) this.#snip.init()
 
                 this.#snip.updateView()
+                await this.#seekIcons.setSeekLabels()
                 await this.#video.activate() 
             }
         }
