@@ -29,21 +29,22 @@ Enhance Spotify with controls to save favourite track section and auto-skip. Sav
 
 ## **🎉 Chorus Features 🎉**
 
-⭐ Save your favourite section of a Spotify track or podcast episode. That section then will the only part played for that track or episode. This can be used to play (or replay) a favourite chorus, sample, or a verse infinitely (if looped).
+⭐ 💾 Save your favourite section of a Spotify track or podcast episode. That section then will the only part played for that track or episode. This can be used to play (or replay) a favourite chorus, sample, or a verse infinitely (if looped).
 
 Use the slider left and right thumbs to narrow down the section you want to save. This saved section will be the only part of the song played from now on.
 
 Set left and right thumbs at 0 to skip a track completely, or better yet...
 
-⭐ Block a song from being played forever. In the artist, album, playlists, or queue pages, clicking the block icon will toggle the track's blocked/unblocked state. In the blocked state, that song will always be skipped from being played in an album, queue, and/or playlist. Blocking a song takes precedence over a saved snip.
+⭐ 🛑 Block a song from being played forever. In the artist, album, playlists, or queue pages, clicking the block icon will toggle the track's blocked/unblocked state. In the blocked state, that song will always be skipped from being played in an album, queue, and/or playlist. Blocking a song takes precedence over a saved snip.
 
-⭐ Toggling the entire extension on/off by clicking the extension icon in the toolbar. Toggle the extension off whenever you want to listen to Spotify without your snips, blocked songs, or custom playback speeds and pitch. Toggle it back on to enjoy the features. It would be a good idea to have the extension pinned for quick access and use of this feature.
+⭐ 💡 Toggling the entire extension on/off by clicking the extension icon in the toolbar. Toggle the extension off whenever you want to listen to Spotify without your snips, blocked songs, or custom playback speeds and pitch. Toggle it back on to enjoy the features. It would be a good idea to have the extension pinned for quick access and use of this feature.
+
+⭐ ⏪ ⏩ Custom Seeking (Fast-Forward & Rewind) for short-form (tracks in album, playlists, etc) and long-form (podcasts and audiobooks) audio. Ex. 10 seconds skip forward and 5 seconds skip back for tracks, and 10 seconds skip back and 30 seconds skip forward for podcasts.
+
 
 ⭐ Generate a shareable link to your favourite snip for easy sharing. Currently only copied to clipboard, but upcoming features will allow social media sharing such as on twitter, IG, etc. Note that link will only work if opening on desktop browser and recipient has the extension installed.
 
 ## 📆 **Upcoming Features** 📆
-
-⏪ ⏩ Custom Fast Forward & Rewind. Currently only available for podcasts (may audiobooks(?)), but would like something like fast-forward 10 secs and fast-rewind 5 secs.
 
 ✂️ Multi-Snips. More snips in a track. For example, snips to only play a chorus and the second verse of a track.
 
@@ -65,7 +66,7 @@ Releases are automated based on semantic releases and tagged as such in the [Rel
 
 ## 👋 **Closing Remarks** 👋
 
-Please give a ⭐ if you like and/or use this project. [Contributions](./contributing.md) are wholeheartedly welcome if they adhere to the [Code of Conduct](./code_of_conduct.md)
+Please give a ⭐ if you like and/or use this project. [Contributions](./contributing.md) are wholeheartedly welcome if they adhere to the [Code of Conduct].(./code_of_conduct.md)
 
 For issues, questions, feature suggestions, etc please report it [here](https://github.com/cdrani/chorus/issues/new/choose).
 
