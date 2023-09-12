@@ -1,24 +1,32 @@
 import Chorus from '../models/chorus.js'
+import Seek from '../models/seek/seek.js'
 import Speed from '../models/speed/speed.js'
 
 export default class ButtonListeners {
     #snip
+    #seek
     #speed
     #chorus
     #currentView = 'snip'
 
     constructor(snip) {
         this.#snip = snip
-        this.#speed = new Speed(snip._store)
+        this.#seek = new Seek()
+        this.#speed = new Speed()
         this.#chorus = new Chorus()
     }
 
     init() {
         this.#snipViewToggle()
+        this.#seekViewToggle()
         this.#speedViewToggle()
+
         this.#closeModalListener()
+
+        this.#saveSeekListener()
         this.#saveTrackListener()
         this.#saveSpeedListener()
+
         this.#shareTrackListener()
         this.#deleteTrackListener()
         this.#resetSpeedListener()
@@ -33,6 +41,7 @@ export default class ButtonListeners {
         this.#chorus.hide()
         this.#snip.isEditing = false
         this.#snipContainer.style.display = 'block'
+        this.#seekContainer.style.display = 'none'
         this.#speedContainer.style.display = 'none'
     }
 
@@ -44,6 +53,25 @@ export default class ButtonListeners {
         return document.getElementById('chorus-speed-controls')
     }
 
+    get #seekContainer() {
+        return document.getElementById('chorus-seek-controls')
+    }
+
+    #seekViewToggle() {
+        const seekButton = document.getElementById('chorus-seek-button')
+
+        seekButton?.addEventListener('click', async () => {
+            const showingSeekControls = this.#seekContainer?.style?.display == 'block'
+            if (showingSeekControls) return
+
+            this.#currentView = 'seek'
+            this.#speedContainer.style.display = 'none'
+            this.#snipContainer.style.display = 'none'
+            this.#seekContainer.style.display = 'block'
+            await this.#seek.init()
+        })
+    }
+
     #snipViewToggle() {
         const snipButton = document.getElementById('chorus-snip-button')
 
@@ -53,6 +81,7 @@ export default class ButtonListeners {
 
             this.#currentView = 'snip'
             this.#speedContainer.style.display = 'none'
+            this.#seekContainer.style.display = 'none'
             this.#snipContainer.style.display = 'block'
         })
     }
@@ -65,6 +94,7 @@ export default class ButtonListeners {
 
             this.#currentView = 'speed'
             this.#snipContainer.style.display = 'none'
+            this.#seekContainer.style.display = 'none'
             this.#speedContainer.style.display = 'block'
             await this.#speed.init()
         })
@@ -105,6 +135,14 @@ export default class ButtonListeners {
         const speedSaveButton = document.getElementById('chorus-speed-save-button')
         speedSaveButton?.addEventListener('click', async () => {
             await this.#speed.save()
+            this.#hide()
+        })
+    }
+
+    #saveSeekListener() {
+        const seekSaveButton = document.getElementById('chorus-seek-save-button')
+        seekSaveButton?.addEventListener('click', async () => {
+            await this.#seek.save()
             this.#hide()
         })
     }
