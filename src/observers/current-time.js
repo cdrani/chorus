@@ -114,11 +114,6 @@ export default class CurrentTimeObserver {
         return repeatButton?.getAttribute('aria-label') === 'Disable repeat'
     }
 
-    get #atSongStart() {
-        const { startTime } = this.#songState
-        return startTime == parseInt(this.#video.currentTime)
-    }
-
     get #atSongEnd() {
         const { endTime } = this.#songState
         return endTime == parseInt(this.#video.currentTime)
