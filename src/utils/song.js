@@ -15,8 +15,10 @@ export const currentSongInfo = () => {
 
     return  {
         id,
-        trackId, 
-        url: `${location.origin}/track/${trackId}`
+        ...trackId && {
+            trackId, 
+            url: `${location.origin}/track/${trackId}`
+        }
     }
 
 }
