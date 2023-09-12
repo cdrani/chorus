@@ -14,7 +14,6 @@ export default class SeekController {
 
         seekCheckbox.checked = seekChecked
         this.#setCheckedUI(seekChecked)
-        seekLabel.textContent = seekChecked ? 'PodCasts/AudioBooks' : 'Global'  
         this.#highlightSeekValue(seekChecked)
 
         this.#data = data
@@ -36,9 +35,9 @@ export default class SeekController {
     #handleButtonPress(event) {
         const { target }  = event
         const { rwInput, ffInput } = this.elements
-        console.log({ target })
-        const [seekAction, direction] = target.getAttribute('role').split('-') // ex. ff-up
-        console.log({ target, seekAction, direction })
+
+        // ex. ff-up
+        const [seekAction, direction] = target.getAttribute('role').split('-')
 
         if (seekAction == 'ff') {
             const currentFFValue = parseInt(ffInput.value)
@@ -62,7 +61,7 @@ export default class SeekController {
         seekToggleOn.style.display = seekChecked ? 'block' : 'none'
         seekToggleOff.style.display = seekChecked ? 'none' : 'block'
 
-        seekLabel.textContent = seekChecked ? 'Global' : 'Podcasts/AudioBooks'
+        seekLabel.textContent = seekChecked ? 'Podcasts/AudioBooks' : 'Global'
         seekCheckbox.checked = seekChecked
     }
 
@@ -83,14 +82,8 @@ export default class SeekController {
 
     #highlightSeekValue(checked) {
         const { seekShowsLabel, seekGlobalLabel } = this.elements
-
-        if (checked) {
-            seekGlobalLabel.style.background = 'green'
-            seekShowsLabel.style.background = 'unset'
-        } else {
-            seekGlobalLabel.style.background = 'unset'
-            seekShowsLabel.style.background = 'green'
-        }
+        seekGlobalLabel.style.background = checked ? 'unset' : 'green'
+        seekShowsLabel.style.background = checked ? 'green' : 'unset'
     }
 
     get elements() {
