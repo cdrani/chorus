@@ -9,7 +9,7 @@ export const createSeekIcon = type => `
     >
         <span 
             id="seek-icon-${type}-label"
-            style="position:absolute;z-index:-10;background:transparent;font-weight:bold;font-size:smaller;top:50%;${type =='ff'? 'left' :'right'}:50%;text-align:center;">
+            style="position:absolute;z-index:-10;background:transparent;font-weight:bold;font-size:small;top:46%;${type =='ff'? 'left' :'right'}:50%;text-align:center;">
         </span>
         <svg 
             fill="none"
