@@ -7,7 +7,7 @@ export default class SeekController {
         }
 
         const { shows, global, seekChecked } = data
-        const { rwInput, ffInput, seekCheckbox, seekLabel } = this.elements
+        const { rwInput, ffInput, seekCheckbox } = this.elements
 
         rwInput.value = seekChecked ? shows.rw : global.rw
         ffInput.value = seekChecked ? shows.ff : global.ff
