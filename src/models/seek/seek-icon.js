@@ -22,10 +22,11 @@ export default class SeekIcons {
     }
     
     get seekType() {
-        const anchor = document.querySelector('[data-testid="CoverSlotCollapsed__container"] > div > a')
-        const contextType = anchor?.getAttribute('data-context-item-type')
+        const anchor = document.querySelector('[data-testid="context-item-info-title"] > span > a')
+        // album, track, episode, chapter
+        const contextType = anchor?.getAttribute('href')?.split('/')?.at(1)
         
-        return contextType == 'track' ? 'global' : 'shows'
+        return ['track', 'album'].includes(contextType) ? 'global' : 'shows'
     }
 
     removeIcons() {
@@ -90,10 +91,12 @@ export default class SeekIcons {
 
         this.#spotifySeekIcons = { ff: spotifyFFIcon, rw: spotifyRWIcon }
 
-        if (spotifyRWIcon.style.display == 'none') return
+        if (spotifyRWIcon?.style?.display == 'none') return
 
-        spotifyRWIcon.style.display = 'none'
-        spotifyFFIcon.style.display = 'none'
+        if (spotifyRWIcon && spotifyFFIcon) {
+            spotifyRWIcon.style.display = 'none'
+            spotifyFFIcon.style.display = 'none'
+        }
     }
 
     #handleSeekButton(e) {
