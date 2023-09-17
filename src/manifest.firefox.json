@@ -45,12 +45,46 @@
       ]
     }
   ],
+  "commands": {
+      "next": {
+          "description": "Next Track"
+      },
+      "play/pause": {
+          "description": "Play/Pause"
+      },
+      "repeat": {
+          "description": "Repeat Track"
+      },
+      "shuffle": {
+          "description": "Shuffle Tracks"
+      },
+      "previous": {
+          "description": "Previous Track"
+      },
+      "settings": {
+          "description": "Display Controls"
+      },
+      "mute/unmute": {
+          "description": "Mute/Unmute Track"
+      },
+      "seek-fastforward": {
+          "description": "Seek Track Forwards"
+      },
+      "seek-rewind": {
+          "description": "Seek Track Backwards"
+      },
+      "save/unsave": {
+         "description": "Save/Unsave Track"
+      }
+  },
   "permissions": [
-    "activeTab",
     "tabs",
     "storage",
+    "activeTab",
+    "scripting",
     "unlimitedStorage"
   ],
+  "host_permissions": ["*://open.spotify.com/"],
   "background": {
     "scripts": [
       "background.js"
