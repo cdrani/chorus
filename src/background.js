@@ -1,3 +1,5 @@
+let ENABLED = true
+
 function setBadgeInfo(enabled = true) {
     chrome.action.setBadgeText({ text: enabled ? 'on' : 'off' })
     chrome.action.setBadgeTextColor({ color: 'white' })
@@ -51,6 +53,7 @@ chrome.storage.onChanged.addListener(async changes => {
     if (!changes.hasOwnProperty('enabled')) return
 
     const { newValue } = changes.enabled
+    ENABLED = newValue
     setBadgeInfo(newValue)
     await sendMessage({ message: { enabled: newValue } })
 })
@@ -74,6 +77,14 @@ async function getActiveTab() {
     return result?.at(0)
 }
 
+async function getAllSpotifyTabs() {
+    const result = await chrome.tabs.query({
+        url: '*://*.spotify.com/*'
+    })
+
+    return result?.at(0)
+}
+
 function messenger({ tabId, message }) {
     return new Promise((reject, resolve) => {
         chrome.tabs.sendMessage(tabId, message, response => {
@@ -91,3 +102,37 @@ async function sendMessage({ message }) {
 
     return await messenger({ tabId: activeTab.id, message })
 }
+
+function handleButtonClick(selector) {
+    document.querySelector(selector).click()
+}
+
+chrome.commands.onCommand.addListener(async command => {
+    if (!ENABLED) return
+
+    const tab = await getAllSpotifyTabs()
+
+    if (!tab) return
+
+    const commandsMap = {
+        'settings': '#chorus-icon',
+        'seek-rewind': '#seek-player-rw-button',
+        'seek-fastforward': '#seek-player-ff-button',
+        'repeat': '[data-testid="control-button-repeat"]',
+        'shuffle': '[data-testid="control-button-shuffle"]',
+        'next': '[data-testid="control-button-skip-forward"]',
+        'previous': '[data-testid="control-button-skip-back"]',
+        'play/pause': '[data-testid="control-button-playpause"]',
+        'mute/unmute': '[data-testid="volume-bar-toggle-mute-button"]',
+        'save/unsave': '[data-testid="now-playing-widget"] > [data-testid="add-button"]',
+    }
+
+    const selector = commandsMap[command]
+    if (!selector) return 
+
+    await chrome.scripting.executeScript({
+        args: [selector],
+        func: handleButtonClick,
+        target: { tabId: tab.id },
+    })
+})
