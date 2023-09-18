@@ -40,6 +40,7 @@ export default class CurrentSnip extends Snip {
     }
 
     _highlightSnip(isSnip) {
+        // TODO: fixme
         const svgElement = document.getElementById('chorus-highlight')
         const fill = Boolean(isSnip) ? '#1ed760' : 'currentColor'
 
