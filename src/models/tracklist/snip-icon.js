@@ -1,4 +1,5 @@
-import TrackListIcon from "./tracklist-icon.js"
+import TrackListIcon from './tracklist-icon.js'
+import { SNIP_ICON, createIcon } from '../../components/icons/icon.js'
 
 export default class SnipIcon extends TrackListIcon {
     constructor(store) {
@@ -17,34 +18,8 @@ export default class SnipIcon extends TrackListIcon {
         super._setUI(row)
     }
 
+    // FIXME: click on snip-icon in tracklist doe not close settings modal
     get _iconUI() {
-        return `
-            <button 
-                role="snip"
-                type="button"
-                aria-label="Edit Snip"
-                style="visibility:hidden;border:none;background:none;display:flex;align-items:center;cursor:pointer"
-            >
-                <svg
-                    role="snip"
-                    fill="none"
-                    width="16"
-                    height="16"
-                    stroke="currentColor"
-                    viewBox="0 0 20 20"
-                    stroke-width="1.5"
-                    style="margin-bottom:4px;"
-                    preserveAspectRatio="xMidYMid meet"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        role="snip"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
-                    />
-                </svg>
-            </button>
-        `
+        return createIcon(SNIP_ICON)
     }
 }

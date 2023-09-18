@@ -289,14 +289,16 @@ input[type=number]::-webkit-outer-spin-button {
 
 [role=skip][aria-label],
 [role=snip][aria-label], 
-[role=speed][aria-label] {
+[role=speed][aria-label],
+[role=settings][aria-label] {
     position: relative;
     display: inline-block;
 }
 
 [role=skip][aria-label]:after,
 [role=snip][aria-label]:after, 
-[role=speed][aria-label]:after {
+[role=speed][aria-label]:after, 
+[role=settings][aria-label]:after {
     content: attr(aria-label);
     display: none;
     position: absolute;
@@ -322,6 +324,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 [role=skip][aria-label]:hover:after,
 [role=snip][aria-label]:hover:after, 
-[role=speed][aria-label]:hover:after {
+[role=speed][aria-label]:hover:after,
+[role=settings][aria-label]:hover:after {
     display: inline-block;
 }
