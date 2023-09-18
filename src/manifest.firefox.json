@@ -2,7 +2,7 @@
   "short_name": "Chorus",
   "name": "Chorus - Spotify Enhancer",
   "description": "Enhance Spotify with controls to save favourite snips, auto-skip tracks, and set global and custom speed. More to come!",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "manifest_version": 3,
   "author": "cdrani",
   "action": {},
@@ -46,36 +46,36 @@
     }
   ],
   "commands": {
-      "next": {
-          "description": "Next Track"
-      },
-      "play/pause": {
-          "description": "Play/Pause"
-      },
-      "repeat": {
-          "description": "Repeat Track"
-      },
-      "shuffle": {
-          "description": "Shuffle Tracks"
-      },
-      "previous": {
-          "description": "Previous Track"
-      },
-      "settings": {
-          "description": "Display Controls"
-      },
-      "mute/unmute": {
-          "description": "Mute/Unmute Track"
-      },
-      "seek-fastforward": {
-          "description": "Seek Track Forwards"
-      },
-      "seek-rewind": {
-          "description": "Seek Track Backwards"
-      },
-      "save/unsave": {
-         "description": "Save/Unsave Track"
-      }
+    "next": {
+      "description": "Next Track"
+    },
+    "play/pause": {
+      "description": "Play/Pause"
+    },
+    "repeat": {
+      "description": "Repeat Track"
+    },
+    "shuffle": {
+      "description": "Shuffle Tracks"
+    },
+    "previous": {
+      "description": "Previous Track"
+    },
+    "settings": {
+      "description": "Display Controls"
+    },
+    "mute/unmute": {
+      "description": "Mute/Unmute Track"
+    },
+    "seek-fastforward": {
+      "description": "Seek Track Forwards"
+    },
+    "seek-rewind": {
+      "description": "Seek Track Backwards"
+    },
+    "save/unsave": {
+      "description": "Save/Unsave Track"
+    }
   },
   "permissions": [
     "tabs",
@@ -84,7 +84,9 @@
     "scripting",
     "unlimitedStorage"
   ],
-  "host_permissions": ["*://open.spotify.com/"],
+  "host_permissions": [
+    "*://open.spotify.com/"
+  ],
   "background": {
     "scripts": [
       "background.js"
