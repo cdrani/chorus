@@ -7,15 +7,20 @@ export const SETTINGS_ICON = {
     stroke: 'currentColor',
 }
 
+export const SNIP_ICON = {
+    role: 'snip',
+    ariaLabel: 'Edit Snip',
+    stroke: 'currentColor',
+}
+
 export const SKIP_ICON = {
     role: 'skip',
     ariaLabel: 'Skip Song',
 }
 
-export const SNIP_ICON = {
-    role: 'snip',
-    ariaLabel: 'Edit Snip',
-    stroke: 'currentColor',
+export const NOW_PLAYING_SKIP_ICON = {
+    ...SKIP_ICON,
+    id: 'chorus-skip',
 }
 
 const SVG_PATHS = {
@@ -32,14 +37,14 @@ const SVG_PATHS = {
 }
 
 const BUTTON_STYLES = {
-    settings: 'padding:0 4px;border:none;background:none;display:flex;justify-content:center;align-items:center;',
+    settings: 'padding:0 4px;border:none;background:none;display:flex;justify-content:center;align-items:center;cursor:pointer;',
     default: 'visibility:hidden;border:none;background:unset;display:flex;align-items:center;cursor:pointer;'
 }
 
 export const createIcon = ({ role, viewBox, id, ariaLabel, strokeWidth, stroke}) => {
     const svgPath = SVG_PATHS[role] || SVG_PATHS.default
-    const settingsButton = role == 'settings'
-    const buttonStyles = BUTTON_STYLES[role] || BUTTON_STYLES.default
+    const buttonStylesKey = id ? 'settings' : 'default'
+    const buttonStyles = BUTTON_STYLES[buttonStylesKey]
 
     return `
         <button 
@@ -48,7 +53,7 @@ export const createIcon = ({ role, viewBox, id, ariaLabel, strokeWidth, stroke})
             id="${id || ''}"
             style="${buttonStyles}"
             aria-label="${ariaLabel || ''}"
-            class="${settingsButton ? 'chorus-hover-white' : ''}"
+            class="${id ? 'chorus-hover-white' : ''}"
         >
             <svg
                 role="${role}"

@@ -19,6 +19,8 @@
     border-width: 0 !important;
     border-style: solid !important;
     border-color: #e5e7eb;
+    display: flex;
+    justify-content: space-between;
 }
 
 .chorus-common {
@@ -249,11 +251,11 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .slider>.thumb.hover {
-    box-shadow: 0 0 0 6px #28e269;
+    box-shadow: 0 0 0 4px #28e269;
 }
 
 .slider>.thumb.active {
-    box-shadow: 0 0 0 6px #28e269;
+    box-shadow: 0 0 0 4px #28e269;
 }
 
 .time {

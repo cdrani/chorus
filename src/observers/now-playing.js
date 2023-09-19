@@ -50,7 +50,7 @@ export default class NowPlayingObserver {
         const snipUI = document.getElementById('chorus')
         if (!snipUI) return
 
-        snipUI.style.display = this.#observer ? 'block' : 'none'
+        snipUI.style.display = this.#observer ? 'flex' : 'none'
 
         const chorusMain = document.getElementById('chorus-main')
         if (!chorusMain) return
