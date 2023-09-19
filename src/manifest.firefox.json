@@ -70,11 +70,14 @@
     "seek-fastforward": {
       "description": "Seek Track Forwards"
     },
+    "save/unsave": {
+      "description": "Save/Unsave Track"
+    },
     "seek-rewind": {
       "description": "Seek Track Backwards"
     },
-    "save/unsave": {
-      "description": "Save/Unsave Track"
+    "block-track": {
+      "description": "Add track to block list"
     }
   },
   "permissions": [

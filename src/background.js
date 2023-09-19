@@ -116,6 +116,7 @@ chrome.commands.onCommand.addListener(async command => {
 
     const commandsMap = {
         'settings': '#chorus-icon',
+        'block-track': '#chorus-skip',
         'seek-rewind': '#seek-player-rw-button',
         'seek-fastforward': '#seek-player-ff-button',
         'repeat': '[data-testid="control-button-repeat"]',

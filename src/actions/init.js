@@ -1,9 +1,10 @@
 import { spotifyVideo } from './overload.js'
 
-import Main from './main.js'
+import Alert from '../models/alert.js'
 import { store } from '../stores/data.js'
 import TrackList from '../models/tracklist/track-list.js'
 import CurrentSnip from '../models/snip/current-snip.js'
+import NowPlayingIcons from '../models/now-playing-icons.js'
 
 import TrackListObserver from '../observers/track-list.js'
 import NowPlayingObserver from '../observers/now-playing.js'
@@ -13,10 +14,11 @@ class App {
     #video
     #store
     #snip
-    #main
+    #alert
     #intervalId
     #trackList
     #active = true
+    #nowPlayingIcons
     #currentTimeObserver
     #nowPlayingObserver
     #trackListObserver
@@ -32,8 +34,9 @@ class App {
         this.#trackList = new TrackList(this.#store)
         this.#snip = new CurrentSnip(this.#store)
 
-        this.#main = new Main(this.#snip)
+        this.#alert = new Alert()
 
+        this.#nowPlayingIcons = new NowPlayingIcons(this.#snip)
         this.#nowPlayingObserver = new NowPlayingObserver({ snip: this.#snip, video: this.#video })
         this.#trackListObserver = new TrackListObserver(this.#trackList)
         this.#currentTimeObserver = new CurrentTimeObserver({ video: this.#video, snip: this.#snip })
@@ -81,10 +84,10 @@ class App {
             if (!this.#active) return
             if (!this.#intervalId) return
 
-            const chorus = document.querySelectorAll('#chorus')
+            const chorus = document.getElementById('chorus')
 
-            if (chorus?.length == 0) {
-                this.#main.init()
+            if (!chorus) {
+                this.#nowPlayingIcons.init()
                 await this.#video.activate()
             }
         }, 3000)
