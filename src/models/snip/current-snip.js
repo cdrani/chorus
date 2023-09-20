@@ -5,8 +5,8 @@ import { currentSongInfo } from '../../utils/song.js'
 import { copyToClipBoard } from '../../utils/clipboard.js'
 
 export default class CurrentSnip extends Snip {
-    constructor(store) {
-        super(store)
+    constructor() {
+        super()
     }
 
     init() {

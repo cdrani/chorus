@@ -1,33 +1,23 @@
+export const createHeaderButton = ({ role, ariaLabel, additionalStyles }) => `
+    <button 
+        role="${role}"
+        ariaLabel="${ariaLabel}"
+        id="chorus-${role}-button"
+        class="chorus-text-button"
+        style="height:21px;padding:0 .25rem;padding-bottom:.125rem;font-size:14px;${additionalStyles || ''}"
+    >
+        <span>${role}</span>
+    </button>
+`
+
 export const createHeader = () => `
     <div class="chorus-common">
         <span class="chorus-header">chorus</span>
         <div style="display:flex;justify-content:space-between;align-items:center;">
             <div style="display:flex;height:25px;align-items:center;justify-content:space-around;">
-                <button 
-                    role="snip"
-                    id="chorus-snip-button"
-                    ariaLabel="Snip Controls"
-                    style="height:21px;padding:0 .25rem;padding-bottom:.125rem;font-size:14px" class="chorus-text-button">
-                        <span>snip</span>
-                </button>
-                <button 
-                    role="speed"
-                    id="chorus-speed-button"
-                    ariaLabel="Speed Controls"
-                    style="height:21px;padding:0 .25rem;padding-bottom:.125rem;margin-left:.5rem;font-size:14px"
-                    class="chorus-text-button"
-                >
-                    <span>speed</span>
-                </button>
-                <button 
-                    role="seek"
-                    id="chorus-seek-button"
-                    ariaLabel="Seek Controls"
-                    style="height:21px;padding:0 .25rem;padding-bottom:.125rem;margin:0 .5rem;font-size:14px"
-                    class="chorus-text-button"
-                >
-                    seek
-                </button>
+                ${createHeaderButton({ role: 'snip', ariaLabel: 'Snip Controls', additionalStyles: 'background-color:green;' })}
+                ${createHeaderButton({ role: 'speed', ariaLabel: 'Speed Controls', additionalStyles: 'margin-left:.5rem;' })}
+                ${createHeaderButton({ role: 'seek', ariaLabel: 'Seek Controls', additionalStyles: 'margin:0 .5rem;' })}
             </div>
 
             <button id="chorus-modal-close-button" class="chorus-close-button">

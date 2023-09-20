@@ -2,9 +2,17 @@ import { createSnipControls } from '../components/snip/snip-controls.js'
 import { createSpeedControls } from '../components/speed/speed-controls.js'
 import { createSeekControls } from '../components/seek/seek-controls.js'
 
+import HeaderListeners from '../events/listeners/header-listeners.js'
+import ActionListeners from '../events/listeners/action-listeners.js'
+
 import { parseNodeString } from '../utils/parser.js'
 
 export default class Chorus {
+    constructor() {
+        this.headerListeners = new HeaderListeners()
+        this.actionListeners = new ActionListeners()
+    }
+
     get isShowing() {
         if (!this.mainElement) return false
 
@@ -39,14 +47,18 @@ export default class Chorus {
         this.chorusControls.appendChild(seekControlsEl)
     }
 
-    hide() {
+    async hide() {
         if (!this.mainElement) return
         
+        await this.headerListeners.hide()
         this.mainElement.style.display = 'none'
     }
 
     show() {
         this.#insertIntoDOM()
         this.mainElement.style.display = 'block'
+
+        this.headerListeners.init()
+        this.actionListeners.init()
     }
 }

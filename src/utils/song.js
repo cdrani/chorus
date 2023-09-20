@@ -2,22 +2,23 @@ import { timeToSeconds } from './time.js'
 
 export const currentSongInfo = () => {
     const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.getAttribute('aria-label')
-    const trackURL = document.querySelector('[data-testid="CoverSlotCollapsed__container"] > div > a')?.href
+    const context = document.querySelector('[data-testid="CoverSlotCollapsed__container"] > div > a')
+    const contextType = context?.getAttribute('data-context-item-type')
 
     // Remove 'Now playing: ' prefix
     const id = songLabel?.split(': ')?.at(1)
 
-    if (!trackURL) return { id }
+    if (!contextType) return { id }
 
-    const params = new URLSearchParams(trackURL)
-
-    const trackId = params.get('uri').split('track:').at(1)
+    const params = new URLSearchParams(context.href)
+    const trackId = params.get('uri').split(`${contextType}:`).at(1)
 
     return  {
         id,
-        ...trackId && {
+        ...contextType && {
+            type: contextType,
             trackId, 
-            url: `${location.origin}/track/${trackId}`
+            url: `${location.origin}/${contextType}/${trackId}`
         }
     }
 
