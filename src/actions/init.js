@@ -16,7 +16,6 @@ class App {
     #snip
     #alert
     #intervalId
-    #trackList
     #active = true
     #nowPlayingIcons
     #currentTimeObserver
@@ -31,14 +30,13 @@ class App {
     }
 
     #init() {
-        this.#trackList = new TrackList(this.#store)
-        this.#snip = new CurrentSnip(this.#store)
+        this.#snip = new CurrentSnip()
 
         this.#alert = new Alert()
 
         this.#nowPlayingIcons = new NowPlayingIcons(this.#snip)
         this.#nowPlayingObserver = new NowPlayingObserver({ snip: this.#snip, video: this.#video })
-        this.#trackListObserver = new TrackListObserver(this.#trackList)
+        this.#trackListObserver = new TrackListObserver(new TrackList(this.#store))
         this.#currentTimeObserver = new CurrentTimeObserver({ video: this.#video, snip: this.#snip })
 
         this.#snip.updateView()

@@ -1,15 +1,13 @@
-import ButtonListeners from '../../events/listeners.js'
+import { store } from '../../stores/data.js'
 import SliderControls from '../slider/slider-controls.js'
 
 export default class Snip {
-    constructor(store) {
+    constructor() {
         this._store = store
         this._controls = new SliderControls()
-        this._listeners = new ButtonListeners(this)
     }
 
     init() {
-        this._listeners.init()
         this._controls.init()
         this.isEditing = true
     }
