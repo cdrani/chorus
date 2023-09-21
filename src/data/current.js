@@ -86,7 +86,7 @@ class CurrentData {
             id: 'globals',
             value: {
                 playbackRate: 1,
-                preservePitch: true
+                preservesPitch: true
             }
         })
 
