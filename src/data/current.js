@@ -18,7 +18,7 @@ class CurrentData {
         return mainElement.style.display == 'block'
     }
 
-    get #songId() {
+    get songId() {
         if (this.#isShowingModal) {
             const title = document.getElementById('track-title')?.textContent
             const artists = document.getElementById('track-artists')?.textContent
@@ -74,7 +74,7 @@ class CurrentData {
 
     async readTrack() {
         const track = await this.#store.getTrack({
-            id: this.#songId,
+            id: this.songId,
             value: this.#trackDefaults
         })
 
