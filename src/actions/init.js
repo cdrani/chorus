@@ -1,6 +1,5 @@
 import { spotifyVideo } from './overload.js'
 
-import Alert from '../models/alert.js'
 import { store } from '../stores/data.js'
 import TrackList from '../models/tracklist/track-list.js'
 import CurrentSnip from '../models/snip/current-snip.js'
@@ -14,7 +13,6 @@ class App {
     #video
     #store
     #snip
-    #alert
     #intervalId
     #active = true
     #nowPlayingIcons
@@ -31,8 +29,6 @@ class App {
 
     #init() {
         this.#snip = new CurrentSnip()
-
-        this.#alert = new Alert()
 
         this.#nowPlayingIcons = new NowPlayingIcons(this.#snip)
         this.#nowPlayingObserver = new NowPlayingObserver({ snip: this.#snip, video: this.#video })
