@@ -3,26 +3,30 @@ import Listeners from './listeners.js'
 export default class HeaderListeners extends Listeners {
     constructor() {
         super()
-        this.viewInFocus = null
-        this.VIEWS = ['snip', 'speed', 'seek']
+        this._setup = false
+        this._viewInFocus = null
+        this._VIEWS = ['snip', 'speed', 'seek']
     }
 
     init() {
+        if (this._setup) return
+
         this.#snipViewToggle()
         this.#seekViewToggle()
         this.#speedViewToggle()
         this.#closeModalListener()
 
-        this.currentView = 'snip'
+        this._currentView = 'snip'
+        this._setup = true
     }
 
     async hide() {
-        if (this.viewInFocus == 'speed') {
+        if (this._viewInFocus == 'speed') {
             this._speed.clearCurrentSpeed()
             await this._speed.reset()
         }
 
-        this.currentView = 'snip'
+        this._currentView = 'snip'
         this._hide()
     }
 
@@ -30,15 +34,15 @@ export default class HeaderListeners extends Listeners {
         const seekButton = document.getElementById('chorus-seek-button')
 
         seekButton?.addEventListener('click', async () => {
-            this.currentView = 'seek'
+            this._currentView = 'seek'
             await this._seek.init()
         })
     }
 
-    set currentView(selectedView) {
-        this.viewInFocus = selectedView
+    set _currentView(selectedView) {
+        this._viewInFocus = selectedView
         
-        this.VIEWS.forEach(view => {
+        this._VIEWS.forEach(view => {
             const viewButton = document.getElementById(`chorus-${view}-button`)
             const viewInFocusContainer = document.getElementById(`chorus-${view}-controls`)
             if (!viewButton || !viewInFocusContainer) return
@@ -50,21 +54,19 @@ export default class HeaderListeners extends Listeners {
 
     #snipViewToggle() {
         const snipButton = document.getElementById('chorus-snip-button')
-        snipButton?.addEventListener('click', () => { this.currentView = 'snip' })
+        snipButton?.addEventListener('click', () => { this._currentView = 'snip' })
     }
 
     #speedViewToggle() {
         const speedButton = document.getElementById('chorus-speed-button')
         speedButton?.addEventListener('click', async () => {
-            this.currentView = 'speed'
+            this._currentView = 'speed'
             await this._speed.init()
         })
     }
 
     #closeModalListener() {
         const closeButton = document.getElementById('chorus-modal-close-button')
-        closeButton?.addEventListener('click', async () =>  { 
-            await this.hide()
-        })
+        closeButton?.addEventListener('click', async () =>  { await this.hide() })
     }
 }
