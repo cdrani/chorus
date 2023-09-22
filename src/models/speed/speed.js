@@ -25,15 +25,6 @@ export default class Speed {
         this.#video.clearCurrentSpeed()
     }
 
-    get #trackDefaults() {
-        return {
-            startTime: 0,
-            isSnip: false,
-            isSkipped: false,
-            endTime: this.#video.duration,
-        }
-    }
-
     get #inputValues() {
         const { input, speedCheckbox, pitchCheckbox } = this.#controls.elements
 
@@ -57,10 +48,10 @@ export default class Speed {
     }
 
     async saveTrackSpeed({ playbackRate, preservesPitch }) {
-        const trackInfo = await this.readTrack()
+        const trackInfo = await currentData.readTrack()
 
         await this.#store.saveTrack({
-            id: this.#songId,
+            id: currentData.songId,
             value: {
                 ...trackInfo,
                 playbackRate,
@@ -73,8 +64,8 @@ export default class Speed {
     }
 
     async saveGlobalSpeed({ playbackRate, preservesPitch }) {
-        const globalsInfo = await this.readGlobals()
-        const trackInfo = await this.readTrack()
+        const globalsInfo = await currentData.readGlobals()
+        const trackInfo = await currentData.readTrack()
 
         await this.#store.saveTrack({
             id: 'globals',
@@ -89,36 +80,6 @@ export default class Speed {
             this.#video.playbackRate = playbackRate
             this.#video.preservesPitch = preservesPitch
         }
-    }
-
-    // TODO: Remove? I think this method is duplicated in CurrentData?
-    get #songId() {
-        const title = document.getElementById('track-title')?.textContent
-        const artists = document.getElementById('track-artists')?.textContent
-        return `${title} by ${artists}`
-    }
-
-    // TODO: Remove? I think this method is duplicated in CurrentData?
-    async readTrack() {
-        const track = await this.#store.getTrack({
-            id: this.#songId,
-            value: this.#trackDefaults
-        })
-
-        return track
-    }
-
-    // TODO: Remove? I think this method is duplicated in CurrentData?
-    async readGlobals() {
-        const globals = await this.#store.getTrack({
-            id: 'globals',
-            value: {
-                playbackRate: 1,
-                preservesPitch: true
-            }
-        })
-
-        return globals
     }
 
     async reset() {

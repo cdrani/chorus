@@ -1,17 +1,16 @@
 #chorus-alert {
-    display:none;
-    justify-content:space-between;
-    align-items:center;
-    border-radius:.5rem;
-    z-index:99999;
-    padding:.5rem 1.25rem;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: .5rem;
+    z-index: 99999;
+    padding: .5rem 1.25rem;
     padding-right:.75rem;
-    min-width:320px;
-    width:60%;
-    background:#1db954;
-    position:absolute;
-    bottom:10%;
-    right:2.5%;
+    width: 320px;
+    background: green;
+    position: absolute;
+    bottom: 10%;
+    right: 2.5%;
 }
 
 #chorus {
