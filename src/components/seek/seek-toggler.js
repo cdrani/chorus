@@ -1,29 +1,28 @@
 import { createToggleButton } from '../toggle-button.js'
 
+const createTag = ({ id, tag, style = '' }) => `
+    <div style="display:flex;align-items:center;">
+        <span id="seek-${id}-label" class="chorus-text chorus-pill" style="${style}">${tag}</span>
+    </div>
+`
+
 export const createSeekToggler = () => `
     <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
         <div style="display:flex;justify-content:space-between;">
-            <div style="display:flex;align-items:center;">
-                <span id="seek-global-label" class="chorus-text chorus-pill" style="background:green">G</span>
-            </div>
-
-            <div style="display:flex;align-items:center;">
-                <span id="seek-shows-label" class="chorus-text chorus-pill">PA</span>
-            </div>
+            ${createTag({ id: 'global', tag: 'G', style: 'background:green;' })}
+            ${createTag({ id: 'shows', tag: 'PA' })}
         </div>
 
         <div>
             <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end">
-                ${
-                    createToggleButton({ 
-                        labelId: 'seek-label',
-                        labelText: 'Global',
-                        onPathId: 'seek-toggle-on',
-                        offPathId: 'seek-toggle-off',
-                        checkboxId: 'seek-checkbox',
-                        buttonId: 'seek-toggle-button',
-                    })
-                }
+                ${createToggleButton({ 
+                    labelText: 'Global',
+                    labelId: 'seek-label',
+                    onPathId: 'seek-toggle-on',
+                    checkboxId: 'seek-checkbox',
+                    offPathId: 'seek-toggle-off',
+                    buttonId: 'seek-toggle-button',
+                })}
             </div>
         </div>
     </div>
