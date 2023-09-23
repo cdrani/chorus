@@ -51,9 +51,11 @@ export default class CurrentSnip extends Snip {
 
     share() {
         const { url } = currentSongInfo()
-        const { startTime, endTime } = this.read()
+        const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = this.read()
+        const pitch = preservesPitch ? 1 : 0
+        const rate = parseFloat(playbackRate) * 100
         
-        const shareURL = `${url}?startTime=${startTime}&endTime=${endTime}`
+        const shareURL = `${url}?ch=${startTime}-${endTime}-${rate}-${pitch}`
         copyToClipBoard(shareURL)
 
         super._displayAlert()

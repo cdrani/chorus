@@ -19,10 +19,12 @@ export default class CurrentTimeObserver {
     }
 
     #init() {
-        const { isSnip, isShared, startTime } = this.#songState
+        const { isSnip, isShared, startTime, playbackRate, preservesPitch } = this.#songState
 
         if (isShared) {
             this.#video.currentTime = startTime
+            this.#video.playbackRate = playbackRate
+            this.#video.preservesPitch = preservesPitch
             this.#playTrack()
         }
 
@@ -79,12 +81,16 @@ export default class CurrentTimeObserver {
         if (!location?.search) return
         
         const params = new URLSearchParams(location.search)
+        const values = params?.get('ch')
+        if (!values) return
 
-        if (!params.get('startTime') || !params.get('endTime')) return
+        const [startTime, endTime, playbackRate, preservesPitch] = values.split('-')
 
         return { 
-            endTime: parseInt(params.get('endTime'), 10),
-            startTime: parseInt(params.get('startTime'), 10)
+            endTime: parseInt(endTime, 10),
+            startTime: parseInt(startTime, 10),
+            preservesPitch: parseInt(preservesPitch, 10) == 1,
+            playbackRate: parseInt(parseFloat(playbackRate) / 100),
         }
     }
 
@@ -92,7 +98,7 @@ export default class CurrentTimeObserver {
         const state = this.#snip.read()
         const sharedSnipState = this.#sharedSnipValues
 
-        if (!sharedSnipState) return state
+        if (!sharedSnipState) return { ...state, isShared: false }
 
         const { trackId } = currentSongInfo()
 
@@ -147,15 +153,16 @@ export default class CurrentTimeObserver {
         this.#setListeners()
         this.#seekIcons.init()
 
+        // TODO: extract logic into own class
         this.#observer = setInterval(() => {
             const { trackId, isSkipped, isShared, isSnip, startTime, endTime } = this.#songState
             
-            if (!isSkipped && !isSnip) {
+            if (!isShared && !isSkipped && !isSnip) {
                 this.#muted && this.#muteButton.click()
                 return
             }
 
-            if (isShared && trackId !== location.pathname.split('track/').at(1)) {
+            if (isShared && trackId !== location.pathname.split('/')?.at(-1)) {
                 this.#video.currentTime = startTime
                 this.#playTrack()
             }
