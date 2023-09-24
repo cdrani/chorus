@@ -1,4 +1,4 @@
-import Listeners from './listeners'
+import Listeners from './listeners.js'
 
 export default class ActionListeners extends Listeners {
     constructor() {
