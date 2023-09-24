@@ -2,7 +2,7 @@
   "name": "chorus",
   "private": true,
   "type": "module",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "scripts": {
     "build:chrome": "TARGET=chrome rollup -c",
     "watch:chrome": "TARGET=chrome rollup -c -w",
