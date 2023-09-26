@@ -1,4 +1,4 @@
-import VideoElement from '../models/video.js'
+import VideoElement from '../models/video/video.js'
 
 class SpotifyVideo {
     #video
