@@ -105,7 +105,8 @@ export default class SeekIcons {
         const seekTime = parseInt(button.firstElementChild.textContent, 10)
 
         const currentTime = this.#video.currentTime
-        this.#video.currentTime = role == 'ff' ? (currentTime + seekTime) : (currentTime - seekTime)
+        const newTime = role == 'ff' ? (currentTime + seekTime) : (currentTime - seekTime)
+        this.#video.currentTime = { source: 'chorus', value: newTime }
     }
 
     #setupListeners() {
