@@ -17,6 +17,7 @@ export default class SongTracker {
             this.#handleSharedSong(songStateData)
             this.#handleUntouchedSong(songStateData)
             this.#handleSkippedSong(songStateData)
+            this.#handleSnipStart(songStateData)
             this.#handleSnipEnd(songStateData)
             this.#toggleMuteIfMuted()
         }, 1000)
@@ -70,6 +71,12 @@ export default class SongTracker {
         }
     }
 
+    #handleSnipStart({ isSnip, startTime }) {
+        if (this.#atPreSnipStart({ isSnip, startTime })) {
+            this.#setVideoTime({ source: 'chorus', value: startTime }) 
+        }
+    }
+
     #handleSnipEnd({ isSnip, endTime, startTime }) {
         if (this.#atSnipEnd({ isSnip, endTime })) {
             if (this.#isLooping) {
@@ -98,8 +105,12 @@ export default class SongTracker {
         this.#nextButton.click()
     }
 
+    #atPreSnipStart({ isSnip, startTime }) {
+        return isSnip && parseInt(startTime, 10) > parseInt(this._video.currentTime, 10)
+    }
+
     #atSnipEnd({ isSnip, endTime }) {
-        return isSnip && parseInt(endTime) == parseInt(this._video.currentTime)
+        return isSnip && parseInt(this._video.currentTime, 10) >= parseInt(endTime, 10)
     }
 
     // TODO: move below into utils?
