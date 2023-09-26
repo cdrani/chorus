@@ -12,7 +12,6 @@ export default class Snip {
 
     init() {
         this._controls.init()
-        this.isEditing = true
     }
 
     read() {

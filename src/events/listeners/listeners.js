@@ -10,7 +10,6 @@ export default class Listeners {
     }
 
     _hide() {
-        this._snip.isEditing = false
         const mainElement = document.getElementById('chorus-main')
         mainElement.style.display = 'none'
     }
