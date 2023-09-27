@@ -40,7 +40,7 @@ export default class VideoOverride {
         return !isNaN(numRate) && isFinite(numRate)
     }
 
-    #handlePlaybackRateSetting = async (value) => {
+    #handlePlaybackRateSetting = async value => {
         if (value?.source !== 'chorus') {
             if (this._video.currentSpeed) return this._video.currentSpeed
 
@@ -53,11 +53,7 @@ export default class VideoOverride {
         return this.#isValidPlaybackRate(value.value) ? value.value : 1
     }
 
-    #handleCurrentTimeSetting = (value) => {
-        if (value?.source == 'chorus') {
-            return value?.value ?? value
-        }
-
-        return value
+    #handleCurrentTimeSetting = value => {
+        return value?.value ?? value
     }
 }
