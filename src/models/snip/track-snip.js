@@ -62,14 +62,13 @@ export default class TrackSnip extends Snip {
         this.toggleIconVisibility(songStateData)
     }
 
-    share() {
+    get trackURL() {
         const { url } = trackSongInfo(this.#row)
-        const { startTime, endTime } = this.read()
-        
-        const shareURL = `${location.origin}${url}?startTime=${startTime}&endTime=${endTime}`
-        copyToClipBoard(shareURL)
+        return url
+    }
 
-        super._displayAlert()
+    share() {
+        super._share()
     }
 
     async save() {

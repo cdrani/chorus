@@ -3,6 +3,8 @@ import { store } from '../../stores/data.js'
 import Alert from '../alert.js'
 import SliderControls from '../slider/slider-controls.js'
 
+import { copyToClipBoard } from '../../utils/clipboard.js'
+
 export default class Snip {
     constructor() {
         this._store = store
@@ -33,6 +35,17 @@ export default class Snip {
 
         this.#setUpdateControls(response)
         this.#toggleRemoveButton(isSnip || isSkip)
+    }
+
+    _share() {
+        const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = this.read()
+        const pitch = preservesPitch ? 1 : 0
+        const rate = parseFloat(playbackRate) * 100
+        
+        const shareURL = `${this.trackURL}?ch=${startTime}-${endTime}-${rate}-${pitch}`
+        copyToClipBoard(shareURL)
+
+        this.displayAlert()
     }
 
     #toggleRemoveButton(showRemove) {
