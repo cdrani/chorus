@@ -2,7 +2,6 @@ import Snip from './snip.js'
 
 import { playback } from '../../utils/playback.js'
 import { currentSongInfo } from '../../utils/song.js'
-import { copyToClipBoard } from '../../utils/clipboard.js'
 
 export default class CurrentSnip extends Snip {
     constructor() {

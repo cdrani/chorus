@@ -32,7 +32,6 @@ export default class Snip {
         const { isSnip, isSkip } = response
 
         this.#setUpdateControls(response)
-        this._highlightSnip(isSnip)
         this.#toggleRemoveButton(isSnip || isSkip)
     }
 
@@ -54,7 +53,7 @@ export default class Snip {
         }
     }
 
-    _displayAlert() {
+    displayAlert() {
         this._alert.displayAlert()
     }
 

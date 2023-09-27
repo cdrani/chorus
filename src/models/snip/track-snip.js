@@ -1,7 +1,7 @@
 import Snip from './snip.js'
 
 import { trackSongInfo } from '../../utils/song.js'
-import { copyToClipBoard } from '../../utils/clipboard.js'
+import { highlightElement } from '../../utils/higlight.js'
 
 export default class TrackSnip extends Snip {
     #row
@@ -42,18 +42,24 @@ export default class TrackSnip extends Snip {
 
     updateView() {
         super._updateView()
+        this.highlightSnip()
     }
 
-    _highlightSnip(isSnip) {
-        const svgElement = this.#row.querySelector('svg[role="snip"]')
-        const fill = isSnip ? '#1ed760' : 'currentColor'
-
-        if (!svgElement) return
-
-        svgElement.style.color = fill
-
-        const icon = this.#row.querySelector('button[role="snip"]')
+    toggleIconVisibility({ isSnip }) {
+        const icon = this.#row.queryselector('button[role="snip"]')
         icon.style.visibility = isSnip ? 'visible' : 'hidden'
+    }
+
+    highlightSnip() {
+        const songStateData = this.read()
+        highlightElement({ 
+            songStateData,
+            property: 'color',
+            context: this.#row,
+            selector: 'svg[role="snip"]',
+        })
+
+        this.toggleIconVisibility(songStateData)
     }
 
     share() {

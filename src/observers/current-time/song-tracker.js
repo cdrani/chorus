@@ -1,6 +1,8 @@
 import { songState } from '../../data/song-state.js'
 import { spotifyVideo } from '../../actions/overload.js'
 
+import { highlightElement } from '../../utils/higlight.js'
+
 export default class SongTracker {
     constructor() {
         this._startedAtZero = false
@@ -33,7 +35,8 @@ export default class SongTracker {
             if (this.#isEditing) return
             const songStateData = await this.#getSongState()
 
-            this.#handleSkippedSong(songStateData)
+            highlightElement({ selector: '#chorus-icon > svg', songStateData })
+
             if (!songStateData.isSkipped) {
                 this.#handleSongStart(songStateData)
                 this.#handleSongEnd(songStateData)
