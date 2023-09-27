@@ -1,15 +1,17 @@
 import { store } from '../../stores/data.js'
+
+import Alert from '../alert.js'
 import SliderControls from '../slider/slider-controls.js'
 
 export default class Snip {
     constructor() {
         this._store = store
+        this._alert = new Alert()
         this._controls = new SliderControls()
     }
 
     init() {
         this._controls.init()
-        this.isEditing = true
     }
 
     read() {
@@ -53,12 +55,7 @@ export default class Snip {
     }
 
     _displayAlert() {
-        const alertBox = document.getElementById('chorus-alert') 
-        const alertMessage = alertBox.querySelector('[id="chorus-alert-message"]')
-
-        alertMessage.textContent = `Snip copied to clipboard.`
-        alertBox.style.display = 'flex' 
-        setTimeout(() => { alertBox.style.display = 'none' }, 3000)
+        this._alert.displayAlert()
     }
 
     _setTrackInfo({ title, artists }) {

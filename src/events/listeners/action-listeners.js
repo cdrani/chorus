@@ -3,9 +3,12 @@ import Listeners from './listeners.js'
 export default class ActionListeners extends Listeners {
     constructor() {
         super()
+        this._setup = false
     }
 
     init() {
+        if (this._setup) return
+
         this.#saveSeekListener()
         this.#saveTrackListener()
         this.#saveSpeedListener()
@@ -13,6 +16,8 @@ export default class ActionListeners extends Listeners {
         this.#shareTrackListener()
         this.#deleteTrackListener()
         this.#resetSpeedListener()
+
+        this._setup = true
     }
 
     #resetSpeedListener() {
@@ -61,7 +66,6 @@ export default class ActionListeners extends Listeners {
 
     #shareTrackListener() {
         const shareButton = document.getElementById('chorus-snip-share-button')
-        shareButton?.removeEventListener('click', () => this.#handleShare())
         shareButton?.addEventListener('click', () => this.#handleShare())
     }
 }

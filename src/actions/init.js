@@ -1,92 +1,77 @@
-import { spotifyVideo } from './overload.js'
-
-import Alert from '../models/alert.js'
 import { store } from '../stores/data.js'
-import TrackList from '../models/tracklist/track-list.js'
+import { spotifyVideo } from './overload.js'
 import CurrentSnip from '../models/snip/current-snip.js'
+import TrackList from '../models/tracklist/track-list.js'
 import NowPlayingIcons from '../models/now-playing-icons.js'
 
 import TrackListObserver from '../observers/track-list.js'
 import NowPlayingObserver from '../observers/now-playing.js'
-import CurrentTimeObserver from '../observers/current-time.js'
+import CurrentTimeObserver from '../observers/current-time/current-time.js'
 
 class App {
-    #video
-    #store
-    #snip
-    #alert
-    #intervalId
-    #active = true
-    #nowPlayingIcons
-    #currentTimeObserver
-    #nowPlayingObserver
-    #trackListObserver
-
     constructor({ video, store }) {
-        this.#store = store
-        this.#video = video
+        this._store = store
+        this._video = video
+        this._active = true
+        this._intervalId = null
 
         this.#init()
     }
 
     #init() {
-        this.#snip = new CurrentSnip()
+        this._snip = new CurrentSnip()
 
-        this.#alert = new Alert()
+        this._nowPlayingIcons = new NowPlayingIcons(this._snip)
+        this._currentTimeObserver = new CurrentTimeObserver(this._video)
+        this._trackListObserver = new TrackListObserver(new TrackList(this._store))
+        this._nowPlayingObserver = new NowPlayingObserver({ snip: this._snip, video: this._video })
 
-        this.#nowPlayingIcons = new NowPlayingIcons(this.#snip)
-        this.#nowPlayingObserver = new NowPlayingObserver({ snip: this.#snip, video: this.#video })
-        this.#trackListObserver = new TrackListObserver(new TrackList(this.#store))
-        this.#currentTimeObserver = new CurrentTimeObserver({ video: this.#video, snip: this.#snip })
-
-        this.#snip.updateView()
-
+        this._snip.updateView()
         this.#resetInterval()    
-
         this.#reInit()
     }
 
     #resetInterval() {
-        if (!this.#intervalId) return 
+        if (!this._intervalId) return 
 
-        clearInterval(this.#intervalId)
-        this.#intervalId = null
+        clearInterval(this._intervalId)
+        this._intervalId = null
     }
 
     disconnect() {
-        this.#active = false
-        this.#video.reset()
+        this._active = false
+        this._video.reset()
 
-        this.#trackListObserver.disconnect()
-        this.#currentTimeObserver.disconnect()
-        this.#nowPlayingObserver.disconnect()
+        this._trackListObserver.disconnect()
+        this._currentTimeObserver.disconnect()
+        this._nowPlayingObserver.disconnect()
         
         this.#resetInterval()
     }
 
     async connect() {
-        this.#active = true
+        this._active = true
 
-        this.#trackListObserver.observe()
-        this.#currentTimeObserver.observe()
-        this.#nowPlayingObserver.observe()
+        this._trackListObserver.observe()
+        this._currentTimeObserver.observe()
+        this._nowPlayingObserver.observe()
 
         this.#resetInterval()
-        await this.#video.activate()
+        await this._video.activate()
 
         this.#reInit()
     }
 
     #reInit() {
-        this.#intervalId = setInterval(async () => {
-            if (!this.#active) return
-            if (!this.#intervalId) return
+        this._intervalId = setInterval(async () => {
+            if (!this._active) return
+            if (!this._intervalId) return
 
             const chorus = document.getElementById('chorus')
 
             if (!chorus) {
-                this.#nowPlayingIcons.init()
-                await this.#video.activate()
+                this._nowPlayingIcons.init()
+                await this._video.activate()
             }
         }, 3000)
     }

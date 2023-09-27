@@ -1,6 +1,7 @@
 import { createSeekIcon } from '../../components/seek/seek-icon.js'
 
 import { currentData } from '../../data/current.js'
+import { songState } from '../../data/song-state.js'
 import { parseNodeString } from '../../utils/parser.js'
 import { spotifyVideo } from '../../actions/overload.js'
 
@@ -99,13 +100,23 @@ export default class SeekIcons {
         }
     }
 
-    #handleSeekButton(e) {
+    async #calculateCurrentTime({ role, seekTime }) {
+        const { startTime, endTime } = await songState()
+        const currentTime = this.#video.currentTime
+        const newTimeFF = Math.min(parseInt(currentTime + seekTime, 10), parseInt(endTime, 10))
+        const newStartTime = currentTime < parseInt(startTime) ? 0 : startTime
+        const newTimeRW = Math.max(parseInt(currentTime - seekTime, 10), parseInt(newStartTime, 10))
+        
+        return role == 'ff' ? newTimeFF : newTimeRW
+    }
+
+    async #handleSeekButton(e) {
         const button = e.target
         const role = button.getAttribute('role')
         const seekTime = parseInt(button.firstElementChild.textContent, 10)
 
-        const currentTime = this.#video.currentTime
-        this.#video.currentTime = role == 'ff' ? (currentTime + seekTime) : (currentTime - seekTime)
+        const newTime = await this.#calculateCurrentTime({ role, seekTime })
+        this.#video.currentTime = { source: 'chorus', value: newTime }
     }
 
     #setupListeners() {
