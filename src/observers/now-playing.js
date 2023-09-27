@@ -18,7 +18,7 @@ export default class NowPlayingObserver {
         const config = { subtree: true, childList: true, attributes: true }
         const target = document.querySelector('[data-testid="now-playing-widget"]')
 
-        this._observer = new MutationObserver(this.#handler)
+        this._observer = new MutationObserver(this.#mutationHandler)
         this._observer.observe(target, config)
         this.#toggleSnipUI()
     }
@@ -31,21 +31,21 @@ export default class NowPlayingObserver {
         )
     }
 
-    #handler = async mutationsList => {
+    #mutationHandler = async mutationsList => {
         for (const mutation of mutationsList) {
             if (this.#isAnchor(mutation)) {
-                const { isSnip, isShared, isSkipped, startTime } = await songState()
+                const { isShared, isSkipped, startTime, endTime } = await songState()
+
                 if (!isShared && location?.search) history.pushState(null, '', location.pathname)
                 if (this._chorus.isShowing) this._snip.init()
-
                 this._snip.updateView()
                 await this._seekIcons.setSeekLabels()
                 await this._video.activate() 
-
+                
                 if (isSkipped) {
                     document.querySelector('[data-testid="control-button-skip-forward"]')?.click()
-                    this._video.currentTime = { source: 'chorus', value: 0 }
-                } else if (isSnip || isShared) {
+                    this._video.currentTime = { source: 'chorus', value: endTime + 1 }
+                } else {
                     this._video.element.currentTime = { source: 'chorus', value: startTime }
                 }
             }
@@ -57,7 +57,6 @@ export default class NowPlayingObserver {
         if (!snipUI) return
 
         snipUI.style.display = this._observer ? 'flex' : 'none'
-
         const chorusMain = document.getElementById('chorus-main')
         if (!chorusMain) return
 
