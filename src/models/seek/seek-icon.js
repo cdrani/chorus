@@ -104,7 +104,8 @@ export default class SeekIcons {
         const { startTime, endTime } = await songState()
         const currentTime = this.#video.currentTime
         const newTimeFF = Math.min(parseInt(currentTime + seekTime, 10), parseInt(endTime, 10))
-        const newTimeRW = Math.max(parseInt(currentTime - seekTime, 10), parseInt(startTime, 10))
+        const newStartTime = currentTime < parseInt(startTime) ? 0 : startTime
+        const newTimeRW = Math.max(parseInt(currentTime - seekTime, 10), parseInt(newStartTime, 10))
         
         return role == 'ff' ? newTimeFF : newTimeRW
     }
