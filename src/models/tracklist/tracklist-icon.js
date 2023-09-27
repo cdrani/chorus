@@ -2,18 +2,14 @@ import { trackSongInfo } from '../../utils/song.js'
 import { parseNodeString } from '../../utils/parser.js'
 
 export default class TrackListIcon {
-    #key
-    #store
-    #selector
-
     constructor({ key, store, selector }) {
-        this.#key = key
-        this.#store = store
-        this.#selector = selector
+        this._key = key
+        this._store = store
+        this._selector = selector
     }
 
     #getIcon(row) {
-        return row.querySelector(this.#selector)
+        return row.querySelector(this._selector)
     }
 
     _setUI(row) {
@@ -43,14 +39,14 @@ export default class TrackListIcon {
         const song = trackSongInfo(row)
         if (!song) return
 
-        return await this.#store.getTrack({
+        return await this._store.getTrack({
             id: song.id,
             value: { isSkipped: false, isSnip: false, startTime: 0, endTime: song.endTime },
         })
     }
 
     async getTrack(id) {
-        return await this.#store.getTrack({ id })
+        return await this._store.getTrack({ id })
     }
 
     async _saveTrack(row) {
@@ -59,7 +55,7 @@ export default class TrackListIcon {
 
         const snipInfo = await this.getTrack(song.id)
 
-        await this.#store.saveTrack({
+        await this._store.saveTrack({
             id: song.id,
             value: { ...snipInfo, isSkipped: !snipInfo.isSkipped },
         })
@@ -77,8 +73,8 @@ export default class TrackListIcon {
 
         const snipInfo = await this.getTrack(song.id)
 
-        this._burn({ icon, burn: snipInfo[this.#key] })
-        this._glow({ icon, glow: snipInfo[this.#key] })
+        this._burn({ icon, burn: snipInfo[this._key] })
+        this._glow({ icon, glow: snipInfo[this._key] })
     }
 
     #getStyleProp(icon) {

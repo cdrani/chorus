@@ -4,16 +4,16 @@ import { trackSongInfo } from '../../utils/song.js'
 import { highlightElement } from '../../utils/higlight.js'
 
 export default class TrackSnip extends Snip {
-    #row
-
     constructor(store) {
         super(store)
+
+        this._row = null
     }
 
     init(row) {
         super.init()
 
-        this.#row = row
+        this._row = row
         this._controls.init()
         this.#displayTrackInfo()
         const { id, endTime: duration } = trackSongInfo(row)
@@ -21,13 +21,13 @@ export default class TrackSnip extends Snip {
     }
 
     #displayTrackInfo() {
-        const { id } = trackSongInfo(this.#row) 
+        const { id } = trackSongInfo(this._row) 
         const [title, artists] = id.split(' by ')
         super._setTrackInfo({ title, artists })
     }
 
     get _defaultTrack() {
-        const { id, endTime } = trackSongInfo(this.#row)
+        const { id, endTime } = trackSongInfo(this._row)
 
         return {
             id,
@@ -46,7 +46,7 @@ export default class TrackSnip extends Snip {
     }
 
     toggleIconVisibility({ isSnip }) {
-        const icon = this.#row.queryselector('button[role="snip"]')
+        const icon = this._row.queryselector('button[role="snip"]')
         icon.style.visibility = isSnip ? 'visible' : 'hidden'
     }
 
@@ -55,7 +55,7 @@ export default class TrackSnip extends Snip {
         highlightElement({ 
             songStateData,
             property: 'color',
-            context: this.#row,
+            context: this._row,
             selector: 'svg[role="snip"]',
         })
 
@@ -63,7 +63,7 @@ export default class TrackSnip extends Snip {
     }
 
     get trackURL() {
-        const { url } = trackSongInfo(this.#row)
+        const { url } = trackSongInfo(this._row)
         return url
     }
 
@@ -76,7 +76,7 @@ export default class TrackSnip extends Snip {
         const { isSkipped } = this.read()
 
         await this._store.saveTrack({
-            id: trackSongInfo(this.#row).id,
+            id: trackSongInfo(this._row).id,
             value: {
                 isSnip: true,
                 startTime: inputLeft.value,
@@ -88,4 +88,3 @@ export default class TrackSnip extends Snip {
         this.updateView()
     }
 }
-
