@@ -62,5 +62,10 @@ export default class CurrentSnip extends Snip {
         })
 
         this.updateView()
+
+        const { isSkipped: updatedSkipValue }  = this.read()
+        if (updatedSkipValue) {
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
+        }
     }
 }
