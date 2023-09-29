@@ -2,7 +2,7 @@ import { timeToSeconds } from './time.js'
 
 export const currentSongInfo = () => {
     const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.getAttribute('aria-label')
-    const context = document.querySelector('[data-testid="CoverSlotCollapsed__container"] > div > a')
+    const context = document.querySelector('[data-testid="CoverSlotCollapsed__container"] a')
     const contextType = context?.getAttribute('data-context-item-type')
 
     // Remove 'Now playing: ' prefix
