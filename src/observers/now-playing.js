@@ -34,20 +34,10 @@ export default class NowPlayingObserver {
     #mutationHandler = async mutationsList => {
         for (const mutation of mutationsList) {
             if (this.#isAnchor(mutation)) {
-                const { isShared, isSkipped, startTime, endTime } = await songState()
-
-                if (!isShared && location?.search) history.pushState(null, '', location.pathname)
                 if (this._chorus.isShowing) this._snip.init()
                 this._snip.updateView()
                 await this._seekIcons.setSeekLabels()
                 await this._video.activate() 
-                
-                if (isSkipped) {
-                    document.querySelector('[data-testid="control-button-skip-forward"]')?.click()
-                    this._video.currentTime = { source: 'chorus', value: endTime + 1 }
-                } else {
-                    this._video.element.currentTime = { source: 'chorus', value: startTime }
-                }
             }
         }
     }
