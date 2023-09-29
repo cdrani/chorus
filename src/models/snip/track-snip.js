@@ -1,19 +1,19 @@
 import Snip from './snip.js'
 
 import { trackSongInfo } from '../../utils/song.js'
-import { copyToClipBoard } from '../../utils/clipboard.js'
+import { highlightElement } from '../../utils/higlight.js'
 
 export default class TrackSnip extends Snip {
-    #row
-
     constructor(store) {
         super(store)
+
+        this._row = null
     }
 
     init(row) {
         super.init()
 
-        this.#row = row
+        this._row = row
         this._controls.init()
         this.#displayTrackInfo()
         const { id, endTime: duration } = trackSongInfo(row)
@@ -21,13 +21,13 @@ export default class TrackSnip extends Snip {
     }
 
     #displayTrackInfo() {
-        const { id } = trackSongInfo(this.#row) 
+        const { id } = trackSongInfo(this._row) 
         const [title, artists] = id.split(' by ')
         super._setTrackInfo({ title, artists })
     }
 
     get _defaultTrack() {
-        const { id, endTime } = trackSongInfo(this.#row)
+        const { id, endTime } = trackSongInfo(this._row)
 
         return {
             id,
@@ -42,28 +42,33 @@ export default class TrackSnip extends Snip {
 
     updateView() {
         super._updateView()
+        this.highlightSnip()
     }
 
-    _highlightSnip(isSnip) {
-        const svgElement = this.#row.querySelector('svg[role="snip"]')
-        const fill = isSnip ? '#1ed760' : 'currentColor'
-
-        if (!svgElement) return
-
-        svgElement.style.color = fill
-
-        const icon = this.#row.querySelector('button[role="snip"]')
+    toggleIconVisibility({ isSnip }) {
+        const icon = this._row.queryselector('button[role="snip"]')
         icon.style.visibility = isSnip ? 'visible' : 'hidden'
     }
 
-    share() {
-        const { url } = trackSongInfo(this.#row)
-        const { startTime, endTime } = this.read()
-        
-        const shareURL = `${location.origin}${url}?startTime=${startTime}&endTime=${endTime}`
-        copyToClipBoard(shareURL)
+    highlightSnip() {
+        const songStateData = this.read()
+        highlightElement({ 
+            songStateData,
+            property: 'color',
+            context: this._row,
+            selector: 'svg[role="snip"]',
+        })
 
-        super._displayAlert()
+        this.toggleIconVisibility(songStateData)
+    }
+
+    get trackURL() {
+        const { url } = trackSongInfo(this._row)
+        return url
+    }
+
+    share() {
+        super._share()
     }
 
     async save() {
@@ -71,7 +76,7 @@ export default class TrackSnip extends Snip {
         const { isSkipped } = this.read()
 
         await this._store.saveTrack({
-            id: trackSongInfo(this.#row).id,
+            id: trackSongInfo(this._row).id,
             value: {
                 isSnip: true,
                 startTime: inputLeft.value,
@@ -83,4 +88,3 @@ export default class TrackSnip extends Snip {
         this.updateView()
     }
 }
-

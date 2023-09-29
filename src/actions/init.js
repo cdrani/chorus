@@ -26,7 +26,6 @@ class App {
         this._trackListObserver = new TrackListObserver(new TrackList(this._store))
         this._nowPlayingObserver = new NowPlayingObserver({ snip: this._snip, video: this._video })
 
-        this._snip.updateView()
         this.#resetInterval()    
         this.#reInit()
     }

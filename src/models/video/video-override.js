@@ -19,8 +19,12 @@ export default class VideoOverride {
 
         Object.defineProperty(HTMLMediaElement.prototype, propertyName, {
             async set(value) {
-                const newValue = self._video.active ? await handler.call(this, value) : value
-                descriptor.set.call(this, newValue)
+                let newValue
+
+                if (self._video.active) {
+                    newValue = await handler.call(this, value)
+                }
+                descriptor.set.call(this, newValue ?? value)
             },
             get: descriptor.get,
             enumerable: descriptor.enumerable,
@@ -54,6 +58,9 @@ export default class VideoOverride {
     }
 
     #handleCurrentTimeSetting = value => {
-        return value?.value ?? value
+        if (value?.source == 'chorus') return value?.value
+        if (value !== parseInt(this._video.currentTime)) return undefined
+        
+        return this._video.currentTime
     }
 }

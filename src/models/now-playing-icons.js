@@ -75,5 +75,9 @@ export default class NowPlayingIcons {
             id: currentSongInfo().id,
             value: { ...songInfo, isSkipped: !songInfo.isSkipped },
         })
+
+        if (!songInfo.isSkipped) {
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
+        }
     }
 }

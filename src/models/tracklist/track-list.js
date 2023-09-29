@@ -7,24 +7,19 @@ import TrackSnip from '../snip/track-snip.js'
 import { trackSongInfo } from '../../utils/song.js'
 
 export default class TrackList {
-    #icons
-    #chorus
-    #snipIcon
-    #skipIcon
-    #trackSnip
-    #previousRowNum = null
-    #visibleEvents = ['mouseenter']
-    #events = ['mouseenter', 'mouseleave']
-
     constructor(store) {
-        this.#chorus = new Chorus()
-        this.#skipIcon = new SkipIcon(store)
-        this.#snipIcon = new SnipIcon(store)
-        this.#trackSnip = new TrackSnip(store)
+        this._chorus = new Chorus()
+        this._skipIcon = new SkipIcon(store)
+        this._snipIcon = new SnipIcon(store)
+        this._trackSnip = new TrackSnip(store)
+
+        this._visibleEvents = ['mouseenter']
+        this._events = ['mouseenter', 'mouseleave']
         
-        this.#icons = [
-            this.#skipIcon //, this.#snipIcon
+        this._icons = [
+            this._skipIcon , // this._snipIcon
         ]
+        this._previousRowNum = null
     }
 
     get #trackRows() {
@@ -65,17 +60,17 @@ export default class TrackList {
         const song = trackSongInfo(row)
         if (!song) return
 
-        this.#events.forEach(event => {
+        this._events.forEach(event => {
             row?.addEventListener(event, async () => {
-                const snipInfo = await this.#snipIcon.getTrack(song.id)
+                const snipInfo = await this._snipIcon.getTrack(song.id)
                 const icons = this.#getRowIcons(row)
                 const keys = { snip: 'isSnip', skip: 'isSkipped' }
 
                 icons.forEach(icon => {
-                      icon.style.visibility = this.#visibleEvents.includes(event) ? 'visible' : 'hidden'
+                      icon.style.visibility = this._visibleEvents.includes(event) ? 'visible' : 'hidden'
                       const role = icon.getAttribute('role')
-                      this.#snipIcon._burn({ icon, burn: snipInfo[keys[role]] })
-                      this.#snipIcon._glow({ icon, glow: snipInfo[keys[role]] })
+                      this._snipIcon._burn({ icon, burn: snipInfo[keys[role]] })
+                      this._snipIcon._glow({ icon, glow: snipInfo[keys[role]] })
                 })
             })
         })
@@ -94,20 +89,20 @@ export default class TrackList {
             const currentIndex = row.parentElement.getAttribute('aria-row-index')
 
             if (role == 'snip') {
-                if (!this.#previousRowNum || (currentIndex != this.#previousRowNum)) {
-                    this.#chorus.show()
-                    this.#trackSnip.init(row)
-                } else if (currentIndex == this.#previousRowNum) {
-                    this.#chorus.toggle()
+                if (!this._previousRowNum || (currentIndex != this._previousRowNum)) {
+                    this._chorus.show()
+                    this._trackSnip.init(row)
+                } else if (currentIndex == this._previousRowNum) {
+                    this._chorus.toggle()
                 }
                 
                 const icon = row.querySelector('button[role="snip"]')
-                this.#snipIcon._animate(icon)
-                this.#previousRowNum = currentIndex 
+                this._snipIcon._animate(icon)
+                this._previousRowNum = currentIndex 
             } else {
                 const icon = row.querySelector('button[role="skip"]')
-                await this.#skipIcon._saveTrack(row)
-                this.#skipIcon._animate(icon)
+                await this._skipIcon._saveTrack(row)
+                this._skipIcon._animate(icon)
             }
         }
     }
@@ -125,7 +120,7 @@ export default class TrackList {
 
         if (!containers?.length) return
 
-        this.#previousRowNum = null
+        this._previousRowNum = null
 
         containers.forEach(container => { 
             container?.removeEventListener('click', this.#handleClick)
@@ -135,7 +130,7 @@ export default class TrackList {
 
     #setRowEvents() {
         this.#trackRows.forEach(row => {
-            this.#icons.forEach(icon => {
+            this._icons.forEach(icon => {
                 icon.setUI(row)
                 icon.setInitialState(row)
             })

@@ -2,7 +2,6 @@ import Snip from './snip.js'
 
 import { playback } from '../../utils/playback.js'
 import { currentSongInfo } from '../../utils/song.js'
-import { copyToClipBoard } from '../../utils/clipboard.js'
 
 export default class CurrentSnip extends Snip {
     constructor() {
@@ -39,26 +38,13 @@ export default class CurrentSnip extends Snip {
         super._updateView()
     }
 
-    _highlightSnip(isSnip) {
-        // TODO: fixme
-        const svgElement = document.getElementById('chorus-highlight')
-        const fill = Boolean(isSnip) ? '#1ed760' : 'currentColor'
-
-        if (!svgElement) return
-
-        svgElement.style.stroke = fill
+    get trackURL() {
+        const { url } = currentSongInfo()
+        return url
     }
 
     share() {
-        const { url } = currentSongInfo()
-        const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = this.read()
-        const pitch = preservesPitch ? 1 : 0
-        const rate = parseFloat(playbackRate) * 100
-        
-        const shareURL = `${url}?ch=${startTime}-${endTime}-${rate}-${pitch}`
-        copyToClipBoard(shareURL)
-
-        super._displayAlert()
+        super._share()
     }
 
     async save() {
@@ -76,5 +62,10 @@ export default class CurrentSnip extends Snip {
         })
 
         this.updateView()
+
+        const { isSkipped: updatedSkipValue }  = this.read()
+        if (updatedSkipValue) {
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
+        }
     }
 }

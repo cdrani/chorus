@@ -1,21 +1,19 @@
 export default class TrackListObserver {
-    #trackList
-    #observer
-    #isHidden = true
-
     constructor(trackList) {
-        this.#trackList = trackList
+        this._observer = null
+        this._isHidden = true
+        this._trackList = trackList
 
         this.observe()
     }
 
     observe() {
         this.#showUI()
-        this.#trackList.setTrackListClickEvent()
+        this._trackList.setTrackListClickEvent()
 
         const target = document.querySelector('main')
-        this.#observer = new MutationObserver(this.#mutationHandler)
-        this.#observer.observe(target, { subtree: true, childList: true, })
+        this._observer = new MutationObserver(this.#mutationHandler)
+        this._observer.observe(target, { subtree: true, childList: true, })
     }
 
     #isQueueView(mutation) {
@@ -49,29 +47,29 @@ export default class TrackListObserver {
 
     #mutationHandler = (mutationsList) => {
         for (const mutation of mutationsList) {
-            if (this.#isQueueView || this.#isMainView(mutation) || this.#isMoreLoaded(mutation)) {
+            if (this.#isQueueView(mutation) || this.#isMainView(mutation) || this.#isMoreLoaded(mutation)) {
                 if (this.#isMainView(mutation)) {
-                    this.#trackList.setTrackListClickEvent()
+                    this._trackList.setTrackListClickEvent()
                 }
-                this.#isHidden ? this.#trackList.removeBlocking() : this.#trackList.setUpBlocking()         
+                this._isHidden ? this._trackList.removeBlocking() : this._trackList.setUpBlocking()         
             }
         }
     }
 
     #hideUI() {
-        this.#isHidden = true
-        this.#trackList.removeBlocking()
+        this._isHidden = true
+        this._trackList.removeBlocking()
     }
 
     #showUI() {
-        this.#isHidden = false
-        this.#trackList.setUpBlocking()
+        this._isHidden = false
+        this._trackList.setUpBlocking()
     }
 
     disconnect() {
         this.#hideUI()
 
-        this.#observer?.disconnect()
-        this.#observer = null
+        this._observer?.disconnect()
+        this._observer = null
     }
 }

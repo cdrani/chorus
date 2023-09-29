@@ -1,15 +1,18 @@
 import { songState } from '../../data/song-state.js'
 import { spotifyVideo } from '../../actions/overload.js'
 
+import { highlightElement } from '../../utils/higlight.js'
+import { secondsToTime, timeToSeconds } from '../../utils/time.js'
+
 export default class SongTracker {
     constructor() {
-        this._startedAtZero = false
+        this._synced = false
         this._video = spotifyVideo.element
         this.initState()
     }
 
     get #isPaused() {
-        return this._video.element.paused || !this._video.element.playing
+        return this._video.element.paused
     }
 
     #playTrack() {
@@ -22,84 +25,76 @@ export default class SongTracker {
     }
 
     async initState() {
-        const { isSkipped, playbackRate, preservesPitch } = await this.#getSongState()
+        const { isShared, startTime, playbackRate, preservesPitch } = await this.#getSongState()
         this._video.playbackRate = playbackRate
         this._video.preservesPitch = preservesPitch
-        !isSkipped && this.#playTrack()
+        isShared && this.#handleSongStart({ startTime })
     }
 
     initInterval() {
         return setInterval(async () => {
-            if (this.#isEditing) return
             const songStateData = await this.#getSongState()
+            const { isShared, isSkipped } = songStateData
 
-            this.#handleSkippedSong(songStateData)
-            if (!songStateData.isSkipped) {
-                this.#handleSongStart(songStateData)
-                this.#handleSongEnd(songStateData)
-                if (this.#isMuted) this.#toggleMuteIfMuted()
-            } else {
-                if (!this.#isMuted) this.#toggleMuteIfMuted()
+            highlightElement({ selector: '#chorus-icon > svg', songStateData })
+            if (!isShared && location?.search) {
+              history.pushState(null, '', location.pathname)
+        return
             }
-        }, 1000)
-    }
 
-    #handleSkippedSong({ isSkipped }) {
-        if (isSkipped) {
-            this.#muteAndSkip()
-        }
+            if (!isSkipped) {
+                if (this.#isMuted) this.#toggleMuteIfMuted()
+                this.#handleSongEnd(songStateData)
+            }
+        }, 500)
     }
 
     #setVideoTime(timeObject) {
         this._video.element.currentTime = timeObject
     }
 
-    #atSongStart(startTime) {
-        return parseInt(startTime, 10) > parseInt(this._video.currentTime, 10)
+    #isSyncedFromStart() {
+        const currentTime = document.querySelector('[data-testid="playback-position"]')?.textContent
+        const displayedTime = timeToSeconds(currentTime)
+
+        return parseInt(displayedTime, 10) == parseInt(this._video.currentTime, 10)
     }
 
     #handleSongStart({ startTime }) {
-        if (this.#atSongStart(startTime)) {
-            this.#setVideoTime({ source: 'chorus', value: startTime }) 
+        if (!this.#isSyncedFromStart() && !this._synced && this.#isPaused) {
+            this._synced = false
+            setTimeout(() => {
+                this.#setVideoTime({ source: 'chorus', value: startTime })
+                const displayedTime = document.querySelector('[data-testid="playback-position"]')
+                displayedTime.textContent = secondsToTime(startTime)
+            }, 250)
+            this.#playTrack()
+        } else {
+            this._synced = true
         }
     }
 
     #atSongEnd(endTime) {
-        return parseInt(this._video.currentTime, 10) >= parseInt(endTime, 10)
+        return parseInt(this._video.currentTime, 10) >= parseInt(endTime, 10) + 1
     }
 
-    #handleSongEnd({ isSnip, endTime, startTime }) {
+    #handleSongEnd({ endTime, startTime }) {
         if (this.#atSongEnd(endTime)) {
-            if (isSnip && this.#isLooping) {
+            if (this.#isLooping) {
                 this.#setVideoTime({ source: 'chorus', value: startTime }) 
             } else {
-                this.#muteAndSkip()
+                if (!this.#isMuted) this.#muteButton.click()
+                this.#nextButton.click()
             }
+            return
         }
     }
 
     #toggleMuteIfMuted() {
-        if (this.#isMuted) {
-            this.#muteButton.click()
-        }
-    }
-
-    #muteAndSkip() {
-        if (!this.#isMuted) {
-            this.#muteButton.click()
-        }
-        this.#nextButton.click()
+        if (this.#isMuted) this.#muteButton.click()
     }
 
     //  ============= TODO: move below into utils? =========
-  
-    get #isEditing() {
-        const mainElement = document.getElementById('chorus-main')
-        if (!mainElement) return
-
-        return main.style.display == 'block'
-    }
-
     get #nextButton() {
         return document.querySelector('[data-testid="control-button-skip-forward"]')
     }
@@ -116,6 +111,5 @@ export default class SongTracker {
         const repeatButton = document.querySelector('[data-testid="control-button-repeat"]')
         return repeatButton?.getAttribute('aria-label') === 'Disable repeat'
     }
-
     // =============== TODO ================================
 }
