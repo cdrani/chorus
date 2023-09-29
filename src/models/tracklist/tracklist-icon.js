@@ -1,5 +1,5 @@
-import { trackSongInfo } from '../../utils/song.js'
 import { parseNodeString } from '../../utils/parser.js'
+import { trackSongInfo, currentSongInfo } from '../../utils/song.js'
 
 export default class TrackListIcon {
     constructor({ key, store, selector }) {
@@ -49,6 +49,15 @@ export default class TrackListIcon {
         return await this._store.getTrack({ id })
     }
 
+    skipJustBlockedSong({ isSkipped, row }) {
+        const { id: currentSongId } = currentSongInfo()
+        const { id: trackSongId } = trackSongInfo(row)
+          
+        if (isSkipped && currentSongId == trackSongId) {
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
+        }
+    }
+
     async _saveTrack(row) {
         const song = trackSongInfo(row)
         if (!song) return
@@ -59,6 +68,8 @@ export default class TrackListIcon {
             id: song.id,
             value: { ...snipInfo, isSkipped: !snipInfo.isSkipped },
         })
+
+        this.skipJustBlockedSong({ isSkipped: !snipInfo.isSkipped, row })
     }
 
     #getRow(icon) {
