@@ -7,7 +7,6 @@ export default class VideoElement {
     constructor(video) {
         this._video = video
         this._currentTrackId = null
-        this.#listenForTrackChange()
         this._active = sessionStorage.getItem('enabled') == 'true'
 
         this._videoOverride = new VideoOverride(this)
@@ -98,16 +97,11 @@ export default class VideoElement {
             return
         } else if (isSnip || isShared) {
             this._video.currentTime = { source: 'chorus', value: startTime }
+            this._video.play()
         } else {
             this._video.play()
         }
         this._currentTrackId = trackId
-    }
-
-    #listenForTrackChange() {
-        this._video.addEventListener('loadeddata', async () => {
-            await this.#handleTrackChange()
-        })
     }
 
     get #muteButton() {

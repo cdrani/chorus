@@ -46,7 +46,7 @@ export default class SongTracker {
                 if (this.#isMuted) this.#toggleMuteIfMuted()
                 this.#handleSongEnd(songStateData)
             }
-        }, 500)
+        }, 1000)
     }
 
     #setVideoTime(timeObject) {
@@ -75,7 +75,7 @@ export default class SongTracker {
     }
 
     #atSongEnd(endTime) {
-        return parseInt(this._video.currentTime, 10) >= parseInt(endTime, 10) + 1
+        return parseInt(this._video.currentTime, 10) >= parseInt(endTime, 10) - 1
     }
 
     #handleSongEnd({ endTime, startTime }) {
