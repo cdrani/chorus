@@ -1,10 +1,10 @@
-import { request } from '../../utils/request.js'
-import { playback } from '../../utils/playback.js'
-import { currentData } from '../../data/current.js'
-import { songState } from '../../data/song-state.js'
-import { spotifyVideo } from '../../actions/overload.js'
+import { request } from '../utils/request.js'
+import { playback } from '../utils/playback.js'
+import { currentData } from '../data/current.js'
+import { songState } from '../data/song-state.js'
+import { spotifyVideo } from '../actions/overload.js'
 
-import { highlightElement } from '../../utils/higlight.js'
+import { highlightElement } from '../utils/higlight.js'
 
 export default class SongTracker {
     constructor() {

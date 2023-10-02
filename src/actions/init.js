@@ -5,9 +5,9 @@ import CurrentSnip from '../models/snip/current-snip.js'
 import TrackList from '../models/tracklist/track-list.js'
 import NowPlayingIcons from '../models/now-playing-icons.js'
 
+import SongTracker from '../observers/song-tracker.js'
 import TrackListObserver from '../observers/track-list.js'
 import NowPlayingObserver from '../observers/now-playing.js'
-import SongTracker from '../observers/current-time/song-tracker.js'
 
 class App {
     constructor({ video, store }) {
