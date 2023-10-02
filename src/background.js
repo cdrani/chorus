@@ -51,7 +51,7 @@ function setState({ key = 'state', value = {} }) {
 
 chrome.storage.onChanged.addListener(async changes => {
     const keys = Object.keys(changes)
-    const changedKey = keys.find(key => key == 'enabled' || key == 'auth_token')
+    const changedKey = keys.find(key => key == 'enabled' || key == 'auth_token' || key == 'device_id')
 
     if (!changedKey) return
 
@@ -112,6 +112,20 @@ async function sendMessage({ message }) {
 function handleButtonClick(selector) {
     document.querySelector(selector).click()
 }
+
+chrome.webRequest.onBeforeRequest.addListener(details => {
+    const rawBody = details?.requestBody?.raw?.at(0)?.bytes
+    if (!rawBody) return
+
+    // Decoding the ArrayBuffer to a UTF-8 string
+    const text = new TextDecoder('utf-8').decode(new Uint8Array(rawBody))
+    const data = JSON.parse(text)
+    console.log('deiv: ', data.device.device_id.toString() )
+    chrome.storage.local.set({ device_id: data.device.device_id.toString() })
+},
+    { urls: ['https://guc3-spclient.spotify.com/track-playback/v1/devices'] },
+    ['requestBody']
+)
 
 chrome.webRequest.onBeforeSendHeaders.addListener(details => {
     details?.requestHeaders?.forEach(header => {

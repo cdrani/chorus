@@ -19,7 +19,7 @@ class DataStore {
         Object.keys(response).forEach(key => {
             const value = response[key]
 
-            if (!['auth_token', 'enabled', 'globals', 'chorus-seek'].includes(key) && 
+            if (!['device_id', 'auth_token', 'enabled', 'globals', 'chorus-seek'].includes(key) && 
                 !value.hasOwnProperty('isSkipped')
             ) {
                 const endTime = value?.endTime

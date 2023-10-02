@@ -108,9 +108,13 @@ async function load() {
         enabled ? await app.connect() : app.disconnect()
     })
 
+    document.addEventListener('app.device_id', async e => {
+        const { device_id } = e.detail
+        sessionStorage.setItem('device_id', device_id)
+    })
+
     document.addEventListener('app.auth_token', async e => {
         const { auth_token } = e.detail
-        
         sessionStorage.setItem('auth_token', auth_token)
     })
 }
