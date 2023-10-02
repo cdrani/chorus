@@ -8,17 +8,23 @@ const setOptions = type => ({
     }
 })
 
-const ACTIONS = {
+const QUERY = {
     next: 'next',
     seek: 'seek?position_ms=', // ms
-    volume: 'volume?volume_percent=', // % 0 - 100
+}
+
+const generateURL = ({ type, value }) => {
+    const queryString = `${QUERY[type]}${value}`
+    const deviceId = JSON.parse(sessionStorage.getItem('device_id'))
+    const deviceIdString = !deviceId ? '' : `${value ? '&' : '?'}device_id=${deviceId}`
+    return `${API_URL}${queryString}` + deviceIdString
 }
 
 export const request = async ({ type = 'seek', value = '', cb = null }) => {
-    const action = `${ACTIONS[type]}${value}`
+    const URL = generateURL({ type, value })
 
     try {
-        const response = await fetch(`${API_URL}${action}`, setOptions(type))
+        const response = await fetch(URL, setOptions(type))
 
         if (!response.ok) {
             throw new Error('Network response was not ok')
