@@ -41,6 +41,10 @@ export default class VideoElement {
         }
     }
 
+    play() {
+        this._video.play()
+    }
+
     get currentTime() {
         return this._video?.currentTime
     }
@@ -79,37 +83,11 @@ export default class VideoElement {
         return this._video ? this._video.playbackRate : 1
     }
 
-    async #handleTrackChange() {
-        if (!this.active) return
-        if (!this.#isMuted) this.#muteButton.click()
-
-        const { preferredRate, preferredPitch } = await currentData.getPlaybackValues()
-        const { isSnip, trackId, isSkipped, startTime, isShared, playbackRate, preservesPitch } = await songState()
-
-        this.currentSpeed = isShared ? playbackRate : preferredRate
-        this._video.playbackRate = this.currentSpeed
-        this._video.preservesPitch = isShared ? preservesPitch : preferredPitch
-
-        const sameSong = !!this._currentTrackId && (trackId == this._currentTrackId)
-        if (sameSong) return
-
-        if (isSkipped) {
-            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()
-            return
-        } else if (isSnip || isShared) {
-            this._video.currentTime = { source: 'chorus', value: startTime }
-            this._video.play()
-        } else {
-            this._video.play()
-        }
-        this._currentTrackId = trackId
+    get volume() {
+        return this._video.volume
     }
 
-    get #muteButton() {
-        return document.querySelector('[data-testid="volume-bar-toggle-mute-button"]')
-    }
-
-    get #isMuted() {
-        return this.#muteButton?.getAttribute('aria-label') == 'Unmute'
+    set volume(value) {
+        this._video.volume = value
     }
 }
