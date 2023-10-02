@@ -6,9 +6,11 @@ import HeaderListeners from '../events/listeners/header-listeners.js'
 import ActionListeners from '../events/listeners/action-listeners.js'
 
 import { parseNodeString } from '../utils/parser.js'
+import { spotifyVideo } from '../actions/overload.js'
 
 export default class Chorus {
     constructor() {
+        this._video = spotifyVideo.element
         this.headerListeners = new HeaderListeners()
         this.actionListeners = new ActionListeners()
     }
