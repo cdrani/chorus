@@ -66,7 +66,7 @@ window.addEventListener('message', async (event) => {
             break
 
         case 'storage.get':
-            response = await getState(payload)
+            response = await getState(payload?.key)
             sendEventToPage({ eventType: 'storage.get.response', detail: response })
             break
 
