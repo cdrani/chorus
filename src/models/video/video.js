@@ -5,6 +5,7 @@ export default class VideoElement {
         this._video = video
         this._active = sessionStorage.getItem('enabled') == 'true'
         this._isEditing = false
+        this._video.autoplay = false
 
         this._videoOverride = new VideoOverride(this)
     }
@@ -43,6 +44,10 @@ export default class VideoElement {
 
     play() {
         this._video.play()
+    }
+
+    pause() {
+        this._video.pause()
     }
 
     get currentTime() {

@@ -5,10 +5,10 @@ import { songState } from '../data/song-state.js'
 import { spotifyVideo } from '../actions/overload.js'
 
 import { highlightElement } from '../utils/higlight.js'
+import { secondsToTime } from '../utils/time.js'
 
 export default class SongTracker {
     constructor() {
-        this._synced = false
         this._timeout = null
         this._currentTrackId = null
         this._currentSongState = null
@@ -31,6 +31,8 @@ export default class SongTracker {
     }
 
     set currentSongState(values) {
+        if (!values) return
+
         this._currentSongState = {
             ...this._currentSongState,
             ...values,
@@ -38,12 +40,14 @@ export default class SongTracker {
     }
 
     async #setSharedState() {
-        const { isShared, playbackRate = 1, preservesPitch = true } = await songState()
-        if (!isShared) return
+        this.#mute()
+        const { isShared, startTime, playbackRate = 1, preservesPitch = true } = await songState()
 
         this._video.playbackRate = playbackRate
         this._video.preservesPitch = preservesPitch
-        await this.#handleShared()
+        if (!isShared) return
+
+        this.#handleShared(startTime)
     }
 
     get #isLooping() {
@@ -54,38 +58,31 @@ export default class SongTracker {
     async #seekTo(position) {
         await request({ 
             type: 'seek',
-            value: parseInt(position, 10) * 1000,
-            cb: () => { 
-                this.#unMute() 
-            },
+            value: Math.max(parseInt(position, 10) - 1, 1) * 1000,
         })
     }
 
-    async #goToNext() {
+    #handleShared(startTime) {
         this.#mute()
-        await request({ type: 'next', cb: () => { this.#unMute() } })
-    }
-
-    async #handleShared() {
-        this.#mute()
-        const { isShared, startTime } = await songState()
-        if (!isShared) return
         this._video.currentTime = { source: 'chorus', value: startTime }
         this.#playTrack()
-
         setTimeout(async () => await this.#seekTo(startTime), 1000)
     }
 
     #mute() { this._video.volume = 0 }
-    #unMute = () => { this._video.volume = 1 }
+
+    #play = () => {
+        this.#mute()
+        setTimeout(() => this._video.volume = 1, 2000)
+    }
 
     #setupListeners() {
-        this._video.element.addEventListener('playing', this.#unMute)
+        this._video.element.addEventListener('play', this.#play, false)
         this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate)
     }
 
     clearListeners() {
-        this._video.element.removeEventListener('playing', this.#unMute)
+        this._video.element.removeEventListener('play', this.#play, false)
         this._video.element.removeEventListener('timeupdate', this.#handleTimeUpdate)
     }
 
@@ -110,7 +107,7 @@ export default class SongTracker {
 
     async songChange() {
         const PREV_TRACKID = this._currentTrackId
-        this._synced = false
+        this._video.pause()
 
         const songStateData = await this.#setCurrentSongData()
         const { isSnip, trackId, isSkipped, startTime, isShared } = songStateData
@@ -119,59 +116,51 @@ export default class SongTracker {
         await this.#applyEffects(songStateData)
 
         if (PREV_TRACKID == this._currentSongState?.trackId) {
-            this.#unMute()
-            if (isSkipped) this.#nextButton.click()
+            if (isSkipped)  {
+                this.#nextButton.click()
+                return
+            }
+
             if (isSnip) this._video.currentTime = { source: 'chorus', value: startTime }
             return
         }
 
-        if (!this._currentTrackId) {
-            if (isSnip) this._video.currentTime = { source: 'chorus', value: startTime } 
-        }
-        
         if (isSkipped) {
-            return (await this.#goToNext())
+            this.#nextButton.click()
+            return
         } else if (isSnip || isShared) {
-            this.#mute()
             await this.#seekTo(startTime)
-            this.#unMute()
-        } else {
-            this.#unMute()
-            this._video.play()
         }
 
+        this._video.play()
         highlightElement({ selector: '#chorus-icon > svg', songStateData })
         this._currentTrackId = trackId
+    }
+
+    get #playbackPosition() {
+        return document.querySelector('[data-testid="playback-position"]')
     }
 
     #handleTimeUpdate = () => {
         if (this._video.isEditing) return
         if (!this._currentSongState) return
 
-        const currentTime = this._video.currentTime
-        const { startTime } = this._currentSongState
-
-        if (!this._synced && parseInt(currentTime, 10) < parseInt(startTime)) {
-            this.#mute()
-        } else {
-            this.#unMute()
-            this._synced = true
-        }
-
         setTimeout(() => {
-            
-            const endTime = this?._currentSongState?.endTime || playback.duration()
-            if (endTime == playback.duration) return
+            const currentTime = parseInt(this._video.currentTime, 10)
+            this.#playbackPosition.textContent = secondsToTime(currentTime)
 
-            const atSongEnd = parseFloat(this._video.currentTime, 10) >= parseInt(endTime, 10)
+            const endTime = this?._currentSongState?.endTime ?? playback.duration()
+
+            const atSongEnd = parseInt(this._video.currentTime, 10) >= parseInt(endTime, 10) - 1
             if (!atSongEnd) return
 
             if (this.#isLooping) {
                 this._video.currentTime = { source: 'chorus', value: startTime }
                 return
             }
-            this.#nextButton.click()
+
             this.#mute()
+            this.#nextButton.click()
         }, 1000)
     }
 
