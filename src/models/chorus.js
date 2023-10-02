@@ -51,6 +51,7 @@ export default class Chorus {
         if (!this.mainElement) return
         
         await this.headerListeners.hide()
+        this._video.isEditing = false
         this.mainElement.style.display = 'none'
     }
 
@@ -58,6 +59,7 @@ export default class Chorus {
         this.#insertIntoDOM()
         this.mainElement.style.display = 'block'
 
+        this._video.isEditing = true
         this.headerListeners.init()
         this.actionListeners.init()
     }

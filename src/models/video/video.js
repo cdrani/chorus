@@ -8,6 +8,7 @@ export default class VideoElement {
         this._video = video
         this._currentTrackId = null
         this._active = sessionStorage.getItem('enabled') == 'true'
+        this._isEditing = false
 
         this._videoOverride = new VideoOverride(this)
     }
@@ -20,8 +21,12 @@ export default class VideoElement {
         return this._active
     }
 
-    async activate() {
-        await this.#handleTrackChange()
+    get isEditing() {
+        return this._isEditing
+    }
+
+    set isEditing(editing) {
+        this._isEditing = editing
     }
 
     reset() {
