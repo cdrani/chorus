@@ -1,5 +1,5 @@
-import CacheStore from "./cache.js"
-import Dispatcher from "../events/dispatcher.js"
+import CacheStore from './cache.js'
+import Dispatcher from '../events/dispatcher.js'
 
 class DataStore {
     #cache
@@ -19,7 +19,9 @@ class DataStore {
         Object.keys(response).forEach(key => {
             const value = response[key]
 
-            if (!['enabled', 'globals', 'chorus-seek'].includes(key) && !value.hasOwnProperty('isSkipped')) {
+            if (!['auth_token', 'enabled', 'globals', 'chorus-seek'].includes(key) && 
+                !value.hasOwnProperty('isSkipped')
+            ) {
                 const endTime = value?.endTime
                 value.isSkipped = endTime == 0
             }
