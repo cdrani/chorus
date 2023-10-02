@@ -10,15 +10,6 @@ class DataStore {
         this.#dispatcher = dispatcher
     }
 
-    async refreshToken() {
-        const response = await this.#dispatcher.sendEvent({
-            eventType: 'storage.get',
-            detail: { key: 'auth_token' },
-        })
-
-        this.#cache.update({ key: 'auth_token', value: response })
-    }
-
     async populate() {
         const response = await this.#dispatcher.sendEvent({
             eventType: 'storage.populate',

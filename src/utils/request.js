@@ -1,5 +1,3 @@
-import { store } from '../stores/data.js'
-
 const API_URL = 'https://api.spotify.com/v1/me/player/'
 
 const setOptions = type => ({
@@ -20,7 +18,6 @@ export const request = async ({ type = 'seek', value = '', cb = null }) => {
     const action = `${ACTIONS[type]}${value}`
 
     try {
-        await store.refreshToken()
         const response = await fetch(`${API_URL}${action}`, setOptions(type))
 
         if (!response.ok) {
