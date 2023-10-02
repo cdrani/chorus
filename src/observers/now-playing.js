@@ -1,26 +1,27 @@
 import Chorus from '../models/chorus.js'
 import SeekIcons from '../models/seek/seek-icon.js'
 
-import { songState } from '../data/song-state.js'
-
 export default class NowPlayingObserver {
-    constructor({ snip, video }) {
+    constructor({ snip, songTracker }) {
         this._snip = snip
-        this._video = video
         this._observer = null
+        this._songTracker = songTracker
+
         this._chorus = new Chorus()
         this._seekIcons = new SeekIcons()
 
         this.observe()
     }
 
-    observe() {
+    async observe() {
         const config = { subtree: true, childList: true, attributes: true }
         const target = document.querySelector('[data-testid="now-playing-widget"]')
 
         this._observer = new MutationObserver(this.#mutationHandler)
         this._observer.observe(target, config)
         this.#toggleSnipUI()
+        this._seekIcons.init()
+        await this._songTracker.init()
     }
 
     #isAnchor(mutation) {
@@ -35,9 +36,9 @@ export default class NowPlayingObserver {
         for (const mutation of mutationsList) {
             if (this.#isAnchor(mutation)) {
                 if (this._chorus.isShowing) this._snip.init()
+                await this._songTracker.songChange() 
                 this._snip.updateView()
                 await this._seekIcons.setSeekLabels()
-                await this._video.activate() 
             }
         }
     }
@@ -55,6 +56,8 @@ export default class NowPlayingObserver {
 
     disconnect() {
         this._observer?.disconnect()
+        this._seekIcons.removeIcons()
+        this._songTracker.clearListeners()
         this._observer = null
         this.#toggleSnipUI()
     }
