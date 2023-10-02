@@ -1,12 +1,8 @@
-import { currentData } from '../../data/current.js'
-import { songState } from '../../data/song-state.js'
-
 import VideoOverride from './video-override.js'
 
 export default class VideoElement {
     constructor(video) {
         this._video = video
-        this._currentTrackId = null
         this._active = sessionStorage.getItem('enabled') == 'true'
         this._isEditing = false
 
