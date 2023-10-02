@@ -81,14 +81,15 @@
     }
   },
   "permissions": [
-    "activeTab",
     "tabs",
-    "scripting",
     "storage",
+    "activeTab",
+    "scripting",
+    "webRequest",
     "unlimitedStorage"
   ],
   "host_permissions": [
-    "*://open.spotify.com/"
+    "*://*.spotify.com/*"
   ],
   "background": {
     "service_worker": "background.js"
