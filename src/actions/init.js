@@ -107,4 +107,10 @@ async function load() {
 
         enabled ? await app.connect() : app.disconnect()
     })
+
+    document.addEventListener('app.auth_token', async e => {
+        const { auth_token } = e.detail
+        
+        sessionStorage.setItem('auth_token', auth_token)
+    })
 }
