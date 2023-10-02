@@ -50,12 +50,18 @@ function setState({ key = 'state', value = {} }) {
 }
 
 chrome.storage.onChanged.addListener(async changes => {
-    if (!changes.hasOwnProperty('enabled')) return
+    const keys = Object.keys(changes)
+    const changedKey = keys.find(key => key == 'enabled' || key == 'auth_token')
 
-    const { newValue } = changes.enabled
-    ENABLED = newValue
-    setBadgeInfo(newValue)
-    await sendMessage({ message: { enabled: newValue } })
+    if (!changedKey) return
+
+    if (changedKey == 'enabled') {
+        const { newValue } = changes.enabled
+        ENABLED = newValue
+        setBadgeInfo(newValue)
+    }
+
+    await sendMessage({ message: { [changedKey]: changes[changedKey].newValue } })
 })
 
 chrome.action.onClicked.addListener(async () => {
