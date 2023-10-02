@@ -120,7 +120,6 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
     // Decoding the ArrayBuffer to a UTF-8 string
     const text = new TextDecoder('utf-8').decode(new Uint8Array(rawBody))
     const data = JSON.parse(text)
-    console.log('deiv: ', data.device.device_id.toString() )
     chrome.storage.local.set({ device_id: data.device.device_id.toString() })
 },
     { urls: ['https://guc3-spclient.spotify.com/track-playback/v1/devices'] },
