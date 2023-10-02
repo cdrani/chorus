@@ -107,6 +107,19 @@ function handleButtonClick(selector) {
     document.querySelector(selector).click()
 }
 
+chrome.webRequest.onBeforeSendHeaders.addListener(details => {
+    details?.requestHeaders?.forEach(header => {
+        if (!header?.value?.startsWith('Bearer')) return
+
+        if (details?.initiator?.match(/.*:\/\/.*spotify.com.*/)) {
+            chrome.storage.local.set({ auth_token: header?.value })
+        }
+    })
+},
+    { urls: ['https://api-partner.spotify.com/pathfinder/v1/*'] },
+    ['requestHeaders']
+)
+
 chrome.commands.onCommand.addListener(async command => {
     if (!ENABLED) return
 
