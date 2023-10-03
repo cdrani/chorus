@@ -2,10 +2,13 @@ import Snip from './snip.js'
 
 import { playback } from '../../utils/playback.js'
 import { currentSongInfo } from '../../utils/song.js'
+import { spotifyVideo } from '../../actions/overload.js'
 
 export default class CurrentSnip extends Snip {
-    constructor() {
+    constructor(songTracker) {
         super()
+        this._songTracker = songTracker
+        this._video = spotifyVideo.element
     }
 
     init() {
@@ -47,9 +50,15 @@ export default class CurrentSnip extends Snip {
         super._share()
     }
 
+    skipTrackOnSave({ isSkipped }) {
+        if (isSkipped) {
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
+        }
+    }
+
     async save() {
         const { inputLeft, inputRight } = this._elements
-        const { isSkipped } = this.read()
+        const { isSkipped } = await this.read()
 
         await this._store.saveTrack({
             id: currentSongInfo().id,
@@ -63,9 +72,8 @@ export default class CurrentSnip extends Snip {
 
         this.updateView()
 
-        const { isSkipped: updatedSkipValue }  = this.read()
-        if (updatedSkipValue) {
-            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
-        }
+        const updatedValues = await this.read()
+        this.skipTrackOnSave(updatedValues)
+        this._songTracker.currentSongState = updatedValues
     }
 }

@@ -6,9 +6,11 @@ import HeaderListeners from '../events/listeners/header-listeners.js'
 import ActionListeners from '../events/listeners/action-listeners.js'
 
 import { parseNodeString } from '../utils/parser.js'
+import { spotifyVideo } from '../actions/overload.js'
 
 export default class Chorus {
     constructor() {
+        this._video = spotifyVideo.element
         this.headerListeners = new HeaderListeners()
         this.actionListeners = new ActionListeners()
     }
@@ -51,6 +53,7 @@ export default class Chorus {
         if (!this.mainElement) return
         
         await this.headerListeners.hide()
+        this._video.isEditing = false
         this.mainElement.style.display = 'none'
     }
 
@@ -58,6 +61,7 @@ export default class Chorus {
         this.#insertIntoDOM()
         this.mainElement.style.display = 'block'
 
+        this._video.isEditing = true
         this.headerListeners.init()
         this.actionListeners.init()
     }

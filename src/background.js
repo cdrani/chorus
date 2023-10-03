@@ -18,11 +18,6 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
 })
 
-chrome.tabs.onActivated.addListener(async () => {
-    const enabled = await getState({ key: 'enabled' })
-    await sendMessage({ message: { enabled }})
-})
-
 // TODO: need a way to import these functions from utils/state.js
 function stateResolver({ resolve, reject, result, key }) {
     if (chrome.runtime.lastError) {
@@ -50,12 +45,18 @@ function setState({ key = 'state', value = {} }) {
 }
 
 chrome.storage.onChanged.addListener(async changes => {
-    if (!changes.hasOwnProperty('enabled')) return
+    const keys = Object.keys(changes)
+    const changedKey = keys.find(key => key == 'enabled' || key == 'auth_token' || key == 'device_id')
 
-    const { newValue } = changes.enabled
-    ENABLED = newValue
-    setBadgeInfo(newValue)
-    await sendMessage({ message: { enabled: newValue } })
+    if (!changedKey) return
+
+    if (changedKey == 'enabled') {
+        const { newValue } = changes.enabled
+        ENABLED = newValue
+        setBadgeInfo(newValue)
+    }
+
+    await sendMessage({ message: { [changedKey]: changes[changedKey].newValue } })
 })
 
 chrome.action.onClicked.addListener(async () => {
@@ -106,6 +107,32 @@ async function sendMessage({ message }) {
 function handleButtonClick(selector) {
     document.querySelector(selector).click()
 }
+
+chrome.webRequest.onBeforeRequest.addListener(details => {
+    const rawBody = details?.requestBody?.raw?.at(0)?.bytes
+    if (!rawBody) return
+
+    // Decoding the ArrayBuffer to a UTF-8 string
+    const text = new TextDecoder('utf-8').decode(new Uint8Array(rawBody))
+    const data = JSON.parse(text)
+    chrome.storage.local.set({ device_id: data.device.device_id.toString() })
+},
+    { urls: ['https://guc3-spclient.spotify.com/track-playback/v1/devices'] },
+    ['requestBody']
+)
+
+chrome.webRequest.onBeforeSendHeaders.addListener(details => {
+    details?.requestHeaders?.forEach(header => {
+        if (!header?.value?.startsWith('Bearer')) return
+
+        if (details?.initiator?.match(/.*:\/\/.*spotify.com.*/)) {
+            chrome.storage.local.set({ auth_token: header?.value })
+        }
+    })
+},
+    { urls: ['https://api-partner.spotify.com/pathfinder/v1/*'] },
+    ['requestHeaders']
+)
 
 chrome.commands.onCommand.addListener(async command => {
     if (!ENABLED) return

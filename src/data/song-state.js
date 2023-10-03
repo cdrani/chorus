@@ -22,12 +22,13 @@ export const songState = async () => {
     const state = await currentData.readTrack()
     const sharedSnipState = sharedSnipValues()
 
-    const { trackId } = currentSongInfo()
-    if (!sharedSnipState) return { ...state, trackId, isShared: false }
+    const { id, trackId } = currentSongInfo()
+    if (!sharedSnipState) return { ...state, id, trackId, isShared: false }
 
     const locationId = location?.pathname?.split('/')?.at(-1)
 
     return {
+        id,
         trackId,
         isShared: trackId == locationId,
         ...state,

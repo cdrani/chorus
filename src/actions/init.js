@@ -1,12 +1,13 @@
 import { store } from '../stores/data.js'
 import { spotifyVideo } from './overload.js'
+
 import CurrentSnip from '../models/snip/current-snip.js'
 import TrackList from '../models/tracklist/track-list.js'
 import NowPlayingIcons from '../models/now-playing-icons.js'
 
+import SongTracker from '../observers/song-tracker.js'
 import TrackListObserver from '../observers/track-list.js'
 import NowPlayingObserver from '../observers/now-playing.js'
-import CurrentTimeObserver from '../observers/current-time/current-time.js'
 
 class App {
     constructor({ video, store }) {
@@ -19,12 +20,14 @@ class App {
     }
 
     #init() {
-        this._snip = new CurrentSnip()
+        this._songTracker = new SongTracker()
+        this._snip = new CurrentSnip(this._songTracker)
 
         this._nowPlayingIcons = new NowPlayingIcons(this._snip)
-        this._currentTimeObserver = new CurrentTimeObserver(this._video)
         this._trackListObserver = new TrackListObserver(new TrackList(this._store))
-        this._nowPlayingObserver = new NowPlayingObserver({ snip: this._snip, video: this._video })
+        this._nowPlayingObserver = new NowPlayingObserver({
+            snip: this._snip, songTracker: this._songTracker
+        })
 
         this.#resetInterval()    
         this.#reInit()
@@ -42,7 +45,6 @@ class App {
         this._video.reset()
 
         this._trackListObserver.disconnect()
-        this._currentTimeObserver.disconnect()
         this._nowPlayingObserver.disconnect()
         
         this.#resetInterval()
@@ -52,12 +54,9 @@ class App {
         this._active = true
 
         this._trackListObserver.observe()
-        this._currentTimeObserver.observe()
         this._nowPlayingObserver.observe()
 
         this.#resetInterval()
-        await this._video.activate()
-
         this.#reInit()
     }
 
@@ -70,7 +69,6 @@ class App {
 
             if (!chorus) {
                 this._nowPlayingIcons.init()
-                await this._video.activate()
             }
         }, 3000)
     }
@@ -106,5 +104,15 @@ async function load() {
         video.active = enabled
 
         enabled ? await app.connect() : app.disconnect()
+    })
+
+    document.addEventListener('app.device_id', async e => {
+        const { device_id } = e.detail
+        sessionStorage.setItem('device_id', device_id)
+    })
+
+    document.addEventListener('app.auth_token', async e => {
+        const { auth_token } = e.detail
+        sessionStorage.setItem('auth_token', auth_token)
     })
 }

@@ -85,10 +85,11 @@
     "storage",
     "activeTab",
     "scripting",
+    "webRequest",
     "unlimitedStorage"
   ],
   "host_permissions": [
-    "*://open.spotify.com/"
+    "*://*.spotify.com/*"
   ],
   "background": {
     "scripts": [
