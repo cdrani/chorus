@@ -18,11 +18,6 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
 })
 
-chrome.tabs.onActivated.addListener(async () => {
-    const enabled = await getState({ key: 'enabled' })
-    await sendMessage({ message: { enabled }})
-})
-
 // TODO: need a way to import these functions from utils/state.js
 function stateResolver({ resolve, reject, result, key }) {
     if (chrome.runtime.lastError) {
