@@ -4,6 +4,7 @@ import Alert from '../alert.js'
 import SliderControls from '../slider/slider-controls.js'
 
 import { copyToClipBoard } from '../../utils/clipboard.js'
+import { timeToSeconds } from '../../utils/time.js'
 
 export default class Snip {
     constructor() {
@@ -37,12 +38,24 @@ export default class Snip {
         this.#toggleRemoveButton(isSnip || isSkip)
     }
 
+    get tempShareTimes() {
+        const tempEndTime = document.getElementById('chorus-end')?.textContent
+        const tempStartTime = document.getElementById('chorus-start')?.textContent
+
+        return {
+            tempEndTime: timeToSeconds(tempEndTime),
+            tempStartTime: timeToSeconds(tempStartTime),
+        }
+    }
+
     _share() {
         const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = this.read()
         const pitch = preservesPitch ? 1 : 0
         const rate = parseFloat(playbackRate) * 100
+
+        const { tempEndTime = startTime, tempStartTime = endTime } = this.tempShareTimes
         
-        const shareURL = `${this.trackURL}?ch=${startTime}-${endTime}-${rate}-${pitch}`
+        const shareURL = `${this.trackURL}?ch=${tempStartTime}-${tempEndTime}-${rate}-${pitch}`
         copyToClipBoard(shareURL)
 
         this.displayAlert()

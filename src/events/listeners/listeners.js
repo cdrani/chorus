@@ -2,13 +2,14 @@ import Seek from '../../models/seek/seek.js'
 import Speed from '../../models/speed/speed.js'
 import CurrentSnip from '../../models/snip/current-snip.js'
 import { spotifyVideo } from '../../actions/overload.js'
+import SongTracker from '../../observers/song-tracker.js'
 
 export default class Listeners {
     constructor() {
         this._video = spotifyVideo.element
         this._seek = new Seek()
         this._speed = new Speed()
-        this._snip = new CurrentSnip()
+        this._snip = new CurrentSnip(new SongTracker())
     }
 
     _hide() {

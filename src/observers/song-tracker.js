@@ -20,6 +20,7 @@ export default class SongTracker {
 
     set currentSongState(values) {
         if (!values) return
+        if (!this._currentSongState) return
 
         this._currentSongState = {
             ...this._currentSongState,
@@ -35,28 +36,40 @@ export default class SongTracker {
     async #seekTo(position) {
         await request({ 
             type: 'seek',
-            value: Math.max(parseInt(position, 10) - 1, 1) * 1000,
+            value: Math.max(parseInt(position, 10), 1) * 1000,
+            cb: () => { this.#mute() }
         })
         await request({
             type: 'play',
-            value: Math.max(parseInt(position, 10) - 0.5, 1) * 1000,
+            value: Math.max(parseInt(position, 10), 1) * 1000,
+            cb: () => { this.#mute() }
         })
     }
 
     #mute() { this._video.volume = 0 }
 
     #play = () => {
+        if (!this.currentSongState) return
+
+        const { startTime, isSnip, isShared } = this._currentSongState
+        const currentTime = parseInt(this._video.currentTime, 10)
+        const parsedStartTime = parseInt(startTime, 10)
+
         this.#mute()
-        setTimeout(() => this._video.volume = 1, 1000)
+        const unMute = (isSnip || isShared) && currentTime < parsedStartTime
+
+        if (unMute) {
+            setTimeout(() => this._video.volume = 1, 2000)
+        }
     }
 
     #setupListeners() {
-        this._video.element.addEventListener('play', this.#play, false)
+        this._video.element.addEventListener('canplaythrough', this.#play, false)
         this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate)
     }
 
     clearListeners() {
-        this._video.element.removeEventListener('play', this.#play, false)
+        this._video.element.removeEventListener('canplaythrough', this.#play, false)
         this._video.element.removeEventListener('timeupdate', this.#handleTimeUpdate)
     }
 
@@ -80,6 +93,7 @@ export default class SongTracker {
 
     async songChange() {
         this.#mute()
+        this._video.pause()
 
         const songStateData = await this.#setCurrentSongData()
         await this.#applyEffects(songStateData)
@@ -97,6 +111,7 @@ export default class SongTracker {
             }
         }
 
+        this._video.play()
         this._video.volume = 1
     }
 
@@ -114,6 +129,8 @@ export default class SongTracker {
 
         setTimeout(() => {
             const currentTime = parseInt(this._video.currentTime, 10)
+            const startTime = parseInt(this._currentSongState.startTime, 10)
+
             this.#playbackPosition.textContent = secondsToTime(currentTime)
 
             const endTime = this?._currentSongState?.endTime ?? playback.duration()
@@ -128,6 +145,7 @@ export default class SongTracker {
 
             this.#mute()
             this.#nextButton.click()
+            this.#mute()
         }, 1000)
     }
 }
