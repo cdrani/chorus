@@ -1,8 +1,8 @@
-const style = "min-width:24px;font-size:0.85rem;height:100%;text-align:end;margin-left:4px"
+const style = "min-width:24px;font-size:0.85rem;text-align:end;margin-left:4px"
 
 const createLabel = text => `
     <div>
-        <label class="chorus-common" style="width:100%">
+        <label class="chorus-common" style="width:100%;align-items: end">
             ${text}: <span style="${style}" id="chorus-${text}"></span>
         </label>
     </div>
