@@ -18,14 +18,15 @@ export default class SongTracker {
         songStateData.isShared ? this.handleShared(songStateData) : await this.songChange(songStateData)
     }
 
-    set currentSongState(values) {
+    async updateCurrentSongData(values) {
         if (!values) return
-        if (!this._currentSongState) return
 
         this._currentSongState = {
-            ...this._currentSongState,
+            ...this._currentSongState || {},
             ...values,
         }
+
+        await this.#applyEffects(this._currentSongState)
     }
 
     get #isLooping() {
