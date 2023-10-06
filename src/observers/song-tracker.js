@@ -1,11 +1,10 @@
-import { request } from '../utils/request.js'
-import { playback } from '../utils/playback.js'
 import { currentData } from '../data/current.js'
 import { songState } from '../data/song-state.js'
 import { spotifyVideo } from '../actions/overload.js'
 
+import { request } from '../utils/request.js'
+import { timeToSeconds } from '../utils/time.js'
 import { highlightElement } from '../utils/higlight.js'
-import { secondsToTime, timeToSeconds } from '../utils/time.js'
 
 export default class SongTracker {
     constructor() {
@@ -36,40 +35,18 @@ export default class SongTracker {
     async #seekTo(position) {
         await request({ 
             type: 'seek',
-            value: Math.max(parseInt(position, 10), 1) * 1000,
-            cb: () => { this.#mute() }
-        })
-        await request({
-            type: 'play',
-            value: Math.max(parseInt(position, 10), 1) * 1000,
-            cb: () => { this.#mute() }
+            value: Math.max(parseInt(position, 10) - 1, 1) * 1000,
+            cb: () => { this.#mute(); setTimeout(() =>  this._video.volume = 1, 1000) }
         })
     }
 
     #mute() { this._video.volume = 0 }
 
-    #play = () => {
-        if (!this.currentSongState) return
-
-        const { startTime, isSnip, isShared } = this._currentSongState
-        const currentTime = parseInt(this._video.currentTime, 10)
-        const parsedStartTime = parseInt(startTime, 10)
-
-        this.#mute()
-        const unMute = (isSnip || isShared) && currentTime < parsedStartTime
-
-        if (unMute) {
-            setTimeout(() => this._video.volume = 1, 2000)
-        }
-    }
-
     #setupListeners() {
-        this._video.element.addEventListener('canplaythrough', this.#play, false)
         this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate)
     }
 
     clearListeners() {
-        this._video.element.removeEventListener('canplaythrough', this.#play, false)
         this._video.element.removeEventListener('timeupdate', this.#handleTimeUpdate)
     }
 
@@ -92,9 +69,6 @@ export default class SongTracker {
     }
 
     async songChange() {
-        this.#mute()
-        this._video.pause()
-
         const songStateData = await this.#setCurrentSongData()
         await this.#applyEffects(songStateData)
         const { isSnip, isSkipped, startTime, isShared } = songStateData
@@ -103,16 +77,16 @@ export default class SongTracker {
             this.#nextButton.click()
             return
         } else if (isSnip || isShared) {
-            const parsedStartTime = parseInt(startTime, 10)
-            const currentPositionTime = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
+            const parsedStartTime = parseInt(startTime, 10) * 1000
+            const currentPosition = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
+            const currentPositionTime = parseInt(currentPosition, 10) * 1000
 
             if (currentPositionTime < parsedStartTime) {
                 await this.#seekTo(startTime)
             }
+        } else {
+            this._video.volume = 1
         }
-
-        this._video.play()
-        this._video.volume = 1
     }
 
     get #nextButton() {
@@ -128,14 +102,11 @@ export default class SongTracker {
         if (!this._currentSongState) return
 
         setTimeout(() => {
-            const currentTime = parseInt(this._video.currentTime, 10)
-            const startTime = parseInt(this._currentSongState.startTime, 10)
+            const { startTime, endTime } = this._currentSongState
+            const currentTimeMS = parseInt(this._video.currentTime * 1000, 10)
 
-            this.#playbackPosition.textContent = secondsToTime(currentTime)
-
-            const endTime = this?._currentSongState?.endTime ?? playback.duration()
-
-            const atSongEnd = parseInt(this._video.currentTime, 10) >= parseInt(endTime, 10) - 1
+            const endTimeMS = parseInt(endTime, 10) * 1000 - 500
+            const atSongEnd = currentTimeMS >= endTimeMS
             if (!atSongEnd) return
 
             if (this.#isLooping) {
@@ -143,9 +114,7 @@ export default class SongTracker {
                 return
             }
 
-            this.#mute()
             this.#nextButton.click()
-            this.#mute()
         }, 1000)
     }
 }
