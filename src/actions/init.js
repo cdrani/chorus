@@ -94,8 +94,8 @@ async function load() {
     await store.populate()
 
     const app = new App({ video, store })
-    const enabled = sessionStorage.getItem('enabled') == 'true'
-    video.active = enabled
+    const enabled = sessionStorage.getItem('enabled')
+    video.active = JSON.parse(enabled)
 
     document.addEventListener('app.enabled', async e => {
         const { enabled } = e.detail
