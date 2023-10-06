@@ -25,12 +25,12 @@ export const songState = async () => {
     const { id, trackId } = currentSongInfo()
     if (!sharedSnipState) return { ...state, id, trackId, isShared: false }
 
-    const locationId = location?.pathname?.split('/')?.at(-1)
+    const trackIdFromURL = location?.pathname?.split('/')?.at(-1)
 
     return {
         id,
-        trackId,
-        isShared: trackId == locationId,
+        trackId: trackId ?? trackIdFromURL,
+        isShared: !!trackIdFromURL,
         ...state,
         ...sharedSnipState
     }
