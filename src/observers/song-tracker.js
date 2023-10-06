@@ -14,7 +14,8 @@ export default class SongTracker {
 
     async init() {
         this.#setupListeners()
-        await this.songChange()
+        const songStateData = await this.#setCurrentSongData()
+        songStateData.isShared ? this.handleShared(songStateData) : await this.songChange(songStateData)
     }
 
     set currentSongState(values) {
@@ -68,8 +69,22 @@ export default class SongTracker {
         return songStateData
     }
 
-    async songChange() {
-        const songStateData = await this.#setCurrentSongData()
+    async handleShared(songStateData) {
+        await this.#applyEffects(songStateData)
+        const { startTime, trackId } = songStateData
+
+        await request({ 
+            type: 'play', 
+            body: { 
+                uris: [`spotify:track:${trackId}`], 
+                position_ms: Math.max(parseInt(startTime, 10) - 1, 1) * 1000,
+            },
+            cb: () => { this.#mute(); setTimeout(() => this._video.volume = 1, 1000) }
+        })
+    }
+
+    async songChange(initialData = null) {
+        const songStateData = initialData ?? await this.#setCurrentSongData()
         await this.#applyEffects(songStateData)
         const { isSnip, isSkipped, startTime, isShared } = songStateData
 
@@ -114,6 +129,7 @@ export default class SongTracker {
                 return
             }
 
+            if (location?.search) history.pushState(null, '', location.pathname)
             this.#nextButton.click()
         }, 1000)
     }
