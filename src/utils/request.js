@@ -1,16 +1,15 @@
 const API_URL = 'https://api.spotify.com/v1/me/player/'
 
-const setOptions = ({ type, value }) => ({
-    method: type == 'next' ? 'POST' : 'PUT',
+const setOptions = ({ method = 'PUT', body = null }) => ({
+    method,
     headers: {
         'Content-Type': 'application/json',
         Authorization: sessionStorage.getItem('auth_token'),
     },
-    body: type == 'play' ? JSON.stringify({ "position_ms": value }) : null
+    body: body ? JSON.stringify(body) : null
 })
 
 const QUERY = {
-    next: 'next',
     play: 'play',
     seek: 'seek?position_ms=',
 }
@@ -22,11 +21,11 @@ const generateURL = ({ type, value }) => {
     return `${API_URL}${queryString}` + deviceIdString
 }
 
-export const request = async ({ type = 'seek', value = '', cb = null }) => {
+export const request = async ({ type = 'seek', value = '', body = null, cb = null }) => {
     const URL = generateURL({ type, value })
 
     try {
-        const response = await fetch(URL, setOptions({ type, value }))
+        const response = await fetch(URL, setOptions({ body }))
 
         if (!response.ok) {
             throw new Error('Network response was not ok')
