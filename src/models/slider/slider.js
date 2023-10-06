@@ -14,6 +14,7 @@ export default class Slider {
 
     init() {
         this.#setUpEvents()
+        this._video.element.setAttribute('lastSetThumb', '')
     }
 
     #setUpEvents() {
@@ -76,6 +77,8 @@ export default class Slider {
             this.updateSliderLeftHalf(currentValue)
 
             if (this._isCurrentlyPlaying) this._video.currentTime = inputLeft.value
+
+            this._video.element.setAttribute('lastSetThumb', 'start')
         }, 50)
     }
 
@@ -89,6 +92,8 @@ export default class Slider {
             this.updateSliderRightHalf(currentValue)
 
             if (this._isCurrentlyPlaying) this._video.currentTime = inputRight.value
+
+            this._video.element.setAttribute('lastSetThumb', 'end')
         }, 50)
     }
 
