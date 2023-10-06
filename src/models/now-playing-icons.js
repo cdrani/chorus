@@ -1,4 +1,3 @@
-import Chorus from './chorus.js'
 import { store } from '../stores/data.js'
 import { currentData } from '../data/current.js'
 import { createControls } from '../components/controls.js'
@@ -8,9 +7,9 @@ import { currentSongInfo } from '../utils/song.js'
 import { parseNodeString } from '../utils/parser.js'
 
 export default class NowPlayingIcons {
-    constructor(snip) {
+    constructor({ snip, chorus }) {
         this.snip = snip
-        this.chorus = new Chorus()
+        this.chorus = chorus
 
         this.init()
     }

@@ -1,13 +1,12 @@
-import Chorus from '../models/chorus.js'
 import SeekIcons from '../models/seek/seek-icon.js'
 
 export default class NowPlayingObserver {
-    constructor({ snip, songTracker }) {
+    constructor({ snip, chorus, songTracker }) {
         this._snip = snip
         this._observer = null
         this._songTracker = songTracker
 
-        this._chorus = new Chorus()
+        this._chorus = chorus
         this._seekIcons = new SeekIcons()
 
         this.observe()

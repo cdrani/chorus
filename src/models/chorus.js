@@ -9,10 +9,10 @@ import { parseNodeString } from '../utils/parser.js'
 import { spotifyVideo } from '../actions/overload.js'
 
 export default class Chorus {
-    constructor() {
+    constructor(songTracker) {
         this._video = spotifyVideo.element
-        this.headerListeners = new HeaderListeners()
-        this.actionListeners = new ActionListeners()
+        this.headerListeners = new HeaderListeners(songTracker)
+        this.actionListeners = new ActionListeners(songTracker)
     }
 
     get isShowing() {
