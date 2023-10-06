@@ -37,11 +37,12 @@ export default class SongTracker {
         await request({ 
             type: 'seek',
             value: Math.max(parseInt(position, 10) - 1, 1) * 1000,
-            cb: () => { this.#mute(); setTimeout(() =>  this._video.volume = 1, 1000) }
+            cb: () => { this.#mute(); setTimeout(() =>  this.#unMute(), 1000) }
         })
     }
 
     #mute() { this._video.volume = 0 }
+    #unMute() { this._video.volume = 1 }
 
     #setupListeners() {
         this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate)
@@ -79,11 +80,12 @@ export default class SongTracker {
                 uris: [`spotify:track:${trackId}`], 
                 position_ms: Math.max(parseInt(startTime, 10) - 1, 1) * 1000,
             },
-            cb: () => { this.#mute(); setTimeout(() => this._video.volume = 1, 1000) }
+            cb: () => { this.#mute(); setTimeout(() => this.#unMute(), 1000) }
         })
     }
 
     async songChange(initialData = null) {
+        this.#mute()
         const songStateData = initialData ?? await this.#setCurrentSongData()
         await this.#applyEffects(songStateData)
         const { isSnip, isSkipped, startTime, isShared } = songStateData
@@ -98,9 +100,11 @@ export default class SongTracker {
 
             if (currentPositionTime < parsedStartTime) {
                 await this.#seekTo(startTime)
+            } else {
+                this.#unMute()
             }
         } else {
-            this._video.volume = 1
+            this.#unMute()
         }
     }
 
