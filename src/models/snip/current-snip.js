@@ -7,6 +7,7 @@ import { spotifyVideo } from '../../actions/overload.js'
 export default class CurrentSnip extends Snip {
     constructor(songTracker) {
         super()
+
         this._songTracker = songTracker
         this._video = spotifyVideo.element
     }
@@ -56,9 +57,16 @@ export default class CurrentSnip extends Snip {
         }
     }
 
+    setCurrentTime({ prevEndTime, endTime }) {
+        const lastSetThumb = this._video.element.getAttribute('lastSetThumb')
+
+        if (lastSetThumb !== 'end') return
+        this._video.currentTime = Math.max(Math.min(prevEndTime, endTime) - 5, 1)
+    }
+
     async save() {
         const { inputLeft, inputRight } = this._elements
-        const { isSkipped } = await this.read()
+        const { isSkipped, endTime: prevEndTime } = await this.read()
 
         await this._store.saveTrack({
             id: currentSongInfo().id,
@@ -74,6 +82,7 @@ export default class CurrentSnip extends Snip {
 
         const updatedValues = await this.read()
         this.skipTrackOnSave(updatedValues)
-        this._songTracker.currentSongState = updatedValues
+        this.setCurrentTime({ prevEndTime, endTime: updatedValues.endTime })
+        await this._songTracker.updateCurrentSongData(updatedValues)
     }
 }
