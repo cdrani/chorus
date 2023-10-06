@@ -4,18 +4,16 @@ import { playback } from '../../utils/playback.js'
 import { secondsToTime } from '../../utils/time.js'
 
 export default class SliderControls {
-    #slider
-
     constructor() {
-        this.#slider = new Slider()
+        this._slider = new Slider()
     }
 
     init() {
-        this.#slider.init()
+        this._slider.init()
     }
 
     setInitialValues(track) {
-        this.#slider.setInitialValues(track)
+        this._slider.setInitialValues(track)
         this.#setInitialStartAndEndValues(track)
     }
 
@@ -50,7 +48,7 @@ export default class SliderControls {
         const current = playback.current()
         const duration = playback.duration()
 
-        this.#slider.updateSliderLeftHalf(startTime ?? current)
-        this.#slider.updateSliderRightHalf(endTime ?? duration)
+        this._slider.updateSliderLeftHalf(startTime ?? current)
+        this._slider.updateSliderRightHalf(endTime ?? duration)
     }
 }

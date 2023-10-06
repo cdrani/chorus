@@ -5,13 +5,11 @@ import { secondsToTime } from '../../utils/time.js'
 import { currentSongInfo } from '../../utils/song.js'
 
 export default class Slider {
-    #video
-    #leftDebouncer
-    #rightDebouncer
-    #isCurrentlyPlaying = true
-
     constructor() {
-        this.#video = spotifyVideo.element
+        this._leftDebouncer = null
+        this._rightDebouncer = null
+        this._isCurrentlyPlaying = true
+        this._video = spotifyVideo.element
     }
 
     init() {
@@ -36,7 +34,7 @@ export default class Slider {
     }
 
     setInitialValues(track) {
-        this.#isCurrentlyPlaying = !track?.id ? true : track.id == currentSongInfo().id
+        this._isCurrentlyPlaying = !track?.id ? true : track.id == currentSongInfo().id
 
         const { endTime, startTime } = track
         const { endDisplay } = this.#elements
@@ -69,28 +67,28 @@ export default class Slider {
     }
 
     #setLeftValue() {
-        if (this.#leftDebouncer) clearTimeout(this.#leftDebouncer)
+        if (this._leftDebouncer) clearTimeout(this._leftDebouncer)
 
-        this.#leftDebouncer = setTimeout(() => {
+        this._leftDebouncer = setTimeout(() => {
             const { inputLeft } = this.#elements
             const currentValue = parseInt(inputLeft.value)
 
             this.updateSliderLeftHalf(currentValue)
 
-            if (this.#isCurrentlyPlaying) this.#video.currentTime = inputLeft.value
+            if (this._isCurrentlyPlaying) this._video.currentTime = inputLeft.value
         }, 50)
     }
 
     #setRightValue() {
-        if (this.#rightDebouncer) clearTimeout(this.#rightDebouncer)
+        if (this._rightDebouncer) clearTimeout(this._rightDebouncer)
 
-        this.#rightDebouncer = setTimeout(() => {
+        this._rightDebouncer = setTimeout(() => {
             const { inputRight } = this.#elements
             const currentValue = parseInt(inputRight.value)
 
             this.updateSliderRightHalf(currentValue)
 
-            if (this.#isCurrentlyPlaying) this.#video.currentTime = inputRight.value
+            if (this._isCurrentlyPlaying) this._video.currentTime = inputRight.value
         }, 50)
     }
 
