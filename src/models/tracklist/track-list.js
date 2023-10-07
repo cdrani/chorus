@@ -4,11 +4,12 @@ import SnipIcon from './snip-icon.js'
 import Chorus from '../chorus.js'
 import TrackSnip from '../snip/track-snip.js'
 
+import { store } from '../../stores/data.js'
 import { trackSongInfo } from '../../utils/song.js'
 
 export default class TrackList {
-    constructor(store) {
-        this._chorus = new Chorus()
+    constructor(songTracker) {
+        this._chorus = new Chorus(songTracker)
         this._skipIcon = new SkipIcon(store)
         this._snipIcon = new SnipIcon(store)
         this._trackSnip = new TrackSnip(store)

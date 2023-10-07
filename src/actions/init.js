@@ -5,6 +5,7 @@ import CurrentSnip from '../models/snip/current-snip.js'
 import TrackList from '../models/tracklist/track-list.js'
 import NowPlayingIcons from '../models/now-playing-icons.js'
 
+import Chorus from '../models/chorus.js'
 import SongTracker from '../observers/song-tracker.js'
 import TrackListObserver from '../observers/track-list.js'
 import NowPlayingObserver from '../observers/now-playing.js'
@@ -21,13 +22,16 @@ class App {
 
     #init() {
         this._songTracker = new SongTracker()
+        this._chorus = new Chorus(this._songTracker)
         this._snip = new CurrentSnip(this._songTracker)
 
-        this._nowPlayingIcons = new NowPlayingIcons(this._snip)
-        this._trackListObserver = new TrackListObserver(new TrackList(this._store))
+        this._nowPlayingIcons = new NowPlayingIcons({ snip: this._snip, chorus: this._chorus })
         this._nowPlayingObserver = new NowPlayingObserver({
-            snip: this._snip, songTracker: this._songTracker
+            snip: this._snip,
+            chorus: this._chorus,
+            songTracker: this._songTracker
         })
+        this._trackListObserver = new TrackListObserver(new TrackList(this._songTracker))
 
         this.#resetInterval()    
         this.#reInit()

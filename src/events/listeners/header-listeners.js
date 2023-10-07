@@ -1,8 +1,9 @@
 import Listeners from './listeners.js'
 
 export default class HeaderListeners extends Listeners {
-    constructor() {
-        super()
+    constructor(songTracker) {
+        super(songTracker)
+
         this._setup = false
         this._viewInFocus = null
         this._VIEWS = ['snip', 'speed', 'seek']
