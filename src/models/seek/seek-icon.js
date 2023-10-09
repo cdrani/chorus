@@ -116,7 +116,7 @@ export default class SeekIcons {
         const seekTime = parseInt(button.firstElementChild.textContent, 10)
 
         const newTime = await this.#calculateCurrentTime({ role, seekTime })
-        this.#video.currentTime = { source: 'chorus', value: newTime }
+        this.#video.currentTime = newTime
     }
 
     #setupListeners() {

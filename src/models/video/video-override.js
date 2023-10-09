@@ -3,7 +3,6 @@ import { currentData } from '../../data/current.js'
 export default class VideoOverride {
     constructor(video) {
         this._video = video
-        this.#overrideMediaProperty('currentTime', this.#handleCurrentTimeSetting)
         this.#overrideMediaProperty('playbackRate', this.#handlePlaybackRateSetting)
     }
 
@@ -55,12 +54,5 @@ export default class VideoOverride {
         }
 
         return this.#isValidPlaybackRate(value.value) ? value.value : 1
-    }
-
-    #handleCurrentTimeSetting = value => {
-        if (value?.source == 'chorus') return value?.value
-        if (value !== parseInt(this._video.currentTime)) return undefined
-        
-        return this._video.currentTime
     }
 }

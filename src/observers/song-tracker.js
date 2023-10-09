@@ -132,7 +132,7 @@ export default class SongTracker {
             if (!atSongEnd) return
 
             if (this.#isLooping) {
-                this._video.currentTime = { source: 'chorus', value: startTime }
+                this._video.currentTime = startTime
                 return
             }
 
