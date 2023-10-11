@@ -5,7 +5,9 @@
   <img alt="GitHub manifest version" src="https://img.shields.io/github/package-json/v/cdrani/chorus?style=flat-square">
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/cdrani/chorus?style=flat-square">
   <img alt="GitHub" src="https://img.shields.io/github/license/cdrani/chorus?style=flat-square">
-  
+</p>
+
+<p align="center">
   <img alt="Chrome WebStore # Users" src="https://img.shields.io/chrome-web-store/users/jfnjmnapkhdbaidedlbdcmhiphfjljcd?label=Chrome%20Users&style=flat-square">
   <img alt="Chrome WebStore Rating" src="https://img.shields.io/chrome-web-store/rating/jfnjmnapkhdbaidedlbdcmhiphfjljcd?label=Chrome%20Rating&style=flat-square">
 
@@ -33,8 +35,6 @@ Enhance Spotify with controls to save favourite track section and auto-skip. Sav
 
 Use the slider left and right thumbs to narrow down the section you want to save. This saved section will be the only part of the song played from now on.
 
-Set left and right thumbs at 0 to skip a track completely, or better yet...
-
 ⭐ 🛑 Block a song from being played forever. In the artist, album, playlists, or queue pages, clicking the block icon will toggle the track's blocked/unblocked state. In the blocked state, that song will always be skipped from being played in an album, queue, and/or playlist. Blocking a song takes precedence over a saved snip.
 
 ⭐ 💡 Toggling the entire extension on/off by clicking the extension icon in the toolbar. Toggle the extension off whenever you want to listen to Spotify without your snips, blocked songs, or custom playback speeds and pitch. Toggle it back on to enjoy the features. It would be a good idea to have the extension pinned for quick access and use of this feature.
@@ -42,7 +42,9 @@ Set left and right thumbs at 0 to skip a track completely, or better yet...
 ⭐ ⏪ ⏩ Custom Seeking (Fast-Forward & Rewind) for short-form (tracks in album, playlists, etc) and long-form (podcasts and audiobooks) audio. Ex. 10 seconds skip forward and 5 seconds skip back for tracks, and 10 seconds skip back and 30 seconds skip forward for podcasts.
 
 
-⭐ Generate a shareable link to your favourite snip for easy sharing. Currently only copied to clipboard, but upcoming features will allow social media sharing such as on twitter, IG, etc. Note that link will only work if opening on desktop browser and recipient has the extension installed.
+⭐ 🔗 Generate a shareable link to your favourite snip for easy sharing. Currently only copied to clipboard, but upcoming features will allow social media sharing such as on twitter, IG, etc. Note that link will only work if opening on desktop browser and recipient has the extension installed.
+
+⭐ ⌨️ Keyboard Shortcuts. The core functionality of the extension can be triggered via keypress. Additional media commands such as play/pause, shuffle, mute/unmute, etc are also available. Reference ["Setting Browser Keyboard Shortcuts"](https://www.makeuseof.com/open-browser-extensions-keyboard-shortcut/) for your specific browser.
 
 ## 📆 **Upcoming Features** 📆
 
@@ -66,7 +68,7 @@ Releases are automated based on semantic releases and tagged as such in the [Rel
 
 ## 👋 **Closing Remarks** 👋
 
-Please give a ⭐ if you like and/or use this project. [Contributions](./contributing.md) are wholeheartedly welcome if they adhere to the [Code of Conduct].(./code_of_conduct.md)
+Please give a ⭐ if you like and/or use this project. [Contributions](./contributing.md) are wholeheartedly welcome if they adhere to the [Code of Conduct](./code_of_conduct.md).
 
 For issues, questions, feature suggestions, etc please report it [here](https://github.com/cdrani/chorus/issues/new/choose).
 
