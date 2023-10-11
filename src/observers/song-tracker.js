@@ -16,7 +16,7 @@ export default class SongTracker {
     async init() {
         this.#setupListeners()
         const songStateData = await this.#setCurrentSongData()
-        songStateData.isShared ? this.handleShared(songStateData) : await this.songChange(songStateData)
+        songStateData.isShared ? await this.handleShared(songStateData) : await this.songChange(songStateData)
     }
 
     async updateCurrentSongData(values) {
@@ -80,7 +80,7 @@ export default class SongTracker {
             type: 'play', 
             body: { 
                 uris: [`spotify:track:${trackId}`], 
-                position_ms: Math.max(parseInt(startTime, 10) - 1, 1) * 1000,
+                position_ms: Math.max(parseInt(startTime, 10) - 1, 0) * 1000,
             },
             cb: () => { this.#mute(); setTimeout(() => this.#unMute(), 1000) }
         })
