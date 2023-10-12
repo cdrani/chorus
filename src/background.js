@@ -122,15 +122,12 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
 )
 
 chrome.webRequest.onBeforeSendHeaders.addListener(details => {
-    details?.requestHeaders?.forEach(header => {
-        if (!header?.value?.startsWith('Bearer')) return
+    const authHeader = details?.requestHeaders?.find(header => header?.name == 'authorization')
+    if (!authHeader) return
 
-        if (details?.initiator?.match(/.*:\/\/.*spotify.com.*/)) {
-            chrome.storage.local.set({ auth_token: header?.value })
-        }
-    })
+    chrome.storage.local.set({ auth_token: authHeader?.value })
 },
-    { urls: ['https://api-partner.spotify.com/pathfinder/v1/*'] },
+    { urls: ['https://guc3-spclient.spotify.com/track-playback/v1/devices'] },
     ['requestHeaders']
 )
 
