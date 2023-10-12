@@ -80,9 +80,9 @@ export default class SongTracker {
             type: 'play', 
             body: { 
                 uris: [`spotify:track:${trackId}`], 
-                position_ms: Math.max(parseInt(startTime, 10) - 1, 0) * 1000,
+                position_ms: Math.max(parseInt(startTime, 10), 0) * 1000,
             },
-            cb: () => { this.#mute(); setTimeout(() => this.#unMute(), 1000) }
+            cb: () => { this.#mute(); setTimeout(() => this.#unMute(), 250) }
         })
     }
 
@@ -100,7 +100,7 @@ export default class SongTracker {
             const currentPosition = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
             const currentPositionTime = parseInt(currentPosition, 10) * 1000
 
-            if (currentPositionTime < parsedStartTime) {
+            if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
                 await this.#seekTo(startTime)
             } else {
                 this.#unMute()
