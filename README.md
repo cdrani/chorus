@@ -31,18 +31,33 @@ Enhance Spotify with controls to save favourite track section and auto-skip. Sav
 
 ## **🎉 Chorus Features 🎉**
 
-⭐ 💾 Save your favourite section of a Spotify track or podcast episode. That section then will the only part played for that track or episode. This can be used to play (or replay) a favourite chorus, sample, or a verse infinitely (if looped).
-
-Use the slider left and right thumbs to narrow down the section you want to save. This saved section will be the only part of the song played from now on.
-
-⭐ 🛑 Block a song from being played forever. In the artist, album, playlists, or queue pages, clicking the block icon will toggle the track's blocked/unblocked state. In the blocked state, that song will always be skipped from being played in an album, queue, and/or playlist. Blocking a song takes precedence over a saved snip.
+<table>
+  <tr>
+		<th width="50%">
+			<p>⭐ 🎛️ Settings UI Icon to update snip, speed, and seek values. Block Icon to block currently playing track.
+			<p><img src="https://github.com/cdrani/chorus/assets/18746599/91c1025f-a44b-4346-818f-64901534de49"/>
+      <p><img src="https://github.com/cdrani/chorus/assets/18746599/2a67e47b-59e9-4e24-b51a-8b5e8b47d659"/>
+		<th width="50%">
+      <p>⭐ Block/Unblock tracks from any view - album, artist, playlist, queue, etc
+			<p><img src="https://github.com/cdrani/chorus/assets/18746599/4b577f8c-fa39-4d7d-aca4-fca3f04fdff4"/>
+	<tr>
+		<th width="50%">
+			<p>⭐ 💾 Save your favourite section of a Spotify track or podcast episode. Can be used to play (or replay) a favourite chorus, sample, or a verse (infinitely if looped).
+			<p><img src="https://github.com/cdrani/chorus/assets/18746599/4f512ac0-ca27-46dc-897c-648dc9ba3a31"/>
+		<th width="50%">
+      <p>⭐ 🔗 Generate a shareable link of a snip for easy sharing across social media.
+      <p><img src="https://github.com/cdrani/chorus/assets/18746599/4f512ac0-ca27-46dc-897c-648dc9ba3a31"/>
+	<tr>
+		<th width="50%">
+      <p>⭐ 🏁 Custom Playback Speed for all audio and per track. Toggling the 
+        "Pitch Correct" switches vocals from low to high pitch based on set playback speed.
+			<p><img src="https://github.com/cdrani/chorus/assets/18746599/86e7d1e6-d625-46d4-80ef-d7f503999a18"/>
+    <th width="50%">
+			<p>⭐ ⏪ ⏩ Custom Seeking (Fast-Forward & Rewind) for short-form (tracks in album, playlists, etc) and long-form (podcasts and audiobooks) audio.
+			<p><img src="https://github.com/cdrani/chorus/assets/18746599/714c1229-9252-4d8c-b07d-70f28cfa01db"/>
+</table>
 
 ⭐ 💡 Toggling the entire extension on/off by clicking the extension icon in the toolbar. Toggle the extension off whenever you want to listen to Spotify without your snips, blocked songs, or custom playback speeds and pitch. Toggle it back on to enjoy the features. It would be a good idea to have the extension pinned for quick access and use of this feature.
-
-⭐ ⏪ ⏩ Custom Seeking (Fast-Forward & Rewind) for short-form (tracks in album, playlists, etc) and long-form (podcasts and audiobooks) audio. Ex. 10 seconds skip forward and 5 seconds skip back for tracks, and 10 seconds skip back and 30 seconds skip forward for podcasts.
-
-
-⭐ 🔗 Generate a shareable link to your favourite snip for easy sharing. Currently only copied to clipboard, but upcoming features will allow social media sharing such as on twitter, IG, etc. Note that link will only work if opening on desktop browser and recipient has the extension installed.
 
 ⭐ ⌨️ Keyboard Shortcuts. The core functionality of the extension can be triggered via keypress. Additional media commands such as play/pause, shuffle, mute/unmute, etc are also available. Reference ["Setting Browser Keyboard Shortcuts"](https://www.makeuseof.com/open-browser-extensions-keyboard-shortcut/) for your specific browser.
 
@@ -63,7 +78,6 @@ Use the slider left and right thumbs to narrow down the section you want to save
 ## ⚙️ **Releases** ⚙️
 
 Releases are automated based on semantic releases and tagged as such in the [Releases](https://github.com/cdrani/chorus/releases) page. Releases have the newest features, bug fixes, etc, but the Web Store / Addons versions are most likely a day or two behind due to Chrome/Mozilla review cycle. If you want the latest and greatest, the download the `chorus-chrome.zip` or `chorus-firefox.zip` file from the newest release.
-
 
 
 ## 👋 **Closing Remarks** 👋
