@@ -25,7 +25,7 @@ Enhance Spotify with controls to save favourite track section and auto-skip. Sav
 
 
 [link-firefox]: https://addons.mozilla.org/firefox/addon/chorus-spotify-enhancer/ 'Version published on Mozilla Add-ons'
-[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/firefox/firefox.svg" width="48" alt="Firefox" valign="middle">][link-firefox] [<img valign="middle" src="https://img.shields.io/amo/v/chorus-spotify-enhancer.svg?label=%20">][link-firefox] (Will be behind until I setup auto-publishing to Addons. Bare with me. 🐻)
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/firefox/firefox.svg" width="48" alt="Firefox" valign="middle">][link-firefox] [<img valign="middle" src="https://img.shields.io/amo/v/chorus-spotify-enhancer.svg?label=%20">][link-firefox] (Might occasionally be behind until I setup auto-publishing to Addons. Bare with me. 🐻)
 
 
 
@@ -33,27 +33,26 @@ Enhance Spotify with controls to save favourite track section and auto-skip. Sav
 
 <table>
   <tr>
-		<th width="50%">
-			<p>⭐ 🎛️ Settings UI Icon to update snip, speed, and seek values. Block Icon to block currently playing track.
+    <th width="50%">
+			<p>Settings UI Icon to update snip, speed, and seek values. Block Icon to block currently playing track.
 			<p><img src="https://github.com/cdrani/chorus/assets/18746599/91c1025f-a44b-4346-818f-64901534de49"/>
       <p><img src="https://github.com/cdrani/chorus/assets/18746599/2a67e47b-59e9-4e24-b51a-8b5e8b47d659"/>
 		<th width="50%">
-      <p>⭐ Block/Unblock tracks from any view - album, artist, playlist, queue, etc
+      <p>Block/Unblock tracks from any view - album, artist, playlist, queue, search, etc
 			<p><img src="https://github.com/cdrani/chorus/assets/18746599/4b577f8c-fa39-4d7d-aca4-fca3f04fdff4"/>
 	<tr>
 		<th width="50%">
-			<p>⭐ 💾 Save your favourite section of a Spotify track or podcast episode. Can be used to play (or replay) a favourite chorus, sample, or a verse (infinitely if looped).
+			<p>Save your favourite section of a track (verse, chorus,etc) and play/replay only that section forever.
 			<p><img src="https://github.com/cdrani/chorus/assets/18746599/4f512ac0-ca27-46dc-897c-648dc9ba3a31"/>
 		<th width="50%">
-      <p>⭐ 🔗 Generate a shareable link of a snip for easy sharing across social media.
+      <p>Generate a shareable link of a snip for easy sharing across social media.
       <p><img src="https://github.com/cdrani/chorus/assets/18746599/4f512ac0-ca27-46dc-897c-648dc9ba3a31"/>
 	<tr>
 		<th width="50%">
-      <p>⭐ 🏁 Custom Playback Speed for all audio and per track. Toggling the 
-        "Pitch Correct" switches vocals from low to high pitch based on set playback speed.
+      <p>Custom Playback Speed. Toggle the "Pitch Correct" to switch vocals from low to high pitch.
 			<p><img src="https://github.com/cdrani/chorus/assets/18746599/86e7d1e6-d625-46d4-80ef-d7f503999a18"/>
     <th width="50%">
-			<p>⭐ ⏪ ⏩ Custom Seeking (Fast-Forward & Rewind) for short-form (tracks in album, playlists, etc) and long-form (podcasts and audiobooks) audio.
+			<p>Custom Seeking (Fast-Forward & Rewind) for all G(eneral) and (P)odcasts/(A)udioBooks.
 			<p><img src="https://github.com/cdrani/chorus/assets/18746599/714c1229-9252-4d8c-b07d-70f28cfa01db"/>
 </table>
 
