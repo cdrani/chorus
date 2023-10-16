@@ -64,6 +64,12 @@ export default class CurrentSnip extends Snip {
         this._video.currentTime = Math.max(Math.min(prevEndTime, endTime) - 5, 1)
     }
 
+    async delete() {
+        await super._delete()
+        const updatedValues = await this.read()
+        await this._songTracker.updateCurrentSongData(updatedValues)
+    }
+
     async save() {
         const { inputLeft, inputRight } = this._elements
         const { isSkipped, endTime: prevEndTime } = await this.read()
