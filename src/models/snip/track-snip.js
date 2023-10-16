@@ -71,6 +71,10 @@ export default class TrackSnip extends Snip {
         super._share()
     }
 
+    async delete() {
+        await super._delete()
+    }
+
     async save() {
         const { inputLeft, inputRight } = this._elements
         const { isSkipped } = this.read()

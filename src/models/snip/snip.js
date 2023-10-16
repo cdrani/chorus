@@ -25,7 +25,7 @@ export default class Snip {
         this._controls.setInitialValues()
     }
 
-    async delete() {
+    async _delete() {
         await this._store.deleteTrack(this._defaultTrack)
         this._updateView()
     }
