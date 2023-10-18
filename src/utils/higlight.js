@@ -12,12 +12,14 @@ export const highlightElement = ({
     context = document,
     property = 'stroke', 
 }) => {
-    setTimeout(() => {
-        const element = context.querySelector(selector)
-        const fillColor = isHighlightable(songStateData) ? '#1ed760' : 'currentColor'
+    let element
+    const timer = setInterval(() => {
+        if (element) { clearInterval(timer); return }
 
+        element = context.querySelector(selector)
         if (!element) return
 
+        const fillColor = isHighlightable(songStateData) ? '#1ed760' : 'currentColor'
         element.style[property] = fillColor
-    }, 1000)
+    }, 250)
 }
