@@ -44,7 +44,18 @@ export default class SongTracker {
     }
 
     #mute() { this._video.volume = 0 }
-    #unMute() { this._video.volume = 1 }
+    #unMute() { this._video.volume = this.#volumePercent }
+
+    get #volumePercent() {
+        const volumeBarElement = document.querySelector('[data-testid="volume-bar"] > div [data-testid="progress-bar"]')
+        if (!volumeBarElement) return 0.65
+
+        const progressPercent = volumeBarElement.style?.cssText
+        if (!progressPercent) return 0.65
+
+        const volume = parseFloat(progressPercent.split(/: /).at(1)) / 100
+        return volume
+    }
 
     #setupListeners() {
         this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate)
