@@ -43,19 +43,16 @@ export default class SongTracker {
         })
     }
 
-    #mute() { this._video.volume = 0 }
-    #unMute() { this._video.volume = this.#volumePercent }
-
-    get #volumePercent() {
-        const volumeBarElement = document.querySelector('[data-testid="volume-bar"] > div [data-testid="progress-bar"]')
-        if (!volumeBarElement) return 0.65
-
-        const progressPercent = volumeBarElement.style?.cssText
-        if (!progressPercent) return 0.65
-
-        const volume = parseFloat(progressPercent.split(/: /).at(1)) / 100
-        return volume
+    get #muteButton() {
+        return document.querySelector('[data-testid="volume-bar-toggle-mute-button"]')
     }
+
+    get #isMute() {
+        return this.#muteButton?.getAttribute('aria-label') == 'Unmute'
+    }
+
+    #mute() { if (!this.#isMute) this.#muteButton?.click() }
+    #unMute() { if (this.#isMute) this.#muteButton?.click() }
 
     #setupListeners() {
         this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate)
