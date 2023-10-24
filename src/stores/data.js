@@ -1,5 +1,7 @@
 import CacheStore from './cache.js'
 import Dispatcher from '../events/dispatcher.js'
+import { currentSongInfo } from '../utils/song.js'
+import { playback } from '../utils/playback.js'
 
 class DataStore {
     #cache
@@ -19,7 +21,7 @@ class DataStore {
         Object.keys(response).forEach(key => {
             const value = response[key]
 
-            if (!['device_id', 'auth_token', 'enabled', 'globals', 'chorus-seek'].includes(key) && 
+            if (!['now-playing', 'device_id', 'auth_token', 'enabled', 'globals', 'chorus-seek'].includes(key) && 
                 !value.hasOwnProperty('isSkipped')
             ) {
                 const endTime = value?.endTime
@@ -39,6 +41,20 @@ class DataStore {
         if (result && Object.hasOwn(result, 'endTime')) return result 
 
         return this.#cache.getValue({ key: id, value })
+    }
+
+    async setNowPlaying(track) {
+        const { id, cover } = currentSongInfo() 
+        const [title, artists] = id.split(' by ')
+
+        const duration = playback.duration()
+        await this.#dispatcher.sendEvent({
+            eventType: 'storage.set',
+            detail: { key: 'now-playing', values: { id, title, artists, cover, duration , ...track, } },
+        })
+
+        this.#cache.update({ key: 'now-playing', value: { id, duration, title, artists, cover, ...track } })
+        return this.#cache.getKey(id)    
     }
 
     async saveTrack({ id, value }) {
