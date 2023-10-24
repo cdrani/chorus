@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="../styles.css" rel="stylesheet">
+        <style>
+            #chorus-popup {
+                display: flex;
+                width: 276px;
+                padding: .75rem;
+            }
+
+            #chorus-controls.controls {
+                width: 100%;
+                position: unset;
+            }
+
+            .chorus-text-button span {
+                height: unset;
+            }
+
+            #track-info {
+                width: 200px;
+                padding-top: 0 !important;
+            }
+
+            label.chorus-common {
+                color: #b3b3b3;
+                align-items: center;
+            }
+
+            .container {
+                max-width: 100%;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+
+            .marquee {
+                white-space: nowrap;
+                overflow: hidden;
+                display: inline-block;
+                animation: marquee 10s linear infinite;
+            }
+
+            .marquee p {
+                display: inline-block;
+            }
+
+            #track-title {
+                font-size: 18px;
+            }
+
+            #track-artists {
+                font-size: 18px;
+            }
+
+            @keyframes marquee {
+                0% {
+                    transform: translate3d(0, 0, 0);
+                }
+                100% {
+                    transform: translate3d(-50%, 0, 0);
+                }
+            }
+        </style>
+    </head>
+
+    <body style="width:300px;height:88px;margin:0">
+        <script type="module" src="index.js"></script>
+    </body>
+</html>
