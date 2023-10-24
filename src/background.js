@@ -46,9 +46,16 @@ function setState({ key = 'state', value = {} }) {
 
 chrome.storage.onChanged.addListener(async changes => {
     const keys = Object.keys(changes)
-    const changedKey = keys.find(key => key == 'enabled' || key == 'auth_token' || key == 'device_id')
+    const changedKey = keys.find(key => (
+        key == 'now-playing' || key == 'enabled' || key == 'auth_token' || key == 'device_id'
+    ))
 
     if (!changedKey) return
+
+    if (changedKey == 'now-playing') {
+        await chrome.runtime.sendMessage({ type: 'app.now-playing', data: changes[changedKey].newValue }) 
+        return
+    }
 
     if (changedKey == 'enabled') {
         const { newValue } = changes.enabled
@@ -57,15 +64,6 @@ chrome.storage.onChanged.addListener(async changes => {
     }
 
     await sendMessage({ message: { [changedKey]: changes[changedKey].newValue } })
-})
-
-chrome.action.onClicked.addListener(async () => {
-    const enabled = await getState({ key: 'enabled' })
-
-    await setState({
-        key: 'enabled',
-        value: !enabled,
-    })
 })
 
 async function getActiveTab() {
