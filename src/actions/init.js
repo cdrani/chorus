@@ -59,6 +59,7 @@ class App {
 
         this._trackListObserver.observe()
         this._nowPlayingObserver.observe()
+        await this._nowPlayingIcons.setNowPlaying()
 
         this.#resetInterval()
         this.#reInit()
