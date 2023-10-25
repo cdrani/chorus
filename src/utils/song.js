@@ -11,7 +11,7 @@ export const currentSongInfo = () => {
     const contextType = anchor?.getAttribute('data-context-item-type')
 
     // Remove 'Now playing: ' prefix
-    const id = songLabel?.split(': ')?.at(1)
+    const id = songLabel?.split('Now playing: ')?.at(1)
 
     if (!contextType) return { id, cover: image?.src }
 
