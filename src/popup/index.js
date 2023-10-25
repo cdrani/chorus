@@ -1,22 +1,5 @@
 import { parseNodeString } from '../utils/parser.js'
-
-const coverImage = () => `
-    <canvas id="canvas" style="display:none"></canvas>
-    <img id="cover" loading="eager" style="height:64px;width:64px;" />
-    <img id="double" loading="eager" style="display:none;height:64px;width:64px" />
-`
-
-const createRootContainer = () => `
-    <div id="chorus" style="height:100%">
-        <div id="chorus-popup">
-            <div id="frame" style="width:64px;height:64px">${coverImage()}</div>
-            <div style="display:flex;flex-direction:column;width:200px;justify-content:space-evenly">
-                <div class="container"><div id="track-title"></div></div>
-                <div class="container"><div id="track-artists"></div></div>
-            </div>
-        </div>
-    </div>
-`
+import { createRootContainer } from './ui.js'
 
 const placeIcons = () => {
     const root = createRootContainer()
@@ -33,14 +16,14 @@ const setTrackInfo = ({ title, artists }) => {
     artistsElement.innerHTML = `<p>${artists}</p>`
 
     if (titleElement.scrollWidth > titleElement.clientWidth) {
-        titleElement.innerHTML += ` - ${titleElement.innerHTML} - `
+        titleElement.innerHTML += `&emsp;${titleElement.innerHTML}&emsp;`
         titleElement.classList.add('marquee')
     } else {
         titleElement.classList.remove('marquee')
     }
 
     if (artistsElement.scrollWidth > artistsElement.clientWidth) {
-        artistsElement.innerHTML += ` - ${artistsElement.innerHTML} - `
+        artistsElement.innerHTML += `&emsp;${artistsElement.innerHTML}&emsp;`
         artistsElement.classList.add('marquee')
     } else {
         artistsElement.classList.remove('marquee')
