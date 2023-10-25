@@ -61,6 +61,13 @@ chrome.storage.onChanged.addListener(async changes => {
         const { newValue } = changes.enabled
         ENABLED = newValue
         setBadgeInfo(newValue)
+
+        chrome.tabs.query({ url: 'https://open.spotify.com/*' }, function (tabs) {
+            tabs.forEach(function (tab) {
+                chrome.tabs.sendMessage(tab.id, {  [changedKey]: changes[changedKey].newValue });
+            })
+        })
+        return
     }
 
     await sendMessage({ message: { [changedKey]: changes[changedKey].newValue } })
@@ -78,7 +85,8 @@ async function getActiveTab() {
 
 async function getAllSpotifyTabs() {
     const result = await chrome.tabs.query({
-        url: '*://*.spotify.com/*'
+        url: '*://*.spotify.com/*',
+        active: true,
     })
 
     return result?.at(0)
