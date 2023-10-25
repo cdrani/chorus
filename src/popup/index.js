@@ -1,3 +1,4 @@
+import { extToggle } from './toggle.js'
 import { parseNodeString } from '../utils/parser.js'
 import { createRootContainer } from './ui.js'
 
@@ -5,6 +6,7 @@ const placeIcons = () => {
     const root = createRootContainer()
     const rootEl = parseNodeString(root)
     document.body.appendChild(rootEl)
+    extToggle.setupEvents()
 }
 
 const setTrackInfo = ({ title, artists }) => {
@@ -337,7 +339,7 @@ function getElements() {
     return {
         cover: document.getElementById('cover'),
         double: document.getElementById('double'),
-        chorusPopup: document.getElementById('chorus-popup'),
+        chorusPopup: document.getElementById('chorus'),
         titleElement: document.getElementById('track-title'),
         artistsElement: document.getElementById('track-artists'),
     }
