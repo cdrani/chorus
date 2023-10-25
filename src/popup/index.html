@@ -1,14 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="../styles.css" rel="stylesheet">
         <style>
-            #chorus-popup {
+            a, p {
+                border: 0;
+                margin: 0;
+                padding: 0;
+                vertical-align: baseline;
+            }
+
+            #chorus {
+                position: absolute;
                 display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                padding: 0.75rem;
+                z-index: 0;
+            }
+
+            #chorus-popup {
+                position: relative;
+                display: flex;
+                grid-gap: .75rem;
                 width: 276px;
-                padding: .75rem;
+            }
+
+            #chorus-toggle {
+                position: absolute;
+                top: 0;
+                right: 0.75rem;
+                display: flex;
+                justify-content: flex-end;
+                z-index: 10;
+                pointer-events: auto;
             }
 
             #chorus-controls.controls {
