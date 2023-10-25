@@ -10,10 +10,10 @@ export const createToggleButton = ({
     <button 
         id="${buttonId}"
         class="chorus-icon-active"
-        style="font-size:1rem;background-color:transparent;display:flex;align-items:center;user-select:none;"
+        style="padding:0;background-color:transparent;display:flex;align-items:center;user-select:none;"
     >
         ${labelId && labelText && `
-            <span id="${labelId}" style="color:#fff;margin-right:1rem">${labelText}</span>
+            <span id="${labelId}" style="font-size:1rem;color:#fff;margin-right:1rem">${labelText}</span>
         `}
 
         <input 
