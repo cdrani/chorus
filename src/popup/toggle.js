@@ -1,4 +1,5 @@
 import { createToggleButton } from '../components/toggle-button.js'
+import { setState } from '../utils/state.js'
 
 class ExtToggle {
     get ui() {
@@ -10,26 +11,37 @@ class ExtToggle {
         })
     }
 
-    setupEvents() {
-        const { extToggleButton } = this.elements
-        extToggleButton.onclick = () => this.#toggleExtCheckbox()
+    initialize(checked) {
+        this.#setCheckedUI(checked)
     }
 
-    #setCheckedUI(extChecked) {
+    setupEvents() {
+        const { extToggleButton } = this.elements
+        extToggleButton.onclick = async () => await this.#toggleExtCheckbox()
+    }
+
+    setFill(fillColor) {
+        const { extToggleOn, extToggleOff } = this.elements
+        extToggleOn.style.fill = fillColor
+        extToggleOff.style.fill = fillColor
+    }
+
+    async #setCheckedUI(extChecked) {
         const { extCheckbox, extToggleOn, extToggleOff } = this.elements
 
         extToggleOn.style.display = extChecked ? 'block' : 'none'
         extToggleOff.style.display = extChecked ? 'none' : 'block'
 
         extCheckbox.checked = extChecked
+        await setState({ key: 'enabled', value: extChecked })
     }
 
-    #toggleExtCheckbox() {
+    async #toggleExtCheckbox() {
         const { extCheckbox } = this.elements
 
         extCheckbox.checked = !extCheckbox.checked
         const { checked } = extCheckbox
-        this.#setCheckedUI(checked)
+        await this.#setCheckedUI(checked)
     }
 
     get elements() {
