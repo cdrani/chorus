@@ -1,6 +1,8 @@
 import { extToggle } from './toggle.js'
-import { parseNodeString } from '../utils/parser.js'
 import { createRootContainer } from './ui.js'
+
+import { parseNodeString } from '../utils/parser.js'
+import { getState, setState } from '../utils/state.js'
 
 const placeIcons = () => {
     const root = createRootContainer()
@@ -37,7 +39,10 @@ const setCoverImage = async ({ cover, title, artists }) => {
     if (!double || !cover) return
 
     await loadImage({ url: cover, elem: double })
-    if (double.complete) updateBackgroundAndTextColours({ imageElement: double, title, artists })
+    if (double.complete) { 
+        const { textColor } = await updateBackgroundAndTextColours({ imageElement: double, title, artists })
+        extToggle.setFill(textColor)
+    }
 }
 
 async function loadImage({ url, elem }) {
@@ -96,7 +101,6 @@ function kmeans(data, options) {
         ))
 
         if (converged) break 
-
         centroids = newCentroids
     }
 
@@ -136,14 +140,10 @@ function getPalette(pixels) {
         const color = [r, g, b]
         pixelArray.push(color)
 
-        if (colorCounts[color]) {
-            colorCounts[color]++
-        } else {
-            colorCounts[color] = 1
-        }
+        colorCounts[color] ? (colorCounts[color]++) : (colorCounts[color] = 1)
     }
 
-    const result = kmeans(pixelArray, { k: 6, tolerance: 10 })
+    const result = kmeans(pixelArray, { k: 10, tolerance: 10 })
 
     const palette = result.centroids.map((centroid) => {
         const color = `rgb(${Math.round(centroid[0])}, ${Math.round(centroid[1])}, ${Math.round(centroid[2])})`
@@ -159,38 +159,34 @@ function getPalette(pixels) {
     return sortedPalette
 }
 
-function sortByProximityToPrimaryColors(colors) {
-    const primaryColors = { red: [255, 0, 0], green: [0, 255, 0], blue: [0, 0, 255] }
+function sortByContrast(background, colors) {
+    function calculateRelativeLuminance(color) {
+        const gammaCorrectedRGB = color.base.map(value => {
+            value /= 255
+            return value <= 0.03928
+              ? value / 12.92
+              : Math.pow((value + 0.055) / 1.055, 2.4)
+        })
 
-    // Custom sorting function to sort by proximity to primary colors.
-    function customSort(a, b) {
-        const calculateDistance = (color, primaryColor) => (
-            color.base.reduce((sum, value, index) => (
-                sum + Math.pow(value - primaryColor[index], 2)
-            ), 0)
-        )
-
-        const closestPrimaryA = Math.min(
-            calculateDistance(a, primaryColors.red),
-            calculateDistance(a, primaryColors.green),
-            calculateDistance(a, primaryColors.blue)
-        )
-
-        const closestPrimaryB = Math.min(
-            calculateDistance(b, primaryColors.red),
-            calculateDistance(b, primaryColors.green),
-            calculateDistance(b, primaryColors.blue)
-        )
-
-        // If the closest primary colors are the same, favor the darker shades.
-        if (closestPrimaryA === closestPrimaryB) {
-            return closestPrimaryA - calculateDistance(b, [0, 0, 0])
-        }
-
-        return closestPrimaryA - closestPrimaryB
+        return 0.2126 * gammaCorrectedRGB[0] + 0.7152 * gammaCorrectedRGB[1] + 0.0722 * gammaCorrectedRGB[2]
     }
 
-    return colors.sort(customSort)
+    function calculateContrastRatio(luminance1, luminance2) {
+        const [L1, L2] = [luminance1, luminance2].sort((a, b) => a - b);
+        return (L2 + 0.05) / (L1 + 0.05);
+    }
+
+    const backgroundLuminance = calculateRelativeLuminance(background)
+
+    // Calculate contrast ratios and add them to the array
+    const sortedColors = colors.map(color => {
+        const colorLuminance = calculateRelativeLuminance(color);
+        const contrastRatio = calculateContrastRatio(backgroundLuminance, colorLuminance);
+        return { ...color, contrastRatio }
+    })
+
+    sortedColors.sort((a, b) => b.contrastRatio - a.contrastRatio)
+    return sortedColors
 }
 
 async function updateBackgroundAndTextColours({ imageElement, title, artists }) {
@@ -201,7 +197,7 @@ async function updateBackgroundAndTextColours({ imageElement, title, artists }) 
     const sortedPalette = sortColorsByProximityAndLuminance(palette.slice())
 
     const background = sortedPalette.at(0)
-    const nextPrimary = sortByProximityToPrimaryColors(sortedPalette.slice(1)).at(0)
+    const nextPrimary = sortByContrast(background, sortedPalette.slice(1).filter(x => x.percentage > 0)).at(0)
     
     const accessibleTextColor = getContrastColor(background.base, nextPrimary.base)
     chorusPopup.style.backgroundColor = background.color
@@ -211,7 +207,7 @@ async function updateBackgroundAndTextColours({ imageElement, title, artists }) 
     cover.src = imageElement.src
     cover.style.boxShadow = `0 0 8px 8px ${background.color} inset`
     setTrackInfo({ title, artists })
-    
+
     await setState({
         key: 'popup-ui', 
         value: {
@@ -222,6 +218,8 @@ async function updateBackgroundAndTextColours({ imageElement, title, artists }) 
             backgroundColor: background.color,
         }
     })
+
+    return { textColor: accessibleTextColor }
 }
 
 function calculateLuminance([ r, g, b ]) {
@@ -238,9 +236,8 @@ function sortColorsByProximityAndLuminance(colors) {
     const colorGroups = {}
     colors.forEach(color => {
         const baseColor = color.base.toString()
-        if (!colorGroups[baseColor]) {
-            colorGroups[baseColor] = []
-        }
+        if (!colorGroups[baseColor]) colorGroups[baseColor] = []
+
         colorGroups[baseColor].push(color)
     })
 
@@ -249,7 +246,6 @@ function sortColorsByProximityAndLuminance(colors) {
         colorGroups[baseColor].sort((a, b) => {
             const luminanceA = calculateLuminance(a.base)
             const luminanceB = calculateLuminance(b.base)
-
             // Sort by luminance in descending order (darker colors first)
             return luminanceB - luminanceA
         })
@@ -278,23 +274,6 @@ function getContrastColor(backgroundRGB, textColorRGB, targetContrast = 7 ) {
     // Calculate the required luminance of the text color for the desired contrast ratio.
     const L2 = L1 + targetContrast * 0.05
 
-    // Function to adjust a single channel's value while staying in the [0, 255] range and making it darker.
-    function adjustChannelDark(currentValue, L2, L1) {
-        return Math.min(currentValue, Math.max(0, Math.round((L2 / L1) * currentValue)))
-    }
-
-    const adjustedColorDark = [
-        adjustChannelDark(textColorRGB[0], L2, L1),
-        adjustChannelDark(textColorRGB[1], L2, L1),
-        adjustChannelDark(textColorRGB[2], L2, L1),
-    ]
-
-    const adjustedContrastDark = getContrastRatio(adjustedColorDark, backgroundRGB)
-
-    if (adjustedContrastDark >= 4.5) {
-        return `rgb(${adjustedColorDark.join(', ')})`
-    }
-
     // Function to adjust a single channel's value while staying in the [0, 255] range and making it lighter.
     function adjustChannelLight(currentValue, L2, L1) {
         return Math.min(255, Math.max(currentValue, Math.round((L1 / L2) * currentValue)))
@@ -307,11 +286,27 @@ function getContrastColor(backgroundRGB, textColorRGB, targetContrast = 7 ) {
     ]
 
     const adjustedContrastLight = getContrastRatio(adjustedColorLight, backgroundRGB)
-
     if (adjustedContrastLight >= 4.5) return `rgb(${adjustedColorLight.join(', ')})`
+
+    // Function to adjust a single channel's value while staying in the [0, 255] range and making it darker.
+    function adjustChannelDark(currentValue, L2, L1) {
+        return Math.min(currentValue, Math.max(0, Math.round((L2 / L1) * currentValue)))
+    }
+
+    const adjustedColorDark = [
+        adjustChannelDark(textColorRGB[0], L2, L1),
+        adjustChannelDark(textColorRGB[1], L2, L1),
+        adjustChannelDark(textColorRGB[2], L2, L1),
+    ]
+
+    const adjustedContrastDark = getContrastRatio(adjustedColorDark, backgroundRGB)
+    if (adjustedContrastDark >= 4.5) return `rgb(${adjustedColorDark.join(', ')})`
 
     const contrastWithBlack = getContrastRatio(backgroundRGB, [0, 0, 0])
     const contrastWithWhite = getContrastRatio(backgroundRGB, [255, 255, 255])
+
+    // favour white text
+    if (Math.abs(contrastWithWhite - contrastWithBlack) <=1 ) return 'rgb(255, 255, 255)'
     return contrastWithBlack > contrastWithWhite ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)'
 }
 
@@ -369,38 +364,18 @@ async function setupFromStorage() {
 const loadInitialData = async () => {
     const { data, loaded } = await setupFromStorage()
     const currentData = await getState('now-playing')
+    const enabled = await getState('enabled')
 
-    if (loaded & data?.src == currentData?.cover) return 
+    extToggle.initialize(enabled)
+    if (loaded & data?.src == currentData?.cover) {
+        return extToggle.setFill(data.textColor)
+    }
 
-    setCoverImage(currentData)
+    if (!currentData?.isSkipped) await setCoverImage(currentData)
 }
 
 placeIcons()
 loadInitialData()
-
-function stateResolver({ resolve, reject, result, key, values }) {
-    if (chrome.runtime.lastError) {
-        console.error({ error: chrome.runtime.lastError })
-        return reject({ error: chrome.runtime.lastError })
-    }
-
-    if (key) return resolve(result?.[key])
-    if (values) return resolve(values)
-
-    return resolve(result)
-}
-
-function setState({ key = 'popup-ui', value = {} }) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ [key]: value }, result => stateResolver({ resolve, reject, result }))
-    })
-}
-
-function getState(key) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get(key, result => stateResolver({ key, resolve, reject, result }))
-    })
-}
 
 chrome.runtime.onMessage.addListener(async ({ type, data }) => {
     if (type == 'app.now-playing') await setCoverImage(data)
