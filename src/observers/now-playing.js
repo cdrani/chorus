@@ -1,3 +1,6 @@
+import { store } from '../stores/data.js'
+import { currentData } from '../data/current.js'
+
 import SeekIcons from '../models/seek/seek-icon.js'
 
 export default class NowPlayingObserver {
@@ -20,6 +23,7 @@ export default class NowPlayingObserver {
         this._observer.observe(target, config)
         this.#toggleSnipUI()
         this._seekIcons.init()
+        await this.setNowPlayingData()
         await this._songTracker.init()
     }
 
@@ -31,10 +35,17 @@ export default class NowPlayingObserver {
         )
     }
 
+    async setNowPlayingData() {
+        const track = await currentData.readTrack()
+        await store.setNowPlaying(track)
+    }
+
+
     #mutationHandler = async mutationsList => {
         for (const mutation of mutationsList) {
             if (this.#isAnchor(mutation)) {
                 if (this._chorus.isShowing) this._snip.init()
+                await this.setNowPlayingData()
                 await this._songTracker.songChange() 
                 this._snip.updateView()
                 await this._seekIcons.setSeekLabels()

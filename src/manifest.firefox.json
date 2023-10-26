@@ -5,7 +5,10 @@
   "version": "1.14.8",
   "manifest_version": 3,
   "author": "cdrani",
-  "action": {},
+  "action": {
+    "default_icon": "icons/logo.png",
+    "default_popup": "popup/index.html"
+  },
   "icons": {
     "16": "icons/icon16.png",
     "24": "icons/icon24.png",

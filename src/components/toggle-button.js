@@ -1,17 +1,20 @@
 export const createToggleButton = ({ 
     buttonId,
-    labelText,
-    labelId,
     onPathId,
     offPathId,
-    checkboxId
+    checkboxId,
+    labelId = '',
+    fillColor = '',
+    labelText = '',
 }) => `
     <button 
         id="${buttonId}"
         class="chorus-icon-active"
-        style="font-size:1rem;background-color:transparent;display:flex;align-items:center;user-select:none;"
+        style="z-index:100;padding:0;background-color:transparent;display:flex;align-items:center;user-select:none;"
     >
-        <span id="${labelId}" style="color:#fff;margin-right:1rem">${labelText}</span>
+        ${labelId && labelText && `
+            <span id="${labelId}" style="font-size:1rem;color:#fff;margin-right:1rem">${labelText}</span>
+        `}
 
         <input 
             type="checkbox"
@@ -30,8 +33,8 @@ export const createToggleButton = ({
             xmlns="http://www.w3.org/2000/svg"
         >
             <path
-                fill="#1ed760"
                 id="${onPathId}"
+                fill="${fillColor || '#1ed760'}"
                 xmlns="http://www.w3.org/2000/svg"
                 d="M297.414 239.133C133.854 239.133 0 376.73 0 544.92c0 168.192 133.853 305.787 297.414 305.787h429.17C890.147 850.707 1024 713.11 1024 544.92c0-168.192-133.854-305.787-297.415-305.787h-429.17zm420.8 65.52c134.854 0 244.236 109.36 244.236 244.217 0 134.874-109.38 244.274-244.237 244.274-134.874 0-244.237-109.4-244.237-244.274 0-134.855 109.362-244.218 244.237-244.218z"
             />

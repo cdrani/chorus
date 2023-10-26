@@ -1,4 +1,12 @@
 let ENABLED = true
+let popupPort = null
+
+chrome.runtime.onConnect.addListener(port => {
+    if (port.name !== 'popup') return
+
+    popupPort = port
+    port.onDisconnect.addListener(() => (popupPort = null))
+})
 
 function setBadgeInfo(enabled = true) {
     chrome.action.setBadgeText({ text: enabled ? 'on' : 'off' })
@@ -28,7 +36,7 @@ function stateResolver({ resolve, reject, result, key }) {
     return key ? resolve(result[key]) : resolve()
 }
 
-function getState({ key = 'state' }) {
+function getState({ key }) {
     return new Promise((resolve, reject) => {
         chrome.storage.local.get(key, result => {
             return stateResolver({ key, resolve, reject, result })
@@ -36,19 +44,24 @@ function getState({ key = 'state' }) {
     })
 }
 
-function setState({ key = 'state', value = {} }) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ [key]: value }, result => {
-            return stateResolver({ resolve, reject, result })
-        })
-    })
+function setState({ key, value = {} }) {
+    return new Promise((resolve, reject) => (
+        chrome.storage.local.set({ [key]: value }, result => stateResolver({ resolve, reject, result }))
+    ))
 }
 
 chrome.storage.onChanged.addListener(async changes => {
     const keys = Object.keys(changes)
-    const changedKey = keys.find(key => key == 'enabled' || key == 'auth_token' || key == 'device_id')
+    const changedKey = keys.find(key => (
+        key == 'now-playing' || key == 'enabled' || key == 'auth_token' || key == 'device_id'
+    ))
 
     if (!changedKey) return
+
+    if (changedKey == 'now-playing' && popupPort) {
+        popupPort.postMessage({ type: 'app.now-playing', data: changes[changedKey].newValue }) 
+        return
+    }
 
     if (changedKey == 'enabled') {
         const { newValue } = changes.enabled
@@ -56,42 +69,23 @@ chrome.storage.onChanged.addListener(async changes => {
         setBadgeInfo(newValue)
     }
 
-    await sendMessage({ message: { [changedKey]: changes[changedKey].newValue } })
-})
-
-chrome.action.onClicked.addListener(async () => {
-    const enabled = await getState({ key: 'enabled' })
-
-    await setState({
-        key: 'enabled',
-        value: !enabled,
-    })
+    await sendMessage({ message: { [changedKey]: changes[changedKey].newValue }})
 })
 
 async function getActiveTab() {
-    const result = await chrome.tabs.query({
-        active: true,
-        currentWindow: true,
-        url: ['*://open.spotify.com/*'],
-    })
-
+    const result = await chrome.tabs.query({ currentWindow: true, url: ['*://open.spotify.com/*'] })
     return result?.at(0)
 }
 
 async function getAllSpotifyTabs() {
-    const result = await chrome.tabs.query({
-        url: '*://*.spotify.com/*'
-    })
-
+    const result = await chrome.tabs.query({ url: '*://*.spotify.com/*' })
     return result?.at(0)
 }
 
 function messenger({ tabId, message }) {
     return new Promise((reject, resolve) => {
         chrome.tabs.sendMessage(tabId, message, response => {
-            if (chrome.runtime.lastError) {
-                return reject({ error: chrome.runtime.lastError })
-            }
+            if (chrome.runtime.lastError) return reject({ error: chrome.runtime.lastError })
             return resolve(response)
         })
     })
@@ -135,7 +129,6 @@ chrome.commands.onCommand.addListener(async command => {
     if (!ENABLED) return
 
     const tab = await getAllSpotifyTabs()
-
     if (!tab) return
 
     const commandsMap = {

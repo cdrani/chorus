@@ -73,9 +73,14 @@ class CurrentData {
     }
 
     async readTrack() {
+        const { cover, id } = currentSongInfo()
         const track = await this.#store.getTrack({
-            id: this.songId,
-            value: this.#trackDefaults
+            id,
+            value: {
+                id,
+                cover,
+                ...this.#trackDefaults,
+            }
         })
 
         return track
