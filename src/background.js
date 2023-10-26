@@ -1,4 +1,12 @@
 let ENABLED = true
+let popupPort = null
+
+chrome.runtime.onConnect.addListener(port => {
+    if (port.name !== 'popup') return
+
+    popupPort = port
+    port.onDisconnect.addListener(() => (popupPort = null))
+})
 
 function setBadgeInfo(enabled = true) {
     chrome.action.setBadgeText({ text: enabled ? 'on' : 'off' })
@@ -50,8 +58,8 @@ chrome.storage.onChanged.addListener(async changes => {
 
     if (!changedKey) return
 
-    if (changedKey == 'now-playing') {
-        await chrome.runtime.sendMessage({ type: 'app.now-playing', data: changes[changedKey].newValue }) 
+    if (changedKey == 'now-playing' && popupPort) {
+        popupPort.postMessage({ type: 'app.now-playing', data: changes[changedKey].newValue }) 
         return
     }
 

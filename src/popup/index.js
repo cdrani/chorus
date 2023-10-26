@@ -4,6 +4,9 @@ import { createRootContainer } from './ui.js'
 import { parseNodeString } from '../utils/parser.js'
 import { getState, setState } from '../utils/state.js'
 
+// Create a connection to the background script
+const PORT = chrome.runtime.connect({ name: "popup" })
+
 const placeIcons = () => {
     const root = createRootContainer()
     const rootEl = parseNodeString(root)
@@ -400,6 +403,9 @@ const loadInitialData = async () => {
 placeIcons()
 loadInitialData()
 
-chrome.runtime.onMessage.addListener(async ({ type, data }) => {
-    if (type == 'app.now-playing') await setCoverImage(data)
+PORT.onMessage.addListener(async ({ type, data }) => {
+    if (type !== 'app.now-playing') return
+    if (!extToggle.on) return
+
+    await setCoverImage(data)
 })
