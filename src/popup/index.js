@@ -8,7 +8,7 @@ const placeIcons = () => {
     const root = createRootContainer()
     const rootEl = parseNodeString(root)
     document.body.appendChild(rootEl)
-    extToggle.setupEvents()
+    extToggle.setupEvents(loadExtOffState)
 }
 
 const setTrackInfo = ({ title, artists, textColor = '#000' }) => {
@@ -193,7 +193,7 @@ function sortByContrast(background, colors) {
 }
 
 async function updateBackgroundAndTextColours({ imageElement, title, artists }) {
-    const { cover, artistsElement, chorusPopup, titleElement } = getElements()
+    const { cover, chorusPopup } = getElements()
 
     const imageData = getImageData(imageElement)
     const palette = getPalette(imageData)
@@ -356,17 +356,40 @@ async function setupFromStorage() {
     return { loaded: true, data }
 }
 
+async function loadExtOffState(enabled) {
+    if (enabled) {
+        const { data, loaded } = await setupFromStorage()
+        const currentData = await getState('now-playing')
+
+        if (loaded & data?.src == currentData?.cover) return extToggle.setFill(data.textColor)
+        return
+    }
+
+    const { chorusPopup, cover } = getElements()
+    cover.src = '../icons/logo.png'
+
+    setTrackInfo({ 
+        title: 'Chorus Spotify Enhancer',
+        artists: 'Music Lovers Intl., You',
+    })
+
+    chorusPopup.style.backgroundColor = '#1DD760'
+    extToggle.setFill('#000')
+}
+
 const loadInitialData = async () => {
-    const { data, loaded } = await setupFromStorage()
-    const currentData = await getState('now-playing')
     const enabled = await getState('enabled')
 
-    extToggle.initialize(enabled)
-    if (loaded & data?.src == currentData?.cover) {
+    const { data, loaded } = await setupFromStorage()
+    const currentData = await getState('now-playing')
+
+    await extToggle.initialize(enabled, loadExtOffState)
+    if (enabled && loaded & data?.src == currentData?.cover) {
         return extToggle.setFill(data.textColor)
     }
 
-    if (!currentData?.isSkipped) await setCoverImage(currentData)
+    if (enabled && !currentData?.isSkipped) await setCoverImage(currentData)
+
 }
 
 placeIcons()

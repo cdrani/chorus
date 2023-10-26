@@ -2,6 +2,15 @@ import { createToggleButton } from '../components/toggle-button.js'
 import { setState } from '../utils/state.js'
 
 class ExtToggle {
+    constructor() {
+        this._on = false
+        this._eventsSet = false
+    }
+
+    set on(enabled) {
+        this._on = enabled 
+    }
+
     get ui() {
         return createToggleButton({
             onPathId: 'ext-toggle-on',
@@ -11,13 +20,20 @@ class ExtToggle {
         })
     }
 
-    initialize(checked) {
-        this.#setCheckedUI(checked)
+    async initialize(checked, callback) {
+        this.on = checked
+        await this.#setCheckedUI(checked)
+        if (!checked) callback()
     }
 
-    setupEvents() {
+    setupEvents(callback) {
         const { extToggleButton } = this.elements
-        extToggleButton.onclick = async () => await this.#toggleExtCheckbox()
+        if (this._eventsSet) return
+
+        extToggleButton.onclick = async () =>  {
+            await this.#toggleExtCheckbox(callback)
+        }
+        this._eventsSet = true 
     }
 
     setFill(fillColor) {
@@ -36,16 +52,20 @@ class ExtToggle {
         await setState({ key: 'enabled', value: extChecked })
     }
 
-    async #toggleExtCheckbox() {
+    async #toggleExtCheckbox(callback) {
         const { extCheckbox } = this.elements
 
-        extCheckbox.checked = !extCheckbox.checked
-        const { checked } = extCheckbox
+        const checked = !this._on
+        this.on = checked
+        extCheckbox.checked = checked
         await this.#setCheckedUI(checked)
+
+        await callback(checked)
     }
 
     get elements() {
         return {
+            extToggle: document.getElementById('chorus-toggle'),
             extToggleOn: document.getElementById('ext-toggle-on'),
             extToggleOff: document.getElementById('ext-toggle-off'),
 
