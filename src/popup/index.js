@@ -366,7 +366,8 @@ async function loadExtOffState(enabled) {
         const currentData = await getState('now-playing')
 
         cover.style.transform = 'unset'
-        if (loaded & data?.src == currentData?.cover) return extToggle.setFill(data.textColor)
+        if (loaded & data?.title == currentData?.title) return extToggle.setFill(data.textColor)
+        if (!currentData?.isSkipped) await setCoverImage(currentData)
         return
     }
 
@@ -394,7 +395,6 @@ const loadInitialData = async () => {
     }
 
     if (enabled && !currentData?.isSkipped) await setCoverImage(currentData)
-
 }
 
 placeIcons()

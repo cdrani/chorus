@@ -11,6 +11,10 @@ class ExtToggle {
         this._on = enabled 
     }
 
+    get on() {
+        return this._on
+    }
+
     get ui() {
         return createToggleButton({
             onPathId: 'ext-toggle-on',
@@ -23,7 +27,7 @@ class ExtToggle {
     async initialize(checked, callback) {
         this.on = checked
         await this.#setCheckedUI(checked)
-        if (!checked) callback()
+        callback(checked)
     }
 
     setupEvents(callback) {
@@ -58,14 +62,13 @@ class ExtToggle {
         const checked = !this._on
         this.on = checked
         extCheckbox.checked = checked
-        await this.#setCheckedUI(checked)
 
+        await this.#setCheckedUI(checked)
         await callback(checked)
     }
 
     get elements() {
         return {
-            extToggle: document.getElementById('chorus-toggle'),
             extToggleOn: document.getElementById('ext-toggle-on'),
             extToggleOff: document.getElementById('ext-toggle-off'),
 
