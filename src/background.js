@@ -61,21 +61,17 @@ chrome.storage.onChanged.addListener(async changes => {
         const { newValue } = changes.enabled
         ENABLED = newValue
         setBadgeInfo(newValue)
-
-        chrome.tabs.query({ url: 'https://open.spotify.com/*' }, function (tabs) {
-            tabs.forEach(function (tab) {
-                chrome.tabs.sendMessage(tab.id, {  [changedKey]: changes[changedKey].newValue });
-            })
-        })
-        return
     }
 
-    await sendMessage({ message: { [changedKey]: changes[changedKey].newValue } })
+    chrome.tabs.query({ url: 'https://open.spotify.com/*' }, function (tabs) {
+        tabs.forEach(function (tab) {
+            chrome.tabs.sendMessage(tab.id, {  [changedKey]: changes[changedKey].newValue })
+        })
+    })
 })
 
 async function getActiveTab() {
     const result = await chrome.tabs.query({
-        active: true,
         currentWindow: true,
         url: ['*://open.spotify.com/*'],
     })
@@ -84,20 +80,15 @@ async function getActiveTab() {
 }
 
 async function getAllSpotifyTabs() {
-    const result = await chrome.tabs.query({
-        url: '*://*.spotify.com/*',
-        active: true,
-    })
-
+    const result = await chrome.tabs.query({ url: '*://*.spotify.com/*' })
     return result?.at(0)
 }
 
 function messenger({ tabId, message }) {
     return new Promise((reject, resolve) => {
         chrome.tabs.sendMessage(tabId, message, response => {
-            if (chrome.runtime.lastError) {
-                return reject({ error: chrome.runtime.lastError })
-            }
+            if (chrome.runtime.lastError) return reject({ error: chrome.runtime.lastError })
+
             return resolve(response)
         })
     })
