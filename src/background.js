@@ -28,7 +28,7 @@ function stateResolver({ resolve, reject, result, key }) {
     return key ? resolve(result[key]) : resolve()
 }
 
-function getState({ key = 'state' }) {
+function getState({ key }) {
     return new Promise((resolve, reject) => {
         chrome.storage.local.get(key, result => {
             return stateResolver({ key, resolve, reject, result })
@@ -36,12 +36,10 @@ function getState({ key = 'state' }) {
     })
 }
 
-function setState({ key = 'state', value = {} }) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ [key]: value }, result => {
-            return stateResolver({ resolve, reject, result })
-        })
-    })
+function setState({ key, value = {} }) {
+    return new Promise((resolve, reject) => (
+        chrome.storage.local.set({ [key]: value }, result => stateResolver({ resolve, reject, result }))
+    ))
 }
 
 chrome.storage.onChanged.addListener(async changes => {
@@ -63,19 +61,11 @@ chrome.storage.onChanged.addListener(async changes => {
         setBadgeInfo(newValue)
     }
 
-    chrome.tabs.query({ url: 'https://open.spotify.com/*' }, function (tabs) {
-        tabs.forEach(function (tab) {
-            chrome.tabs.sendMessage(tab.id, {  [changedKey]: changes[changedKey].newValue })
-        })
-    })
+    await sendMessage({ message: { [changedKey]: changes[changedKey].newValue }})
 })
 
 async function getActiveTab() {
-    const result = await chrome.tabs.query({
-        currentWindow: true,
-        url: ['*://open.spotify.com/*'],
-    })
-
+    const result = await chrome.tabs.query({ currentWindow: true, url: ['*://open.spotify.com/*'] })
     return result?.at(0)
 }
 
@@ -88,7 +78,6 @@ function messenger({ tabId, message }) {
     return new Promise((reject, resolve) => {
         chrome.tabs.sendMessage(tabId, message, response => {
             if (chrome.runtime.lastError) return reject({ error: chrome.runtime.lastError })
-
             return resolve(response)
         })
     })
@@ -132,7 +121,6 @@ chrome.commands.onCommand.addListener(async command => {
     if (!ENABLED) return
 
     const tab = await getAllSpotifyTabs()
-
     if (!tab) return
 
     const commandsMap = {
