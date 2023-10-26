@@ -19,8 +19,8 @@ const setTrackInfo = ({ title, artists, textColor = '#000' }) => {
     titleElement.innerHTML = `<p>${title}</p>`
     artistsElement.innerHTML = `<p>${artists}</p>`
 
-    titleElement.style = `font-size:14px;font-weight:bold;color:${textColor}` 
-    artistsElement.style = `font-size:14px;font-weight:bold;color:${textColor}`
+    titleElement.style = `font-size:14px;font-weight:500;color:${textColor}` 
+    artistsElement.style = `font-size:14px;font-weight:500;color:${textColor}`
 
     if (titleElement.scrollWidth > titleElement.clientWidth) {
         titleElement.innerHTML += `&emsp;${titleElement.innerHTML}&emsp;`
