@@ -53,6 +53,7 @@ async function loadImage({ url, elem }) {
         elem.onload = () => resolve(elem)
         elem.onerror = reject
         elem.crossOrigin = 'Anonymous'
+        elem.style.transform = 'unset'
         elem.src = url
     })
 }
@@ -358,16 +359,19 @@ async function setupFromStorage() {
 }
 
 async function loadExtOffState(enabled) {
+    const { chorusPopup, cover } = getElements()
+
     if (enabled) {
         const { data, loaded } = await setupFromStorage()
         const currentData = await getState('now-playing')
 
+        cover.style.transform = 'unset'
         if (loaded & data?.src == currentData?.cover) return extToggle.setFill(data.textColor)
         return
     }
 
-    const { chorusPopup, cover } = getElements()
     cover.src = '../icons/logo.png'
+    cover.style.transform = 'scale(1.225)'
 
     setTrackInfo({ 
         title: 'Chorus Spotify Enhancer',
