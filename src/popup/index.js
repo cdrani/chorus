@@ -11,13 +11,16 @@ const placeIcons = () => {
     extToggle.setupEvents()
 }
 
-const setTrackInfo = ({ title, artists }) => {
+const setTrackInfo = ({ title, artists, textColor = '#000' }) => {
     if (!title || !artists) return
 
     const { titleElement, artistsElement } = getElements()
 
     titleElement.innerHTML = `<p>${title}</p>`
     artistsElement.innerHTML = `<p>${artists}</p>`
+
+    titleElement.style = `font-size:14px;font-weight:bold;color:${textColor}` 
+    artistsElement.style = `font-size:14px;font-weight:bold;color:${textColor}`
 
     if (titleElement.scrollWidth > titleElement.clientWidth) {
         titleElement.innerHTML += `&emsp;${titleElement.innerHTML}&emsp;`
@@ -199,27 +202,24 @@ async function updateBackgroundAndTextColours({ imageElement, title, artists }) 
     const background = sortedPalette.at(0)
     const nextPrimary = sortByContrast(background, sortedPalette.slice(1).filter(x => x.percentage > 0)).at(0)
     
-    const accessibleTextColor = getContrastColor(background.base, nextPrimary.base)
+    const textColor = getContrastColor(background.base, nextPrimary.base)
     chorusPopup.style.backgroundColor = background.color
-    titleElement.style = `font-size:14px;color:${accessibleTextColor}` 
-    artistsElement.style = `font-size:14px;color:${accessibleTextColor}`
 
     cover.src = imageElement.src
-    cover.style.boxShadow = `0 0 8px 8px ${background.color} inset`
-    setTrackInfo({ title, artists })
+    setTrackInfo({ title, artists, textColor })
 
     await setState({
         key: 'popup-ui', 
         value: {
             title, 
             artists,
+            textColor,
             src: imageElement.src,
-            textColor: accessibleTextColor,
             backgroundColor: background.color,
         }
     })
 
-    return { textColor: accessibleTextColor }
+    return { textColor }
 }
 
 function calculateLuminance([ r, g, b ]) {
@@ -341,16 +341,11 @@ function getElements() {
 }
 
 function loadImageData({ src, title, artists, backgroundColor, textColor }) {
-    const { artistsElement, titleElement, cover, chorusPopup } = getElements()
+    const { cover, chorusPopup } = getElements()
 
     cover.src = src
-    cover.style.boxShadow = `0 0 4px 4px ${backgroundColor} inset`
-
     chorusPopup.style.backgroundColor = backgroundColor
-    titleElement.style = `font-size:14px;color:${textColor}`
-    artistsElement.style = `font-size:14px;color:${textColor}`
-
-    setTrackInfo({ title, artists })
+    setTrackInfo({ title, artists, textColor })
 }
 
 async function setupFromStorage() {
