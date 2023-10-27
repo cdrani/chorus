@@ -16,17 +16,15 @@ export default class SongTracker {
     async init() {
         this.#setupListeners()
         const songStateData = await this.#setCurrentSongData()
-        songStateData.isShared ? await this.handleShared(songStateData) : await this.songChange(songStateData)
+        songStateData.isShared 
+            ? await this.handleShared(songStateData)
+            : await this.songChange(songStateData)
     }
 
     async updateCurrentSongData(values) {
         if (!values) return
 
-        this._currentSongState = {
-            ...this._currentSongState || {},
-            ...values,
-        }
-
+        this._currentSongState = { ...this._currentSongState || {}, ...values }
         await this.#applyEffects(this._currentSongState)
     }
 

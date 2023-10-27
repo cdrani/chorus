@@ -19,13 +19,14 @@
                 justify-content: flex-start;
                 padding: 0.75rem;
                 z-index: 0;
+                width: 276px;
             }
 
             #chorus-popup {
                 position: relative;
                 display: flex;
                 grid-gap: .75rem;
-                width: 276px;
+                width: 100%;
             }
 
             #chorus-toggle {
@@ -48,7 +49,7 @@
             }
 
             .container {
-                max-width: 100%;
+                max-width: 200px;
                 overflow: hidden;
                 white-space: nowrap;
             }
@@ -62,6 +63,11 @@
 
             .marquee p {
                 display: inline-block;
+            }
+
+            .track-text {
+                font-size: 14px;
+                font-weight: 500;
             }
 
             @keyframes marquee {

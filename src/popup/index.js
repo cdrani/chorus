@@ -22,18 +22,18 @@ const setTrackInfo = ({ title, artists, textColor = '#000' }) => {
     titleElement.innerHTML = `<p>${title}</p>`
     artistsElement.innerHTML = `<p>${artists}</p>`
 
-    titleElement.style = `font-size:14px;font-weight:500;color:${textColor}` 
-    artistsElement.style = `font-size:14px;font-weight:500;color:${textColor}`
+    titleElement.style.color = textColor
+    artistsElement.style.color = textColor
 
-    if (titleElement.scrollWidth > titleElement.clientWidth) {
-        titleElement.innerHTML += `&emsp;${titleElement.innerHTML}&emsp;`
+    if (title.length > 27) {
+        titleElement.innerHTML += `&emsp;&emsp;${titleElement.innerHTML}&emsp;&emsp;`
         titleElement.classList.add('marquee')
     } else {
         titleElement.classList.remove('marquee')
     }
 
-    if (artistsElement.scrollWidth > artistsElement.clientWidth) {
-        artistsElement.innerHTML += `&emsp;${artistsElement.innerHTML}&emsp;`
+    if (artists.length > 27) {
+        artistsElement.innerHTML += `&emsp;&emsp;${artistsElement.innerHTML}&emsp;&emsp;`
         artistsElement.classList.add('marquee')
     } else {
         artistsElement.classList.remove('marquee')
@@ -361,39 +361,46 @@ async function setupFromStorage() {
     return { loaded: true, data }
 }
 
-async function loadExtOffState(enabled) {
+function loadDefaultUI(enabled) {
     const { chorusPopup, cover } = getElements()
 
-    if (enabled) {
-        const { data, loaded } = await setupFromStorage()
-        const currentData = await getState('now-playing')
-
-        cover.style.transform = 'unset'
-        if (loaded & data?.title == currentData?.title) return extToggle.setFill(data.textColor)
-        if (!currentData?.isSkipped) await setCoverImage(currentData)
-        return
-    }
-
     cover.src = '../icons/logo.png'
-    cover.style.transform = 'scale(1.225)'
+    cover.style.transform = 'scale(1.15)'
 
-    setTrackInfo({ 
-        title: 'Chorus Spotify Enhancer',
-        artists: 'Music Lovers Intl., You',
-    })
+    const title = enabled 
+        ? 'No Active Spotify Tab Open Or Media Playing'
+        : 'Chorus Toggled Off. Turn On To Enhance Spotify.'
+
+    setTrackInfo({ title, artists: 'Chorus - Spotify Enhancer' })
 
     chorusPopup.style.backgroundColor = '#1DD760'
     extToggle.setFill('#000')
 }
 
+async function loadExtOffState(enabled) {
+    if (!enabled) return loadDefaultUI(enabled)
+
+    const { cover } = getElements()
+    const { data, loaded } = await setupFromStorage()
+    const currentData = await getState('now-playing')
+
+    if (!data && !currentData) return loadDefaultUI(enabled)
+
+    cover.style.transform = 'unset'
+    if (loaded & data?.title == currentData?.title) return extToggle.setFill(data.textColor)
+
+    if (!currentData?.isSkipped) await setCoverImage(currentData)
+}
+
 const loadInitialData = async () => {
     const enabled = await getState('enabled')
-
     const { data, loaded } = await setupFromStorage()
     const currentData = await getState('now-playing')
 
     await extToggle.initialize(enabled, loadExtOffState)
-    if (enabled && loaded & data?.src == currentData?.cover) {
+    if (!data && !currentData) return loadDefaultUI()
+
+    if (enabled && loaded & data?.title == currentData?.title) {
         return extToggle.setFill(data.textColor)
     }
 
@@ -404,8 +411,8 @@ placeIcons()
 loadInitialData()
 
 PORT.onMessage.addListener(async ({ type, data }) => {
-    if (type !== 'app.now-playing') return
-    if (!extToggle.on) return
+    if (!['enabled', 'now-playing'].includes(type)) return
 
-    await setCoverImage(data)
+    if (type == 'enabled') await extToggle.initialize(data, loadExtOffState)
+    if (type == 'now-playing') (data && await setCoverImage(data))
 })
