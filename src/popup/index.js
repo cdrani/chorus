@@ -22,18 +22,18 @@ const setTrackInfo = ({ title, artists, textColor = '#000' }) => {
     titleElement.innerHTML = `<p>${title}</p>`
     artistsElement.innerHTML = `<p>${artists}</p>`
 
-    titleElement.style = `font-size:14px;font-weight:500;color:${textColor}` 
-    artistsElement.style = `font-size:14px;font-weight:500;color:${textColor}`
+    titleElement.style.color = textColor
+    artistsElement.style.color = textColor
 
-    if (titleElement.scrollWidth > titleElement.clientWidth) {
-        titleElement.innerHTML += `&emsp;${titleElement.innerHTML}&emsp;`
+    if (title.length > 27) {
+        titleElement.innerHTML += `&emsp;&emsp;${titleElement.innerHTML}&emsp;&emsp;`
         titleElement.classList.add('marquee')
     } else {
         titleElement.classList.remove('marquee')
     }
 
-    if (artistsElement.scrollWidth > artistsElement.clientWidth) {
-        artistsElement.innerHTML += `&emsp;${artistsElement.innerHTML}&emsp;`
+    if (artists.length > 27) {
+        artistsElement.innerHTML += `&emsp;&emsp;${artistsElement.innerHTML}&emsp;&emsp;`
         artistsElement.classList.add('marquee')
     } else {
         artistsElement.classList.remove('marquee')

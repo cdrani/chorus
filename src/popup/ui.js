@@ -11,9 +11,9 @@ export const createRootContainer = () => `
         <div id="chorus-toggle">${extToggle.ui}</div>
         <div id="chorus-popup">
             <div id="frame" style="width:64px;height:64px">${coverImage()}</div>
-            <div style="display:flex;flex-direction:column;width:200px;justify-content:space-evenly">
-                <div class="container"><div id="track-title"></div></div>
-                <div class="container"><div id="track-artists"></div></div>
+            <div style="display:flex;flex-direction:column;width:100%;justify-content:space-evenly">
+                <div class="container"><div class="track-text" id="track-title"></div></div>
+                <div class="container"><div class="track-text" id="track-artists"></div></div>
             </div>
         </div>
     </div>
