@@ -49,6 +49,9 @@
     }
   ],
   "commands": {
+    "on/off": {
+      "description": "Toggle Extension On/Off"
+    },
     "next": {
       "description": "Next Track"
     },

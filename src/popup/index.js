@@ -404,8 +404,8 @@ placeIcons()
 loadInitialData()
 
 PORT.onMessage.addListener(async ({ type, data }) => {
-    if (type !== 'app.now-playing') return
-    if (!extToggle.on) return
+    if (!['enabled', 'now-playing'].includes(type)) return
 
-    await setCoverImage(data)
+    if (type == 'enabled') await extToggle.initialize(data, loadExtOffState)
+    if (type == 'now-playing') await setCoverImage(data)
 })

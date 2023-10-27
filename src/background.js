@@ -15,10 +15,7 @@ function setBadgeInfo(enabled = true) {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-    const result = await setState({
-        key: 'enabled',
-        value: true,
-    })
+    const result = await setState({ key: 'enabled', value: true })
 
     if (!result?.error) {
         setBadgeInfo(true)
@@ -36,12 +33,10 @@ function stateResolver({ resolve, reject, result, key }) {
     return key ? resolve(result[key]) : resolve()
 }
 
-function getState({ key }) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get(key, result => {
-            return stateResolver({ key, resolve, reject, result })
-        })
-    })
+function getState(key) {
+    return new Promise((resolve, reject) => (
+        chrome.storage.local.get(key, result => stateResolver({ key, resolve, reject, result }))
+    ))
 }
 
 function setState({ key, value = {} }) {
@@ -58,9 +53,9 @@ chrome.storage.onChanged.addListener(async changes => {
 
     if (!changedKey) return
 
-    if (changedKey == 'now-playing' && popupPort) {
-        popupPort.postMessage({ type: 'app.now-playing', data: changes[changedKey].newValue }) 
-        return
+    if (['now-playing', 'enabled'].includes(changedKey)) {
+        popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
+        if (changedKey == 'now-playing') return
     }
 
     if (changedKey == 'enabled') {
@@ -121,21 +116,27 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
 
     chrome.storage.local.set({ auth_token: authHeader?.value })
 },
-    { urls: ['https://guc3-spclient.spotify.com/track-playback/v1/devices'] },
+    { 
+        urls: [
+            'https://guc3-spclient.spotify.com/track-playback/v1/devices',
+            'https://api.spotify.com/*'
+        ]
+    },
     ['requestHeaders']
 )
 
 chrome.commands.onCommand.addListener(async command => {
-    if (!ENABLED) return
-
     const tab = await getAllSpotifyTabs()
     if (!tab) return
 
-    const commandsMap = {
+    const chorusMap = {
         'settings': '#chorus-icon',
         'block-track': '#chorus-skip',
         'seek-rewind': '#seek-player-rw-button',
         'seek-fastforward': '#seek-player-ff-button',
+    }
+
+    const mediaMap = {
         'repeat': '[data-testid="control-button-repeat"]',
         'shuffle': '[data-testid="control-button-shuffle"]',
         'next': '[data-testid="control-button-skip-forward"]',
@@ -145,8 +146,16 @@ chrome.commands.onCommand.addListener(async command => {
         'save/unsave': '[data-testid="now-playing-widget"] > [data-testid="add-button"]',
     }
 
-    const selector = commandsMap[command]
-    if (!selector) return 
+    if (command == 'on/off') {
+        const enabled = await getState('enabled')        
+        chrome.storage.local.set({ enabled: !enabled })
+        return
+    } 
+
+    const selector = chorusMap[command] || mediaMap[command]
+    const isChorusCommand = Object.keys(chorusMap).includes(command)
+
+    if (!ENABLED && isChorusCommand) return
 
     await chrome.scripting.executeScript({
         args: [selector],
