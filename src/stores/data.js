@@ -3,6 +3,8 @@ import Dispatcher from '../events/dispatcher.js'
 import { currentSongInfo } from '../utils/song.js'
 import { playback } from '../utils/playback.js'
 
+const DO_NOT_INCLUDE = [ 'now-playing', 'device_id', 'auth_token', 'enabled', 'globals', 'chorus-seek']
+
 class DataStore {
     #cache
     #dispatcher
@@ -21,9 +23,7 @@ class DataStore {
         Object.keys(response).forEach(key => {
             const value = response[key]
 
-            if (!['now-playing', 'device_id', 'auth_token', 'enabled', 'globals', 'chorus-seek'].includes(key) && 
-                !value.hasOwnProperty('isSkipped')
-            ) {
+            if (!DO_NOT_INCLUDE.includes(key) && !value.hasOwnProperty('isSkipped')) {
                 const endTime = value?.endTime
                 value.isSkipped = endTime == 0
             }
