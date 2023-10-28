@@ -68,12 +68,7 @@ chrome.storage.onChanged.addListener(async changes => {
 })
 
 async function getActiveTab() {
-    const result = await chrome.tabs.query({ currentWindow: true, url: ['*://open.spotify.com/*'] })
-    return result?.at(0)
-}
-
-async function getAllSpotifyTabs() {
-    const result = await chrome.tabs.query({ url: '*://*.spotify.com/*' })
+    const result = await chrome.tabs.query({ url: ['*://open.spotify.com/*'] })
     return result?.at(0)
 }
 
@@ -91,10 +86,6 @@ async function sendMessage({ message }) {
     if (!activeTab) return
 
     return await messenger({ tabId: activeTab.id, message })
-}
-
-function handleButtonClick(selector) {
-    document.querySelector(selector).click()
 }
 
 chrome.webRequest.onBeforeRequest.addListener(details => {
@@ -118,15 +109,15 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
 },
     { 
         urls: [
-            'https://guc3-spclient.spotify.com/track-playback/v1/devices',
-            'https://api.spotify.com/*'
+            'https://api.spotify.com/*',
+            'https://guc3-spclient.spotify.com/track-playback/v1/devices'
         ]
     },
     ['requestHeaders']
 )
 
 chrome.commands.onCommand.addListener(async command => {
-    const tab = await getAllSpotifyTabs()
+    const tab = await getActiveTab()
     if (!tab) return
 
     const chorusMap = {
@@ -159,7 +150,7 @@ chrome.commands.onCommand.addListener(async command => {
 
     await chrome.scripting.executeScript({
         args: [selector],
-        func: handleButtonClick,
         target: { tabId: tab.id },
+        func: selector => document.querySelector(selector)?.click(),
     })
 })
