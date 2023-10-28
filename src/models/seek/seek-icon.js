@@ -6,9 +6,10 @@ import { parseNodeString } from '../../utils/parser.js'
 import { spotifyVideo } from '../../actions/overload.js'
 
 export default class SeekIcons {
-    #data
-    #spotifySeekIcons = {}
-    #video = spotifyVideo.element
+    constructor() {
+        this._data = null
+        this._video = spotifyVideo.element
+    }
 
     async init() {
         this.#removeCurrentSpotifySeekIcons()
@@ -18,16 +19,31 @@ export default class SeekIcons {
     }
 
     async #setData() {
-        this.#data = await currentData.getSeekValues()
-        return this.#data
+        this._data = await currentData.getSeekValues()
+        return this._data
     }
     
-    get seekType() {
+    get #seekType() {
         const anchor = document.querySelector('[data-testid="context-item-info-title"] > span > a')
         // album, track, episode, chapter
         const contextType = anchor?.getAttribute('href')?.split('/')?.at(1)
         
         return ['track', 'album'].includes(contextType) ? 'global' : 'shows'
+    }
+
+    get rwIcon() {
+        return createSeekIcon('rw')
+    }
+
+    get ffIcon() {
+        return createSeekIcon('ff')
+    }
+
+    get #spotifySeekIcons() {
+        const spotifyRWIcon = document.querySelector('[data-testid="control-button-seek-back-15"]')
+        const spotifyFFIcon = document.querySelector('[data-testid="control-button-seek-forward-15"]')
+
+        return { spotifyFFIcon, spotifyRWIcon }
     }
 
     removeIcons() {
@@ -37,9 +53,11 @@ export default class SeekIcons {
         seekBack.style.display = 'none'
         seekForward.style.display = 'none'
 
-        if (!this.#spotifySeekIcons.ff) return
-        this.#spotifySeekIcons.ff.style.display = 'flex'
-        this.#spotifySeekIcons.rw.style.display = 'flex'
+        const { spotifyRWIcon, spotifyFFIcon } = this.#spotifySeekIcons
+        if (!spotifyRWIcon) return
+
+        spotifyRWIcon.style.display = 'flex'
+        spotifyFFIcon.style.display = 'flex'
     }
 
     #placeIcons() {
@@ -58,7 +76,7 @@ export default class SeekIcons {
         const ffIcon = parseNodeString(this.ffIcon)
         const rwIcon = parseNodeString(this.rwIcon)
 
-        if (this.seekType == 'shows') this.#removeCurrentSpotifySeekIcons()
+        if (this.#seekType == 'shows') this.#removeCurrentSpotifySeekIcons()
 
         skipForward.parentElement.insertBefore(ffIcon, skipForward.nextSibling)
         skipBack.parentElement.insertBefore(rwIcon, skipBack)
@@ -79,30 +97,33 @@ export default class SeekIcons {
         const rwIconLabel = document.getElementById('seek-icon-rw-label')
         const ffIconLabel = document.getElementById('seek-icon-ff-label')
         
-        const seekType = this.seekType
-        rwIconLabel.textContent = data[seekType].rw
-        ffIconLabel.textContent = data[seekType].ff
+        const { rw, ff } = data[this.#seekType]
+
+        rwIconLabel.textContent = rw
+        ffIconLabel.textContent = ff
+
+        const rwButton = rwIconLabel.parentElement
+        const ffButton = ffIconLabel.parentElement
+
+        rwButton.setAttribute('aria-label', `Rewind ${rw}s`)
+        ffButton.setAttribute('aria-label', `Fast-Forward ${ff}s`)
     }
 
     #removeCurrentSpotifySeekIcons() {
-        if (this.seekType == 'global') return
+        if (this.#seekType == 'global') return
 
-        const spotifyRWIcon = document.querySelector('[data-testid="control-button-seek-back-15"]')
-        const spotifyFFIcon = document.querySelector('[data-testid="control-button-seek-forward-15"]')
+        const { spotifyFFIcon, spotifyRWIcon } = this.#spotifySeekIcons
 
-        this.#spotifySeekIcons = { ff: spotifyFFIcon, rw: spotifyRWIcon }
+        if (spotifyFFIcon?.style?.display == 'none') return
+        if (!spotifyRWIcon && !spotifyFFIcon) return
 
-        if (spotifyRWIcon?.style?.display == 'none') return
-
-        if (spotifyRWIcon && spotifyFFIcon) {
-            spotifyRWIcon.style.display = 'none'
-            spotifyFFIcon.style.display = 'none'
-        }
+        spotifyRWIcon.style.display = 'none'
+        spotifyFFIcon.style.display = 'none'
     }
 
     async #calculateCurrentTime({ role, seekTime }) {
         const { startTime, endTime } = await songState()
-        const currentTime = this.#video.currentTime
+        const currentTime = this._video.currentTime
         const newTimeFF = Math.min(parseInt(currentTime + seekTime, 10), parseInt(endTime, 10) - 0.5)
         const newStartTime = currentTime < parseInt(startTime) ? 0 : startTime
         const newTimeRW = Math.max(parseInt(currentTime - seekTime, 10), parseInt(newStartTime, 10) - 0.5)
@@ -116,7 +137,7 @@ export default class SeekIcons {
         const seekTime = parseInt(button.firstElementChild.textContent, 10)
 
         const newTime = await this.#calculateCurrentTime({ role, seekTime })
-        this.#video.currentTime = newTime
+        this._video.currentTime = newTime
     }
 
     #setupListeners() {
@@ -125,13 +146,5 @@ export default class SeekIcons {
 
         rwIconButton.onclick = e => this.#handleSeekButton(e)
         ffIconButton.onclick = e => this.#handleSeekButton(e)
-    }
-
-    get rwIcon() {
-        return createSeekIcon('rw')
-    }
-
-    get ffIcon() {
-        return createSeekIcon('ff')
     }
 }
