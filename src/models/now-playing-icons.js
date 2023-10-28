@@ -11,12 +11,14 @@ export default class NowPlayingIcons {
     constructor({ snip, chorus }) {
         this.snip = snip
         this.chorus = chorus
-
-        this.init()
     }
 
-    init() {
+    placeIcons() {
         this.#placeIcons()
+    }
+
+    clearIcons() {
+        document.getElementById('chorus')?.remove()
     }
 
     // TODO: Icon should not be concerned with creating the main UI

@@ -288,6 +288,8 @@ input[type=number]::-webkit-outer-spin-button {
     justify-content: flex-end;
 }
 
+[role=ff][aria-label],
+[role=rw][aria-label],
 [role=skip][aria-label],
 [role=snip][aria-label], 
 [role=speed][aria-label],
@@ -296,6 +298,8 @@ input[type=number]::-webkit-outer-spin-button {
     display: inline-block;
 }
 
+[role=ff][aria-label]:after,
+[role=rw][aria-label]:after,
 [role=skip][aria-label]:after,
 [role=snip][aria-label]:after, 
 [role=speed][aria-label]:after, 
@@ -323,6 +327,8 @@ input[type=number]::-webkit-outer-spin-button {
     box-shadow: 0px 4px 6px 0px rgb(0 0 0 / 35%);
 }
 
+[role=ff][aria-label]:hover:after,
+[role=rw][aria-label]:hover:after,
 [role=skip][aria-label]:hover:after,
 [role=snip][aria-label]:hover:after, 
 [role=speed][aria-label]:hover:after,

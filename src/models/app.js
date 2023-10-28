@@ -47,6 +47,7 @@ export default class App {
         this._active = false
         this._video.reset()
 
+        this._nowPlayingIcons.clearIcons()
         this._trackListObserver.disconnect()
         this._nowPlayingObserver.disconnect()
         
@@ -56,6 +57,7 @@ export default class App {
     async connect() {
         this._active = true
 
+        this._nowPlayingIcons.placeIcons()
         this._trackListObserver.observe()
         this._nowPlayingObserver.observe()
 
@@ -71,7 +73,7 @@ export default class App {
             const chorus = document.getElementById('chorus')
 
             if (!chorus) {
-                this._nowPlayingIcons.init()
+                this._nowPlayingIcons.placeIcons()
             }
         }, 3000)
     }

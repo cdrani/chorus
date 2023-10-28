@@ -25,6 +25,7 @@ async function load() {
     const app = new App(video)
     const enabled = JSON.parse(sessionStorage.getItem('enabled'))
     video.active = enabled
+    enabled ? await app.connect() : app.disconnect()
 
     document.addEventListener('app.enabled', async e => {
         const { enabled } = e.detail
