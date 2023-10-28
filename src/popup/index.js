@@ -197,6 +197,10 @@ function sortByContrast(background, colors) {
     return sortedColors
 }
 
+async function updatePopupUIState(popupState) {
+    await setState({ key: 'popup-ui', value: popupState })
+}
+
 async function updateBackgroundAndTextColours({ imageElement, title, artists }) {
     const { cover, chorusPopup } = getElements()
 
@@ -208,22 +212,14 @@ async function updateBackgroundAndTextColours({ imageElement, title, artists }) 
     const nextPrimary = sortByContrast(background, sortedPalette.slice(1).filter(x => x.percentage > 0)).at(0)
     
     const textColor = getContrastColor(background.base, nextPrimary.base)
-    chorusPopup.style.backgroundColor = background.color
+    const backgroundColor = background.color
+    chorusPopup.style.backgroundColor = backgroundColor
 
-    cover.src = imageElement.src
+    const src = imageElement.src
+    cover.src = src
+
     setTrackInfo({ title, artists, textColor })
-
-    await setState({
-        key: 'popup-ui', 
-        value: {
-            title, 
-            artists,
-            textColor,
-            src: imageElement.src,
-            backgroundColor: background.color,
-        }
-    })
-
+    await updatePopupUIState({ title, artists, textColor, src, backgroundColor })
     return { textColor }
 }
 
@@ -373,7 +369,7 @@ function loadDefaultUI(enabled) {
 
     setTrackInfo({ title, artists: 'Chorus - Spotify Enhancer' })
 
-    chorusPopup.style.backgroundColor = '#1DD760'
+    chorusPopup.style.backgroundColor = '#1ED760'
     extToggle.setFill('#000')
 }
 

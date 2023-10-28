@@ -53,9 +53,8 @@ chrome.storage.onChanged.addListener(async changes => {
 
     if (!changedKey) return
 
-    if (['now-playing', 'enabled'].includes(changedKey)) {
-        popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
-        if (changedKey == 'now-playing') return
+    if (changedKey == 'now-playing' && ENABLED) {
+        return popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
     }
 
     if (changedKey == 'enabled') {
