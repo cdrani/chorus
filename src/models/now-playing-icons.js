@@ -5,6 +5,7 @@ import { SETTINGS_ICON, NOW_PLAYING_SKIP_ICON, createIcon } from '../components/
 
 import { currentSongInfo } from '../utils/song.js'
 import { parseNodeString } from '../utils/parser.js'
+import { highlightElement } from '../utils/higlight.js'
 
 export default class NowPlayingIcons {
     constructor({ snip, chorus }) {
@@ -63,19 +64,42 @@ export default class NowPlayingIcons {
         })
 
         const skipIcon = document.getElementById('chorus-skip') 
-        skipIcon.addEventListener('click', () => this.#handleSkipTrack())
+        skipIcon.addEventListener('click', async () => this.#handleSkipTrack())
+    }
+
+    #hightlightTrackListBlock(songStateData) {
+        if (!this.#trackRows) return
+
+        const title = currentSongInfo()?.id?.split(' by ')?.at(0) || ''
+        const context = this.#trackRows.find(row => 
+            row.querySelector('[data-testid="internal-track-link"] div')?.textContent == title
+        )
+        if (!context) return
+
+        highlightElement({ songStateData, context, property: 'fill', selector: 'svg[role="skip"]' })
+
+        const icon = context.querySelector('svg[role="skip"]')
+        if (!icon) return
+
+        icon.style.visibility = 'visible'
+    }
+
+    get #trackRows() {
+        const trackRows = document.querySelectorAll('[data-testid="tracklist-row"]')
+        return trackRows?.length > 0 ? Array.from(trackRows) : undefined
     }
 
     async #handleSkipTrack() {
         const songInfo = await currentData.readTrack()
         if (!songInfo) return
 
-        await store.saveTrack({
+        const updatedValues = await store.saveTrack({
             id: currentSongInfo().id,
             value: { ...songInfo, isSkipped: !songInfo.isSkipped },
         })
 
-        if (!songInfo.isSkipped) {
+        if (updatedValues.isSkipped) {
+            this.#hightlightTrackListBlock(updatedValues)
             document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
         }
     }

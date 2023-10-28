@@ -1,9 +1,10 @@
 const isHighlightable = ({ 
     isSnip, 
+    isSkipped,
     playbackRate = '1',
     preservesPitch = true,
 }) => (
-    isSnip || !preservesPitch || playbackRate !== '1'
+    isSnip || isSkipped || !preservesPitch || playbackRate !== '1'
 )
 
 export const highlightElement = ({ 
