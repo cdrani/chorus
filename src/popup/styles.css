@@ -1,0 +1,87 @@
+body {
+    margin: 0;
+    width: 300px;
+    height: 88px;
+    font-family: system-ui, sans-serif;
+}
+
+button {
+    border-width: 0 !important;
+    border-style: solid !important;
+    border-color: #e5e7eb;
+    cursor: pointer;
+}
+
+a, p {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+
+#chorus {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0.75rem;
+    z-index: 0;
+    width: 276px;
+}
+
+#chorus-popup {
+    position: relative;
+    display: flex;
+    grid-gap: .75rem;
+    width: 100%;
+}
+
+#chorus-toggle {
+    position: absolute;
+    top: 0;
+    right: 0.75rem;
+    display: flex;
+    justify-content: flex-end;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.chorus-text-button span {
+    height: unset;
+}
+
+label.chorus-common {
+    color: #b3b3b3;
+    align-items: center;
+}
+
+.container {
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.marquee {
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    animation: marquee 10s linear infinite;
+}
+
+.marquee p {
+    display: inline-block;
+}
+
+.track-text {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
