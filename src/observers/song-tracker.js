@@ -20,7 +20,18 @@ export default class SongTracker {
     async init() {
         this.#setupListeners()
         const songStateData = await this.#setCurrentSongData()
-        if (songStateData.isShared) await this.handleShared(songStateData)
+        songStateData.isShared 
+            ? await this.handleShared(songStateData)
+            : await this.songChange(songStateData)
+    }
+
+    async handleShared(songStateData) {
+        await this.#applyEffects(songStateData)
+        const { startTime: position } = songStateData
+        const trackId = location.pathname?.split('/')?.at(-1)
+        this._video.currentTime = position
+        this.#mute()
+        await PlayerService.play({ trackId, position, cb: () => this.#requestCallback(500) })
     }
 
     async updateCurrentSongData(values) {
@@ -33,15 +44,6 @@ export default class SongTracker {
     get #isLooping() {
         const repeatButton = document.querySelector('[data-testid="control-button-repeat"]')
         return repeatButton?.getAttribute('aria-label') === 'Disable repeat'
-    }
-
-    async #seekTo(position) {
-        await PlayerService.seekTo({ position, cb: () => this.#requestCallback(500) }) 
-    }
-
-    async #playFrom(position) {
-        const { trackId } = currentSongInfo()
-        await PlayerService.play({ trackId, position, cb: () => this.#requestCallback(250) })
     }
 
     #requestCallback = (duration = 1000) => {
@@ -87,22 +89,19 @@ export default class SongTracker {
         return songInfo
     }
 
-    async handleShared(songStateData) {
-        await this.#applyEffects(songStateData)
-        await this.#playFrom(songStateData.startTime)
-    }
-
     async songChange(initialData = null) {
         this.#mute()
 
+
         const songStateData = initialData ?? await this.#setCurrentSongData()
         await this.#applyEffects(songStateData)
-        const { isSnip, isSkipped, startTime, isShared } = songStateData
+        const { isShared, isSnip, isSkipped, startTime } = songStateData
+
+        if (isShared && location?.search) history.pushState(null, '', location.pathname)
 
         if (isSkipped) {
-            this.#nextButton.click()
-            return
-        } else if (isSnip || isShared) {
+            return this.#nextButton.click()
+        } else if (isSnip) {
             const parsedStartTime = parseInt(startTime, 10) * 1000
             const currentPosition = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
             const currentPositionTime = parseInt(currentPosition, 10) * 1000
@@ -110,7 +109,7 @@ export default class SongTracker {
             if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
                 this._video.currentTime = startTime
             } 
-        } 
+        }
 
         this.#unMute()
     }
@@ -127,8 +126,8 @@ export default class SongTracker {
         if (this._video.isEditing) return
         if (!this._currentSongState) return
 
-        setTimeout(() => {
-            const { startTime, endTime } = this._currentSongState
+        setTimeout(async () => {
+            const { isShared, startTime, endTime } = this._currentSongState
             const currentTimeMS = parseInt(this._video.currentTime * 1000, 10)
 
             const isSongEnd = endTime == playback.duration()
@@ -136,12 +135,10 @@ export default class SongTracker {
             const atSongEnd = currentTimeMS >= endTimeMS
             if (!atSongEnd) return
 
-            if (this.#isLooping) {
-                this._video.currentTime = startTime
-                return
+            if (this.#isLooping || isShared) {
+                return (this._video.currentTime = startTime)
             }
 
-            if (location?.search) history.pushState(null, '', location.pathname)
             this.#nextButton.click()
         }, 1000)
     }
