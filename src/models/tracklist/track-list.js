@@ -73,7 +73,7 @@ export default class TrackList {
                       this._snipIcon._burn({ icon, burn: snipInfo[keys[role]] })
                       this._snipIcon._glow({ icon, glow: snipInfo[keys[role]] })
                 })
-            }, { once: true })
+            })
         })
     }
 
