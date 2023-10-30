@@ -6,7 +6,9 @@
   "manifest_version": 3,
   "author": "cdrani",
   "action": {
-    "default_icon": "icons/logo.png",
+    "default_icon": {
+      "32": "icons/logo.png"
+    },
     "default_popup": "popup/index.html"
   },
   "icons": {
