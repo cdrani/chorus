@@ -18,11 +18,10 @@ export default class NowPlayingObserver {
     }
 
     async observe() {
-        const config = { attributes: true }
         const target = document.querySelector('[data-testid="now-playing-widget"]')
-
         this._observer = new MutationObserver(this.#mutationHandler)
-        this._observer.observe(target, config)
+        this._observer.observe(target, { attributes: true })
+
         this.#toggleSnipUI()
         this._seekIcons.init()
         await this.setNowPlayingData()
