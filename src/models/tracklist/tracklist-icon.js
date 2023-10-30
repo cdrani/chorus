@@ -6,6 +6,7 @@ export default class TrackListIcon {
         this._key = key
         this._store = store
         this._selector = selector
+        this._seen = new Set()
     }
 
     #getIcon(row) {
@@ -37,11 +38,14 @@ export default class TrackListIcon {
 
     async #initializeTrack(row) {
         const song = trackSongInfo(row)
-        if (!song) return
 
-        return await this._store.getTrack({
+        if (!song) return
+        if (this._seen.has(song.id)) return
+
+        this._seen.add(song.id)
+        await this._store.getTrack({
             id: song.id,
-            value: { isSkipped: false, isSnip: false, startTime: 0, endTime: song.endTime },
+            value: { ...song, isSkipped: false, isSnip: false, startTime: 0, endTime: song.endTime }
         })
     }
 
