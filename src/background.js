@@ -63,7 +63,7 @@ chrome.storage.onChanged.addListener(async changes => {
 
     updateBadgeState({ changes, changedKey })
 
-    if (!['now-playing', 'enabled'].includes(changedKey)) {
+    if (['now-playing', 'enabled'].includes(changedKey)) {
         if (changedKey == 'now-playing' && !ENABLED) return
 
         popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
