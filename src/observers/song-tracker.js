@@ -12,6 +12,7 @@ import { PlayerService } from '../services/player.js'
 export default class SongTracker {
     constructor() {
         this._init = true
+        this._playedSnip = false
         this._currentSongState = null
         this._video = spotifyVideo.element
     }
@@ -35,7 +36,7 @@ export default class SongTracker {
     }
 
     async #seekTo(position) {
-        await PlayerService.seekTo({ position, cb: () => this.#requestCallback(1000) })
+        await PlayerService.seekTo({ position, cb: () => this.#requestCallback(500) }) 
     }
 
     async #playFrom(position) {
@@ -45,7 +46,7 @@ export default class SongTracker {
 
     #requestCallback = (duration = 1000) => {
         this.#mute()
-        setTimeout(() => { console.log('unmuting'); this.#unMute() }, duration) 
+        setTimeout(() => this.#unMute(), duration) 
     }
 
     get #muteButton() {
@@ -92,7 +93,7 @@ export default class SongTracker {
     }
 
     async songChange(initialData = null) {
-        if (!this._init) { this.#mute(); }
+        this.#mute()
 
         const songStateData = initialData ?? await this.#setCurrentSongData()
         await this.#applyEffects(songStateData)
@@ -107,12 +108,11 @@ export default class SongTracker {
             const currentPositionTime = parseInt(currentPosition, 10) * 1000
 
             if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
-                await this.#playFrom(startTime)
+                this._video.currentTime = startTime
             } 
-        }
+        } 
 
-        if (!this._init) this.#unMute()
-        this._init = false
+        this.#unMute()
     }
 
     get #nextButton() {
