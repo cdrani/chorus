@@ -13,8 +13,6 @@ export default class NowPlayingObserver {
 
         this._chorus = chorus
         this._seekIcons = new SeekIcons()
-
-        this.observe()
     }
 
     async observe() {
