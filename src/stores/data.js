@@ -37,10 +37,8 @@ class DataStore {
     }
 
     getTrack({ id, value = {}}) {
-        const result = this.#cache.getKey(id)
-        if (result && Object.hasOwn(result, 'endTime')) return result 
-
-        return this.#cache.getValue({ key: id, value })
+        const cacheValue = this.#cache.getValue({ key: id, value })
+        return cacheValue
     }
 
     async setNowPlaying(track) {

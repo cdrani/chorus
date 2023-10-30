@@ -3,6 +3,7 @@ import Snip from './snip.js'
 import { playback } from '../../utils/playback.js'
 import { currentSongInfo } from '../../utils/song.js'
 import { spotifyVideo } from '../../actions/overload.js'
+import { currentData } from '../../data/current.js'
 
 export default class CurrentSnip extends Snip {
     constructor(songTracker) {
@@ -27,15 +28,7 @@ export default class CurrentSnip extends Snip {
     }
 
     get _defaultTrack() {
-        return {
-            id: currentSongInfo().id,
-            value: {
-                startTime: 0,
-                isSnip: false,
-                isSkipped: false,
-                endTime: playback.duration(),
-            },
-        }
+        return currentData.readTrack()
     }
 
     updateView() {
@@ -72,11 +65,13 @@ export default class CurrentSnip extends Snip {
 
     async save() {
         const { inputLeft, inputRight } = this._elements
-        const { isSkipped, endTime: prevEndTime } = await this.read()
+        const track = await this.read()
+        const { id, isSkipped, endTime: prevEndTime } = track
 
-        await this._store.saveTrack({
-            id: currentSongInfo().id,
+        const result = await this._store.saveTrack({
+            id,
             value: {
+                ...track,
                 isSnip: true,
                 startTime: inputLeft.value,
                 endTime: inputRight.value,
@@ -85,10 +80,9 @@ export default class CurrentSnip extends Snip {
         })
 
         this.updateView()
+        this.skipTrackOnSave(result)
+        this.setCurrentTime({ prevEndTime, endTime: result.endTime })
 
-        const updatedValues = await this.read()
-        this.skipTrackOnSave(updatedValues)
-        this.setCurrentTime({ prevEndTime, endTime: updatedValues.endTime })
-        await this._songTracker.updateCurrentSongData(updatedValues)
+        await this._songTracker.updateCurrentSongData(result)
     }
 }

@@ -2,12 +2,8 @@ import { timeToSeconds } from './time.js'
 
 export const currentSongInfo = () => {
     const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.getAttribute('aria-label')
-    const context = document.querySelectorAll([
-        '[data-testid="CoverSlotCollapsed__container"] a', 
-        '[data-testid="CoverSlotCollapsed__container"] img'
-    ])
-    const image = context?.[1]
-    const anchor = context?.[0]
+    const image = document.querySelector('[data-testid="CoverSlotCollapsed__container"] img')
+    const anchor = document.querySelector('[data-testid="CoverSlotCollapsed__container"] a')
     const contextType = anchor?.getAttribute('data-context-item-type')
 
     // Remove 'Now playing: ' prefix
@@ -24,14 +20,14 @@ export const currentSongInfo = () => {
         ...contextType && {
             type: contextType,
             trackId, 
-            url: `${location.origin}/${contextType}/${trackId}`
+            url: `${location.origin}/${contextType}/${trackId}`,
         }
     }
 
 }
 
 export const trackSongInfo = row => {
-    const song = row?.querySelector('a > div')?.textContent || 
+    const title = row?.querySelector('a > div')?.textContent || 
         row?.querySelector('div[data-encore-id="type"]')?.textContent
     const songLength = row?.querySelector('button[data-testid="add-button"] + div')?.textContent
     const image = row?.querySelector('img')
@@ -42,9 +38,11 @@ export const trackSongInfo = row => {
     const trackInfo = getTrackId(row)
 
     return {
+        title,
         startTime: 0,
         cover: image?.src,
-        id:  `${song} by ${artists}`,
+        artists: getArtists(row),
+        id: `${title} by ${artists}`,
         endTime: timeToSeconds(songLength),
         ...trackInfo && {...trackInfo }
     }

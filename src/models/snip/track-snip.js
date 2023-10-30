@@ -10,14 +10,15 @@ export default class TrackSnip extends Snip {
         this._row = null
     }
 
-    init(row) {
+    async init(row) {
         super.init()
 
         this._row = row
         this._controls.init()
         this.#displayTrackInfo()
         const { id, endTime: duration } = trackSongInfo(row)
-        this._controls.setInitialValues({ ...this.read(), id, duration })
+        const track = await this.read()
+        this._controls.setInitialValues({ ...track, id, duration })
     }
 
     #displayTrackInfo() {
@@ -27,11 +28,12 @@ export default class TrackSnip extends Snip {
     }
 
     get _defaultTrack() {
-        const { id, endTime } = trackSongInfo(this._row)
+        const track = trackSongInfo(this._row)
 
         return {
-            id,
+            id: track.id,
             value: {
+                ...track,
                 endTime,
                 startTime: 0,
                 isSnip: false,

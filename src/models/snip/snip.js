@@ -3,8 +3,9 @@ import { store } from '../../stores/data.js'
 import Alert from '../alert.js'
 import SliderControls from '../slider/slider-controls.js'
 
-import { copyToClipBoard } from '../../utils/clipboard.js'
 import { timeToSeconds } from '../../utils/time.js'
+import { currentData } from '../../data/current.js'
+import { copyToClipBoard } from '../../utils/clipboard.js'
 
 export default class Snip {
     constructor() {
@@ -17,8 +18,8 @@ export default class Snip {
         this._controls.init()
     }
 
-    read() {
-        return this._store.getTrack(this._defaultTrack)
+    async read() {
+        return (await currentData.readTrack())
     }
 
     reset() {

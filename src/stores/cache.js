@@ -10,11 +10,9 @@ export default class CacheStore {
 
     getValue({ key, value }) {
         const result = this.getKey(key)
-        if (!result) {
-            this.update({ key, value })
-        }
+        if (result) return result
 
-        return this.getKey(key)
+        return this.update({ key, value })
     }
 
     update({ key, value }) {
@@ -22,6 +20,7 @@ export default class CacheStore {
 
         const parsedValue = typeof value !== 'string' ? JSON.stringify(value) : value
         this.#cache.setItem(key, parsedValue || {})
+        return this.getKey(key)
     }
 
     removeKey(key) {
