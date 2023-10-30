@@ -45,22 +45,29 @@ function setState({ key, value = {} }) {
     ))
 }
 
+function updateBadgeState({ changes, changedKey }) {
+    if (changedKey != 'enabled') return
+
+    const { newValue, oldValue } = changes.enabled
+    ENABLED = newValue ?? !oldValue
+    setBadgeInfo(ENABLED)
+}
+
 chrome.storage.onChanged.addListener(async changes => {
     const keys = Object.keys(changes)
     const changedKey = keys.find(key => (
-        key == 'now-playing' || key == 'enabled' || key == 'auth_token' || key == 'device_id'
+        ['now-playing', 'enabled', 'auth_token', 'device_id'].includes(key)
     ))
 
     if (!changedKey) return
 
-    if (changedKey == 'now-playing' && ENABLED) {
-        return popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
-    }
+    updateBadgeState({ changes, changedKey })
 
-    if (changedKey == 'enabled') {
-        const { newValue } = changes.enabled
-        ENABLED = newValue
-        setBadgeInfo(newValue)
+    if (!['now-playing', 'enabled'].includes(changedKey)) {
+        if (changedKey == 'now-playing' && !ENABLED) return
+
+        popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
+        if (changedKey == 'now-playing') return
     }
 
     await sendMessage({ message: { [changedKey]: changes[changedKey].newValue }})
