@@ -92,7 +92,7 @@ export default class TrackList {
             if (role == 'snip') {
                 if (!this._previousRowNum || (currentIndex != this._previousRowNum)) {
                     this._chorus.show()
-                    this._trackSnip.init(row)
+                    await this._trackSnip.init(row)
                 } else if (currentIndex == this._previousRowNum) {
                     this._chorus.toggle()
                 }

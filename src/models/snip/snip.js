@@ -3,8 +3,9 @@ import { store } from '../../stores/data.js'
 import Alert from '../alert.js'
 import SliderControls from '../slider/slider-controls.js'
 
-import { copyToClipBoard } from '../../utils/clipboard.js'
 import { timeToSeconds } from '../../utils/time.js'
+import { currentData } from '../../data/current.js'
+import { copyToClipBoard } from '../../utils/clipboard.js'
 
 export default class Snip {
     constructor() {
@@ -17,8 +18,8 @@ export default class Snip {
         this._controls.init()
     }
 
-    read() {
-        return this._store.getTrack(this._defaultTrack)
+    async read() {
+        return (await currentData.readTrack())
     }
 
     reset() {
@@ -30,8 +31,8 @@ export default class Snip {
         this._updateView()
     }
 
-    _updateView() {
-        const response = this.read()
+    async _updateView(initData = null) {
+        const response = initData ?? await this.read()
         const { isSnip, isSkip } = response
 
         this.#setUpdateControls(response)
@@ -48,8 +49,8 @@ export default class Snip {
         }
     }
 
-    _share() {
-        const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = this.read()
+    async _share() {
+        const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = await this.read()
         const pitch = preservesPitch ? 1 : 0
         const rate = parseFloat(playbackRate) * 100
 

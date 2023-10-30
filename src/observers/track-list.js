@@ -3,8 +3,6 @@ export default class TrackListObserver {
         this._observer = null
         this._isHidden = true
         this._trackList = trackList
-
-        this.observe()
     }
 
     observe() {

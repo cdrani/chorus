@@ -2,25 +2,24 @@ import { store } from '../stores/data.js'
 import { currentData } from '../data/current.js'
 
 import SeekIcons from '../models/seek/seek-icon.js'
+import { currentSongInfo } from '../utils/song.js'
 
 export default class NowPlayingObserver {
     constructor({ snip, chorus, songTracker }) {
         this._snip = snip
         this._observer = null
+        this._currentSongId = null
         this._songTracker = songTracker
 
         this._chorus = chorus
         this._seekIcons = new SeekIcons()
-
-        this.observe()
     }
 
     async observe() {
-        const config = { subtree: true, childList: true, attributes: true }
         const target = document.querySelector('[data-testid="now-playing-widget"]')
-
         this._observer = new MutationObserver(this.#mutationHandler)
-        this._observer.observe(target, config)
+        this._observer.observe(target, { attributes: true })
+
         this.#toggleSnipUI()
         this._seekIcons.init()
         await this.setNowPlayingData()
@@ -30,8 +29,8 @@ export default class NowPlayingObserver {
     #isAnchor(mutation) {
         return (
             mutation.type === 'attributes' &&
-            mutation.target.localName == 'a' &&
-            mutation.attributeName === 'href'
+            mutation.target.localName == 'div' &&
+            mutation.attributeName === 'aria-label'
         )
     }
 
@@ -40,16 +39,28 @@ export default class NowPlayingObserver {
         await store.setNowPlaying(track)
     }
 
+    get #songId() {
+        return currentSongInfo().id
+    }
+
+    get #songChanged() {
+        if (this._currentSongId == null) return true
+
+        return this.#songId !== this._currentSongId 
+    }
 
     #mutationHandler = async mutationsList => {
         for (const mutation of mutationsList) {
-            if (this.#isAnchor(mutation)) {
-                if (this._chorus.isShowing) this._snip.init()
-                await this.setNowPlayingData()
-                await this._songTracker.songChange() 
-                this._snip.updateView()
-                await this._seekIcons.setSeekLabels()
-            }
+            if (!this.#isAnchor(mutation)) return
+            if (!this.#songChanged) return
+
+            this._currentSongId = this.#songId
+            if (this._chorus.isShowing) this._snip.init()
+
+            await this.setNowPlayingData()
+            await this._songTracker.songChange() 
+            this._snip.updateView()
+            await this._seekIcons.setSeekLabels()
         }
     }
 
@@ -66,6 +77,7 @@ export default class NowPlayingObserver {
 
     disconnect() {
         this._observer?.disconnect()
+        this._currentSongId = null
         this._seekIcons.removeIcons()
         this._songTracker.clearListeners()
         this._observer = null

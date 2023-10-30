@@ -10,14 +10,15 @@ export default class TrackSnip extends Snip {
         this._row = null
     }
 
-    init(row) {
+    async init(row) {
         super.init()
 
         this._row = row
         this._controls.init()
         this.#displayTrackInfo()
         const { id, endTime: duration } = trackSongInfo(row)
-        this._controls.setInitialValues({ ...this.read(), id, duration })
+        const track = await this.read()
+        this._controls.setInitialValues({ ...track, id, duration })
     }
 
     #displayTrackInfo() {
@@ -27,11 +28,12 @@ export default class TrackSnip extends Snip {
     }
 
     get _defaultTrack() {
-        const { id, endTime } = trackSongInfo(this._row)
+        const track = trackSongInfo(this._row)
 
         return {
-            id,
+            id: track.id,
             value: {
+                ...track,
                 endTime,
                 startTime: 0,
                 isSnip: false,
@@ -40,9 +42,9 @@ export default class TrackSnip extends Snip {
         }
     }
 
-    updateView() {
+    updateView(songStateData) {
         super._updateView()
-        this.highlightSnip()
+        this.highlightSnip(songStateData)
     }
 
     toggleIconVisibility({ isSnip }) {
@@ -50,8 +52,7 @@ export default class TrackSnip extends Snip {
         icon.style.visibility = isSnip ? 'visible' : 'hidden'
     }
 
-    highlightSnip() {
-        const songStateData = this.read()
+    highlightSnip(songStateData) {
         highlightElement({ 
             songStateData,
             property: 'color',
@@ -77,9 +78,9 @@ export default class TrackSnip extends Snip {
 
     async save() {
         const { inputLeft, inputRight } = this._elements
-        const { isSkipped } = this.read()
+        const { isSkipped } = await this.read()
 
-        await this._store.saveTrack({
+        const songStateData = await this._store.saveTrack({
             id: trackSongInfo(this._row).id,
             value: {
                 isSnip: true,
@@ -89,6 +90,6 @@ export default class TrackSnip extends Snip {
             },
         })
 
-        this.updateView()
+        this.updateView(songStateData)
     }
 }

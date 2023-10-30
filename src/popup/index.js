@@ -409,6 +409,11 @@ loadInitialData()
 PORT.onMessage.addListener(async ({ type, data }) => {
     if (!['enabled', 'now-playing'].includes(type)) return
 
-    if (type == 'enabled') await extToggle.initialize(data, loadExtOffState)
-    if (type == 'now-playing') (data && await setCoverImage(data))
+    if (type == 'enabled')  {
+        const enabled = data == {} ? false : data
+        await extToggle.initialize(enabled, loadExtOffState)
+    }
+
+    if (type == 'now-playing' && (!data || data == {})) return
+    await setCoverImage(data)
 })

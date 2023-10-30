@@ -29,9 +29,9 @@ export const songState = async () => {
 
     return {
         id,
-        trackId: trackId ?? trackIdFromURL,
-        isShared: !!trackIdFromURL,
+        isShared: true,
         ...state,
-        ...sharedSnipState
+        ...sharedSnipState,
+        trackId: trackIdFromURL
     }
 }
