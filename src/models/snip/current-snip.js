@@ -1,6 +1,5 @@
 import Snip from './snip.js'
 
-import { playback } from '../../utils/playback.js'
 import { currentSongInfo } from '../../utils/song.js'
 import { spotifyVideo } from '../../actions/overload.js'
 import { currentData } from '../../data/current.js'
@@ -13,12 +12,13 @@ export default class CurrentSnip extends Snip {
         this._video = spotifyVideo.element
     }
 
-    init() {
+    async init() {
         super.init()
 
         this._controls.init()
         this.#displayTrackInfo()
-        this._controls.setInitialValues(this.read())
+        const track = await this.read()
+        this._controls.setInitialValues(track)
     }
 
     #displayTrackInfo() {
