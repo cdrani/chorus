@@ -1,4 +1,5 @@
 import { setState, getState } from './utils/state.js'
+import { getActiveTab, sendMessage } from './utils/messaging.js'
 
 let ENABLED = true
 let popupPort = null
@@ -52,27 +53,6 @@ chrome.storage.onChanged.addListener(async changes => {
 
     await sendMessage({ message: { [changedKey]: changes[changedKey].newValue }})
 })
-
-async function getActiveTab() {
-    const result = await chrome.tabs.query({ url: ['*://open.spotify.com/*'] })
-    return result?.at(0)
-}
-
-function messenger({ tabId, message }) {
-    return new Promise((reject, resolve) => {
-        chrome.tabs.sendMessage(tabId, message, response => {
-            if (chrome.runtime.lastError) return reject({ error: chrome.runtime.lastError })
-            return resolve(response)
-        })
-    })
-}
-
-async function sendMessage({ message }) {
-    const activeTab = await getActiveTab()
-    if (!activeTab) return
-
-    return await messenger({ tabId: activeTab.id, message })
-}
 
 chrome.webRequest.onBeforeRequest.addListener(details => {
     const rawBody = details?.requestBody?.raw?.at(0)?.bytes
