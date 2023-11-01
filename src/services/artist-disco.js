@@ -4,11 +4,13 @@ const BASE_PATH = 'https://api.spotify.com/v1'
 
 const generateURL = ({ pathType, param }) => {
     const pathName =  {
+        me: `/me/playlists`,
         albums: '/albums?ids=param',
-        users: `/users/param/playlists`,
-        playlist: `/playlists/param/tracks`,
-        artists: '/artists/param/albums?limit=50',
+        tracks: `/playlists/param/tracks`,
+        artists: '/artists/param/albums?include_groups=album,single&limit=50',
     }
+
+    if (!param) return `${BASE_PATH}${pathName[pathType]}`
 
     return `${BASE_PATH}${pathName[pathType].replace('param', param)}`
 }
@@ -18,7 +20,8 @@ async function fetchArtistAlbumIds(artist_id) {
     let url = generateURL({ pathType: 'artists', param: artist_id }) 
 
     while (url) {
-        let result = await request({ url , options: setOptions() })
+        const options = await setOptions({})
+        let result = await request({ url , options })
         result.items.forEach(item => albumIds.push(item.id))
         url = result.next
     }
@@ -26,60 +29,47 @@ async function fetchArtistAlbumIds(artist_id) {
     return albumIds
 }
 
-async function fetchAlbums(albumIds) {
-    const trackIds = []
-    const groupSize = 20 // limit of albums can be fetched at one time
+async function fetchTrackURIs(albumIds) {
+    const trackURIs = []
+    const groupSize = 20 // Max. num of albums fetched at a time
 
     for (let group = 0; group < albumIds.length; group += groupSize) {
         const albumIdsGroup = albumIds.slice(group, group + groupSize)
         const url = generateURL({ pathType: 'albums', param: albumIdsGroup.join(',') })
-        const albumInfo = await request({ url, options: setOptions() })
-        const albumGroupsTracks = albumInfo.map(({ tracks }) => tracks)
+        const options = await setOptions({})
+        const albumInfo = await request({ url, options })
+        const albumGroupsTracks = albumInfo?.albums?.map(({ tracks }) => tracks)
 
-        const trackIdsInAlbumGroup = await fetchTrackURIsInAlbums(albumGroupsTracks)
-        trackIds.push(trackIdsInAlbumGroup)
+        for (const album of albumGroupsTracks) {
+            album.items.forEach(({ uri }) => trackURIs.push(uri))
+            let next = album.next
+            
+            while(next) {
+                const options = await setOptions({})
+                const tracks = request({ url: next, options })
+                next = tracks.next
+                tracks.items.forEach(({ uri }) => trackURIs.push(uri))
+            }
+        }
     }
     
-    return trackIds
-}
-
-async function fetchTrackURIsInAlbums(albumTracks) {
-    const trackURIs = albumTracks.reduce(async (promise, album) => {
-        const trackURIs = await promise
-        const albumTrackURIs = album.items.map(item => item.uri)
-        trackURIs.push(...albumTrackURIs)
-
-        let next = album.next
-        while (next) {
-            const tracks = await request({ url: next, options: setOptions() })
-            next = tracks.next
-
-            const trackURIsFromTracks = tracks.items.map(item => item.uri)
-            trackURIs.push(...trackURIsFromTracks)
-        }
-
-        return trackURIs
-    }, Promise.resolve([]))
-
     return trackURIs
 }
 
-async function createPlaylist({ artist_name, user_id }) {
-    const url = generateURL({ pathType: 'users', param: user_id })
-    const playlist = await request({ 
-        url, 
-        options: setOptions({ method: 'POST', body: { name: artist_name, public: false } })
-    })
+async function createPlaylist(name) {
+    const url = generateURL({ pathType: 'me' })
+    const options = await setOptions({ method: 'POST', body: { name, public: false } }) 
+    const playlist = await request({ url, options })
     return { id: playlist.id, url: playlist.external_urls.spotify }
 }
 
 async function addTracksToPlaylist({ playlist, trackURIs }) {
-    const groupSize = 100 // Num. tracks that can be added to playlist at a time
+    const groupSize = 100 // Max. num of tracks uploaded at a time
 
     for (let group = 0; group < trackURIs.length; group += groupSize) {
         const trackURIsGroup = trackURIs.slice(group, group + groupSize)
         const url = generateURL({ pathType: 'tracks', param: playlist.id })
-        const options = setOptions({ method: 'PUT', body: { uris: trackURIsGroup }})
+        const options = await setOptions({ method: 'PUT', body: { uris: trackURIsGroup }})
         await request({ url, options })
     }
 
@@ -88,12 +78,11 @@ async function addTracksToPlaylist({ playlist, trackURIs }) {
 }
 
 
-async function createArtistDiscoPlaylist({ artist_name, artist_id, user_id }) {
+async function createArtistDiscoPlaylist({ artist_name, artist_id }) {
     const albumsIds = await fetchArtistAlbumIds(artist_id)
-    const albums = await fetchAlbums(albumsIds)
-    const trackURIs = await fetchTrackURIsInAlbums(albums)
-    const playlist = await createPlaylist({ artist_name, user_id })
-    await addTracksToPlaylist({ playlist, tracks: trackURIs })
+    const trackURIs = await fetchTrackURIs(albumsIds)
+    const playlist = await createPlaylist(artist_name)
+    await addTracksToPlaylist({ playlist, trackURIs })
 }
 
 export { createArtistDiscoPlaylist }
