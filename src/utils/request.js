@@ -15,9 +15,11 @@ export const request = async ({ url, options, cb = null }) => {
             throw new Error('Network response was not ok')
         }
 
-        if (cb) await cb()
+        return (await response.json())
     } catch (error) {
         console.error('Problem with data request: ', error)
         throw error
+    } finally {
+        if (cb) await cb()
     }
 }
