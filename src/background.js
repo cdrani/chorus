@@ -1,3 +1,5 @@
+import { setState, getState } from './utils/state.js'
+
 let ENABLED = true
 let popupPort = null
 
@@ -15,35 +17,13 @@ function setBadgeInfo(enabled = true) {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-    const result = await setState({ key: 'enabled', value: true })
+    const result = await setState({ key: 'enabled', values: true })
 
     if (!result?.error) {
         setBadgeInfo(true)
         await sendMessage({ message: { enabled: true } })
     }
 })
-
-// TODO: need a way to import these functions from utils/state.js
-function stateResolver({ resolve, reject, result, key }) {
-    if (chrome.runtime.lastError) {
-        console.error('Error: ', chrome.runtime.lastError)
-        return reject({ error: chrome.runtime.lastError })
-    }
-
-    return key ? resolve(result[key]) : resolve()
-}
-
-function getState(key) {
-    return new Promise((resolve, reject) => (
-        chrome.storage.local.get(key, result => stateResolver({ key, resolve, reject, result }))
-    ))
-}
-
-function setState({ key, value = {} }) {
-    return new Promise((resolve, reject) => (
-        chrome.storage.local.set({ [key]: value }, result => stateResolver({ resolve, reject, result }))
-    ))
-}
 
 function updateBadgeState({ changes, changedKey }) {
     if (changedKey != 'enabled') return

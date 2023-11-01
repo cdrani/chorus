@@ -1,3 +1,5 @@
+import { getState, setState, removeState } from './utils/state.js'
+
 const loadScript = filePath => {
     const script = document.createElement('script')
     script.src = chrome.runtime.getURL(filePath)
@@ -6,42 +8,6 @@ const loadScript = filePath => {
 }
 
 loadScript('actions/init.js')
-
-const stateResolver = ({ resolve, reject, result, key, values }) => {
-    if (chrome.runtime.lastError) {
-        console.error({ error: chrome.runtime.lastError })
-        return reject({ error: chrome.runtime.lastError })
-    }
-
-    if (key) return resolve(result?.[key])
-    if (values) return resolve(values)
-
-    return resolve(result)
-}
-
-const getState = key => {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get(key, result => {
-            return stateResolver({ key, resolve, reject, result })
-        })
-    })
-}
-
-const removeState = key => {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.remove(key, result => {
-            return stateResolver({ key, resolve, reject, result })
-        })
-    })
-}
-
-const setState = ({ key, values }) => {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ [key]: values }, result => {
-            return stateResolver({ resolve, reject, result, values })
-        })
-    })
-}
 
 const sendEventToPage = ({ eventType, detail }) => {
     window.postMessage({
@@ -84,7 +50,7 @@ window.addEventListener('message', async (event) => {
 
 chrome.runtime.onMessage.addListener(message => {
     const messageKey = Object.keys(message)
-    const changedKey = messageKey.find(key => key == 'enabled' || key == 'auth_token' || key == 'device_id')
+    const changedKey = messageKey.find(key => ['enabled', 'auth_token', 'device_id'].includes(key))
     if (!changedKey) return
 
     sendEventToPage({ eventType: `app.${changedKey}`, detail: { [changedKey]: message[changedKey] } })
