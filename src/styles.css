@@ -6,7 +6,8 @@
     z-index: 99999;
     padding: .5rem 1.25rem;
     padding-right:.75rem;
-    width: 320px;
+    min-width: 320px;
+    max-width: fit-content;
     background: green;
     position: absolute;
     bottom: 10%;
