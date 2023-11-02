@@ -72,17 +72,18 @@ async function addTracksToPlaylist({ playlist, trackURIs }) {
         const options = await setOptions({ method: 'POST', body: { uris: trackURIsGroup }})
         await request({ url, options })
     }
-
-    let tab = (await chrome.tabs.query({ active: true, currentWindow: true })).at(0)
-    chrome.tabs.update(tab.id, { url: playlist.url })
 }
 
-
 async function createArtistDiscoPlaylist({ artist_name, artist_id }) {
-    const albumsIds = await fetchArtistAlbumIds(artist_id)
-    const trackURIs = await fetchTrackURIs(albumsIds)
-    const playlist = await createPlaylist(artist_name)
-    await addTracksToPlaylist({ playlist, trackURIs })
+    try {
+        const albumsIds = await fetchArtistAlbumIds(artist_id)
+        const trackURIs = await fetchTrackURIs(albumsIds)
+        const playlist = await createPlaylist(artist_name)
+        await addTracksToPlaylist({ playlist, trackURIs })
+        return { artist_name, playlist }
+    } catch(error) {
+        return { error: error.message }
+    }
 }
 
 export { createArtistDiscoPlaylist }
