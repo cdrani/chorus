@@ -1,4 +1,4 @@
-import { loadArtistDiscoUI } from '../artist-disco.js'
+import { loadArtistDiscoUI } from '../components/artist-disco.js'
 
 export default class ArtistDiscoObserver {
     constructor()  {
