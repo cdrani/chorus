@@ -33,8 +33,8 @@ async function fetchTrackURIs(albumIds) {
     const trackURIs = []
     const groupSize = 20 // Max. num of albums fetched at a time
 
-    for (let group = 0; group < albumIds.length; group += groupSize) {
-        const albumIdsGroup = albumIds.slice(group, group + groupSize)
+    for (let group = 0; group <= albumIds.length / 20; group++) {
+        const albumIdsGroup = albumIds.slice(group * groupSize, (group + 1) * groupSize)
         const url = generateURL({ pathType: 'albums', param: albumIdsGroup.join(',') })
         const options = await setOptions({})
         const albumInfo = await request({ url, options })
@@ -48,7 +48,7 @@ async function fetchTrackURIs(albumIds) {
                 const options = await setOptions({})
                 const tracks = request({ url: next, options })
                 next = tracks.next
-                tracks.items.forEach(({ uri }) => trackURIs.push(uri))
+                tracks?.items?.forEach(({ uri }) => trackURIs.push(uri))
             }
         }
     }
@@ -66,10 +66,10 @@ async function createPlaylist(name) {
 async function addTracksToPlaylist({ playlist, trackURIs }) {
     const groupSize = 100 // Max. num of tracks uploaded at a time
 
-    for (let group = 0; group < trackURIs.length; group += groupSize) {
-        const trackURIsGroup = trackURIs.slice(group, group + groupSize)
+    for (let group = 0; group < trackURIs.length / groupSize; group++) {
+        const trackURIsGroup = trackURIs.slice(group * 100, (group + 1) * 100)
         const url = generateURL({ pathType: 'tracks', param: playlist.id })
-        const options = await setOptions({ method: 'PUT', body: { uris: trackURIsGroup }})
+        const options = await setOptions({ method: 'POST', body: { uris: trackURIsGroup }})
         await request({ url, options })
     }
 
