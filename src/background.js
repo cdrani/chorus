@@ -1,5 +1,6 @@
 import { setState, getState } from './utils/state.js'
 import { getActiveTab, sendMessage } from './utils/messaging.js'
+import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 
 let ENABLED = true
 let popupPort = null
@@ -22,7 +23,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 
     if (!result?.error) {
         setBadgeInfo(true)
-        await sendMessage({ message: { enabled: true } })
     }
 })
 
@@ -81,6 +81,15 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
     },
     ['requestHeaders']
 )
+
+chrome.runtime.onMessage.addListener(({ key, data }, _, sendResponse) => {
+    if (key == 'artist.disco') { 
+        createArtistDiscoPlaylist(data)
+            .then((data) => sendResponse({ state: 'completed', data }))
+            .catch(error => sendResponse({ state: 'error', error: error.message }))
+    }
+    return true
+})
 
 chrome.commands.onCommand.addListener(async command => {
     const tab = await getActiveTab()

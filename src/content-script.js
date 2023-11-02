@@ -1,3 +1,4 @@
+import { sendBackgroundMessage } from './utils/messaging.js'
 import { getState, setState, removeState } from './utils/state.js'
 
 const loadScript = filePath => {
@@ -25,6 +26,10 @@ window.addEventListener('message', async (event) => {
     let response
 
     switch (requestType) {
+        case 'artist.disco': 
+            response = await sendBackgroundMessage({ key: payload.key, data: payload.values })
+            sendEventToPage({ eventType: 'artist.disco.response', detail:  response })
+            break
         case 'storage.set':
             const { key, values } = payload
             response = await setState({ key, values })
