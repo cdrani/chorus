@@ -29,8 +29,10 @@ export const request = async ({ url, options, cb = null }) => {
             throw new Error('Network response was not ok')
         }
 
-        const jsonResponse = await response.json()
-        return jsonResponse
+        if (response?.status !== 204) {
+            const jsonResponse = await response?.json()
+            return jsonResponse
+        }
     } catch (error) {
         console.error('Problem with data request: ', error)
         throw error
