@@ -6,7 +6,8 @@
     z-index: 99999;
     padding: .5rem 1.25rem;
     padding-right:.75rem;
-    width: 320px;
+    min-width: 320px;
+    max-width: fit-content;
     background: green;
     position: absolute;
     bottom: 10%;
@@ -293,7 +294,8 @@ input[type=number]::-webkit-outer-spin-button {
 [role=skip][aria-label],
 [role=snip][aria-label], 
 [role=speed][aria-label],
-[role=settings][aria-label] {
+[role=settings][aria-label],
+[role=artist-disco][aria-label] {
     position: relative;
     display: inline-block;
 }
@@ -303,7 +305,8 @@ input[type=number]::-webkit-outer-spin-button {
 [role=skip][aria-label]:after,
 [role=snip][aria-label]:after, 
 [role=speed][aria-label]:after, 
-[role=settings][aria-label]:after {
+[role=settings][aria-label]:after,
+[role=artist-disco][aria-label]:after {
     content: attr(aria-label);
     display: none;
     position: absolute;
@@ -332,6 +335,7 @@ input[type=number]::-webkit-outer-spin-button {
 [role=skip][aria-label]:hover:after,
 [role=snip][aria-label]:hover:after, 
 [role=speed][aria-label]:hover:after,
-[role=settings][aria-label]:hover:after {
+[role=settings][aria-label]:hover:after,
+[role=artist-disco][aria-label]:hover:after {
     display: inline-block;
 }

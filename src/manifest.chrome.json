@@ -21,15 +21,9 @@
   "content_scripts": [
     {
       "run_at": "document_idle",
-      "js": [
-        "content-script.js"
-      ],
-      "css": [
-        "styles.css"
-      ],
-      "matches": [
-        "*://open.spotify.com/*"
-      ]
+      "js": ["content-script.js"],
+      "css": ["styles.css"],
+      "matches": ["*://open.spotify.com/*"]
     }
   ],
   "web_accessible_resources": [

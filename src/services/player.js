@@ -16,7 +16,7 @@ export const PlayerService = {
             uris: [`spotify:track:${trackId}`],
             position_ms: Math.max(parseInt(position, 10), 0) * 1000,
         }
-        const options = setOptions({ method: 'PUT', body })
+        const options = await setOptions({ method: 'PUT', body })
         await request({ url: generateURL({ type: 'play'}), options, cb })
     }
 }

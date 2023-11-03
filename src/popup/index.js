@@ -198,7 +198,7 @@ function sortByContrast(background, colors) {
 }
 
 async function updatePopupUIState(popupState) {
-    await setState({ key: 'popup-ui', value: popupState })
+    await setState({ key: 'popup-ui', values: popupState })
 }
 
 async function updateBackgroundAndTextColours({ imageElement, title, artists }) {

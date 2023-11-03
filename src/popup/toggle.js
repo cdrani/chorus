@@ -53,7 +53,7 @@ class ExtToggle {
         extToggleOff.style.display = extChecked ? 'none' : 'block'
 
         extCheckbox.checked = extChecked
-        await setState({ key: 'enabled', value: extChecked })
+        await setState({ key: 'enabled', values: extChecked })
     }
 
     async #toggleExtCheckbox(callback) {

@@ -1,3 +1,7 @@
+import { setState, getState } from './utils/state.js'
+import { getActiveTab, sendMessage } from './utils/messaging.js'
+import { createArtistDiscoPlaylist } from './services/artist-disco.js'
+
 let ENABLED = true
 let popupPort = null
 
@@ -15,35 +19,9 @@ function setBadgeInfo(enabled = true) {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-    const result = await setState({ key: 'enabled', value: true })
-
-    if (!result?.error) {
-        setBadgeInfo(true)
-        await sendMessage({ message: { enabled: true } })
-    }
+    const result = await setState({ key: 'enabled', values: true })
+    if (!result?.error) setBadgeInfo(true)
 })
-
-// TODO: need a way to import these functions from utils/state.js
-function stateResolver({ resolve, reject, result, key }) {
-    if (chrome.runtime.lastError) {
-        console.error('Error: ', chrome.runtime.lastError)
-        return reject({ error: chrome.runtime.lastError })
-    }
-
-    return key ? resolve(result[key]) : resolve()
-}
-
-function getState(key) {
-    return new Promise((resolve, reject) => (
-        chrome.storage.local.get(key, result => stateResolver({ key, resolve, reject, result }))
-    ))
-}
-
-function setState({ key, value = {} }) {
-    return new Promise((resolve, reject) => (
-        chrome.storage.local.set({ [key]: value }, result => stateResolver({ resolve, reject, result }))
-    ))
-}
 
 function updateBadgeState({ changes, changedKey }) {
     if (changedKey != 'enabled') return
@@ -66,33 +44,13 @@ chrome.storage.onChanged.addListener(async changes => {
     if (['now-playing', 'enabled'].includes(changedKey)) {
         if (changedKey == 'now-playing' && !ENABLED) return
 
-        popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
-        if (changedKey == 'now-playing') return
+        if (changedKey == 'now-playing') {
+            return popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
+        }
     }
 
     await sendMessage({ message: { [changedKey]: changes[changedKey].newValue }})
 })
-
-async function getActiveTab() {
-    const result = await chrome.tabs.query({ url: ['*://open.spotify.com/*'] })
-    return result?.at(0)
-}
-
-function messenger({ tabId, message }) {
-    return new Promise((reject, resolve) => {
-        chrome.tabs.sendMessage(tabId, message, response => {
-            if (chrome.runtime.lastError) return reject({ error: chrome.runtime.lastError })
-            return resolve(response)
-        })
-    })
-}
-
-async function sendMessage({ message }) {
-    const activeTab = await getActiveTab()
-    if (!activeTab) return
-
-    return await messenger({ tabId: activeTab.id, message })
-}
 
 chrome.webRequest.onBeforeRequest.addListener(details => {
     const rawBody = details?.requestBody?.raw?.at(0)?.bytes
@@ -121,6 +79,15 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
     },
     ['requestHeaders']
 )
+
+chrome.runtime.onMessage.addListener(({ key, data }, _, sendResponse) => {
+    if (key == 'artist.disco') { 
+        createArtistDiscoPlaylist(data)
+            .then((data) => sendResponse({ state: 'completed', data }))
+            .catch(error => sendResponse({ state: 'error', error: error.message }))
+    }
+    return true
+})
 
 chrome.commands.onCommand.addListener(async command => {
     const tab = await getActiveTab()

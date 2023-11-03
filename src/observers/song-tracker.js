@@ -90,8 +90,7 @@ export default class SongTracker {
     }
 
     async songChange(initialData = null) {
-        this.#mute()
-
+        if (!this._init) this.#mute()
 
         const songStateData = initialData ?? await this.#setCurrentSongData()
         await this.#applyEffects(songStateData)
@@ -112,6 +111,7 @@ export default class SongTracker {
         }
 
         this.#unMute()
+        this._init = false
     }
 
     get #nextButton() {

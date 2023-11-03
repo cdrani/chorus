@@ -10,9 +10,12 @@ function stateResolver({ resolve, reject, result, key, values }) {
     return resolve(result)
 }
 
-function setState({ key = 'popup-ui', value = {} }) {
+function setState({ key, values }) {
     return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ [key]: value }, result => stateResolver({ resolve, reject, result }))
+        chrome.storage.local.set( 
+            { [key]: values }, 
+            result => stateResolver({ resolve, reject, result, values })
+        )
     })
 }
 
@@ -22,4 +25,10 @@ function getState(key) {
     })
 }
 
-export { setState, getState }
+function removeState(key) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.remove(key, result => stateResolver({ key, resolve, reject, result }))
+    })
+}
+
+export { setState, getState, removeState }
