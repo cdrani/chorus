@@ -7,8 +7,8 @@ const dispatcher = new Dispatcher()
 
 const createArtistDiscoUI = () => `
     <div 
-        id="artist-disco-wrapper"
-        style="display:flex;align-items:center;justify-content:center"
+        id="artist-disco"
+        style="display:flex;width:3.5rem;height:3.5rem;align-items:center;justify-content:center"
     >
         <button 
             role="artist-disco"
@@ -22,7 +22,6 @@ const createArtistDiscoUI = () => `
                 stroke-width="0.5"
                 viewBox="0 0 17 16"
                 xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="xMidYMid meet"
             >
                 <g 
                     fill="#1ed760"
@@ -72,7 +71,7 @@ async function sendArtistDiscoMessage() {
 function loadArtistDiscoUI() {
     const setup = setInterval(() => {
         const actionBar = document.querySelector('[data-testid="action-bar"]')
-        const discoUI = document.getElementById('artist-disco-wrapper')
+        const discoUI = document.getElementById('artist-disco')
 
         if (actionBar && discoUI) { clearInterval(setup); return }
         if (actionBar && !discoUI) addArtistDiscoUI() 
