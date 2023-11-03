@@ -20,10 +20,7 @@ function setBadgeInfo(enabled = true) {
 
 chrome.runtime.onInstalled.addListener(async () => {
     const result = await setState({ key: 'enabled', values: true })
-
-    if (!result?.error) {
-        setBadgeInfo(true)
-    }
+    if (!result?.error) setBadgeInfo(true)
 })
 
 function updateBadgeState({ changes, changedKey }) {
@@ -47,8 +44,9 @@ chrome.storage.onChanged.addListener(async changes => {
     if (['now-playing', 'enabled'].includes(changedKey)) {
         if (changedKey == 'now-playing' && !ENABLED) return
 
-        popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
-        if (changedKey == 'now-playing') return
+        if (changedKey == 'now-playing') {
+            return popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
+        }
     }
 
     await sendMessage({ message: { [changedKey]: changes[changedKey].newValue }})
