@@ -4,21 +4,14 @@ export const setOptions = async ({ method = 'GET', body = null }) => {
     const authHeader = await getAuthHeader()
     return {
         method,
-        headers: {
-            Authorization: authHeader,
-            'Content-Type': 'application/json'
-        },
-        body: body ? JSON.stringify(body) : null
+        body: body ? JSON.stringify(body) : null,
+        headers: { Authorization: authHeader, 'Content-Type': 'application/json' },
     }
 }
 
 const getAuthHeader = async () => {
-    if (typeof sessionStorage == 'undefined') {
-        const authHeader = await getState('auth_token')
-        return authHeader
-    }
-    
-    return sessionStorage.getItem('auth_token')
+    const authHeader = await getState('auth_token')
+    return authHeader
 }
 
 export const request = async ({ url, options, cb = null }) => {
@@ -33,10 +26,6 @@ export const request = async ({ url, options, cb = null }) => {
             const jsonResponse = await response?.json()
             return jsonResponse
         }
-    } catch (error) {
-        console.error('Problem with data request: ', error)
-        throw error
-    } finally {
-        if (cb) await cb()
-    }
+    } catch (error) { throw error } 
+    finally { if (cb) await cb() }
 }
