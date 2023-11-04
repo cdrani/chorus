@@ -2,7 +2,7 @@
   "short_name": "Chorus",
   "name": "Chorus - Spotify Enhancer",
   "description": "Enhance Spotify with controls to save favourite snips, auto-skip tracks, and set global and custom speed. More to come!",
-  "version": "1.15.5",
+  "version": "1.16.0",
   "manifest_version": 3,
   "author": "cdrani",
   "action": {
@@ -19,9 +19,15 @@
   "content_scripts": [
     {
       "run_at": "document_idle",
-      "js": ["content-script.js"],
-      "css": ["styles.css"],
-      "matches": ["*://open.spotify.com/*"]
+      "js": [
+        "content-script.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "matches": [
+        "*://open.spotify.com/*"
+      ]
     }
   ],
   "web_accessible_resources": [
