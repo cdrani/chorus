@@ -59,6 +59,7 @@ export default class App {
 
     async connect() {
         this._active = true
+        this._video.active = true
 
         this._nowPlayingIcons.placeIcons()
         this._trackListObserver.observe()

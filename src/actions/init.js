@@ -3,39 +3,30 @@ import { spotifyVideo } from './overload.js'
 
 import App from '../models/app.js'
 
-let loaded = false
-const video = spotifyVideo.element
-
 const setup = setInterval(async () => {
+    const video = spotifyVideo.element
     const nowPlayingWidget = document.querySelector('[data-testid="now-playing-widget"]')
-    if (!video && !nowPlayingWidget) return
+    if (!video) return
+    if (!nowPlayingWidget) return
 
-    if (!loaded) {
-        await load()
-        loaded = true
-    }
+    await load()
     clearInterval(setup)
 }, 500)
 
 async function load() {
-    const video = spotifyVideo.element
-
     await store.populate()
-
-    const app = new App(video)
-    const enabled = JSON.parse(sessionStorage.getItem('enabled'))
-    video.active = enabled
+    const app = new App(spotifyVideo.element)
+    const enabled = JSON.parse(sessionStorage.getItem('enabled') ?? 'true')
+    
     enabled ? await app.connect() : app.disconnect()
 
     document.addEventListener('app.enabled', async e => {
         const { enabled } = e.detail
-        
-        const enabledFromSession = JSON.parse(sessionStorage.getItem('enabled'))
-        sessionStorage.setItem('enabled', enabled)
-        video.active = enabled
 
-        if (enabledFromSession === enabled) return
-        enabled ? await app.connect() : app.disconnect()
+        if (!enabled.oldValue) { await store.populate() }
+        
+        sessionStorage.setItem('enabled', enabled.newValue)
+        enabled.newValue ? await app.connect() : app.disconnect()
     })
 
     document.addEventListener('app.device_id', async e => {

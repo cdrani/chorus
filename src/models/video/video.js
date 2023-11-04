@@ -30,6 +30,7 @@ export default class VideoElement {
         this.clearCurrentSpeed()
         this.playbackRate = 1
         this.preservesPitch = true
+        this._active = false
     }
 
     get element() {
