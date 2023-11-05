@@ -1,22 +1,23 @@
+import { getState } from '../utils/state.js'
 import { setOptions, request } from '../utils/request.js'
 
-const API_URL = 'https://api.spotify.com/v1/me/player/'
-const QUERY = { play: 'play' }
+const API_URL = 'https://api.spotify.com/v1/me/player'
 
-const generateURL = ({ type, value = '' }) => {
-    const queryString = `${QUERY[type]}${type == 'play' ? '' : value}`
-    const deviceId = JSON.parse(sessionStorage.getItem('device_id'))
-    const deviceIdString = !deviceId ? '' : `${value && type != 'play' ? '&' : '?'}device_id=${deviceId}`
-    return `${API_URL}${queryString}` + deviceIdString
+function playSharedTrack({ track_id, position }) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const body = {
+                uris: [`spotify:track:${track_id}`],
+                position_ms: Math.max(parseInt(position, 10), 0) * 1000,
+            }
+            const options = await setOptions({ method: 'PUT', body })
+            const device_id = await getState('device_id')
+            const url = `${API_URL}/play?device_id=${device_id}`
+            
+            const response = await request({ url, options })
+            resolve(response)
+        } catch(error) { reject(error) }
+    })
 }
 
-export const PlayerService = {
-    play: async ({ position, trackId, cb }) => {
-        const body = {
-            uris: [`spotify:track:${trackId}`],
-            position_ms: Math.max(parseInt(position, 10), 0) * 1000,
-        }
-        const options = await setOptions({ method: 'PUT', body })
-        await request({ url: generateURL({ type: 'play'}), options, cb })
-    }
-}
+export { playSharedTrack }
