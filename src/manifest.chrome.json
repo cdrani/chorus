@@ -21,22 +21,14 @@
   "content_scripts": [
     {
       "run_at": "document_idle",
-      "js": [
-        "content-script.js"
-      ],
-      "css": [
-        "styles.css"
-      ],
-      "matches": [
-        "*://open.spotify.com/*"
-      ]
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "matches": ["*://open.spotify.com/*"]
     }
   ],
   "web_accessible_resources": [
     {
-      "matches": [
-        "*://open.spotify.com/*"
-      ],
+      "matches": ["*://open.spotify.com/*"],
       "resources": [
         "styles.css",
         "utils/*.js",
@@ -88,18 +80,10 @@
       "description": "Add track to block list"
     }
   },
-  "permissions": [
-    "tabs",
-    "storage",
-    "activeTab",
-    "scripting",
-    "webRequest",
-    "unlimitedStorage"
-  ],
-  "host_permissions": [
-    "*://*.spotify.com/*"
-  ],
+  "permissions": ["tabs", "storage", "activeTab", "scripting", "webRequest", "unlimitedStorage"],
+  "host_permissions": ["*://*.spotify.com/*"],
   "background": {
+    "type": "module",
     "service_worker": "background.js"
   }
 }
