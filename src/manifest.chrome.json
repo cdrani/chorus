@@ -38,7 +38,8 @@
         "observers/*.js",
         "stores/*.js",
         "actions/*.js",
-        "data/*.js"
+        "data/*.js",
+        "services/*.js"
       ]
     }
   ],

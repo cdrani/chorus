@@ -6,7 +6,7 @@
   "manifest_version": 3,
   "author": "cdrani",
   "action": {
-    "default_icon":  {
+    "default_icon": {
       "32": "icons/logo.png"
     },
     "default_popup": "popup/index.html"
@@ -21,7 +21,7 @@
   "content_scripts": [
     {
       "run_at": "document_idle",
-      "js": ["content-script.js"],
+      "js": ["content.js"],
       "css": ["styles.css"],
       "matches": ["*://open.spotify.com/*"]
     }
@@ -38,7 +38,8 @@
         "observers/*.js",
         "stores/*.js",
         "actions/*.js",
-        "data/*.js"
+        "data/*.js",
+        "services/*.js"
       ]
     }
   ],
@@ -84,7 +85,7 @@
   "host_permissions": ["*://*.spotify.com/*"],
   "background": {
     "type": "module",
-    "scripts": ["background.js"],
+    "scripts": ["background.js"]
   },
   "browser_specific_settings": {
     "gecko": {
