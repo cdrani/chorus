@@ -3,16 +3,6 @@ import { spotifyVideo } from './overload.js'
 
 import App from '../models/app.js'
 
-const setup = setInterval(async () => {
-    const video = spotifyVideo.element
-    const nowPlayingWidget = document.querySelector('[data-testid="now-playing-widget"]')
-    if (!video) return
-    if (!nowPlayingWidget) return
-
-    await load()
-    clearInterval(setup)
-}, 500)
-
 async function load() {
     await store.populate()
     const app = new App(spotifyVideo.element)
@@ -42,3 +32,18 @@ async function load() {
         sessionStorage.setItem('auth_token', auth_token)
     })
 }
+
+function initExtension() {
+    const setup = setInterval(async () => {
+        const video = spotifyVideo.element
+        const nowPlayingWidget = document.querySelector('[data-testid="now-playing-widget"]')
+        
+        if (!video) return
+        if (!nowPlayingWidget) return
+
+        await load()
+        clearInterval(setup)
+    }, 500)
+}
+
+initExtension()
