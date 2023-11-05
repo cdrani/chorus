@@ -41,15 +41,12 @@ chrome.storage.onChanged.addListener(async changes => {
 
     updateBadgeState({ changes, changedKey })
 
-    if (['now-playing', 'enabled'].includes(changedKey)) {
-        if (changedKey == 'now-playing' && !ENABLED) return
-
-        if (changedKey == 'now-playing') {
-            return popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
-        }
+    if (changedKey == 'now-playing' && ENABLED) {
+        return popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
     }
 
-    await sendMessage({ message: { [changedKey]: changes[changedKey].newValue }})
+    const messageValue = changedKey == 'enabled' ? changes : changes[changedKey].newValue
+    await sendMessage({ message: { [changedKey]: messageValue }})
 })
 
 chrome.webRequest.onBeforeRequest.addListener(details => {
@@ -81,11 +78,12 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
 )
 
 chrome.runtime.onMessage.addListener(({ key, data }, _, sendResponse) => {
-    if (key == 'artist.disco') { 
-        createArtistDiscoPlaylist(data)
-            .then((data) => sendResponse({ state: 'completed', data }))
-            .catch(error => sendResponse({ state: 'error', error: error.message }))
-    }
+    if (key !== 'artist.disco') return
+
+    createArtistDiscoPlaylist(data)
+        .then(result => sendResponse({ state: 'completed', data: result }))
+        .catch(error => sendResponse({ state: 'error', error: error.message }))
+
     return true
 })
 

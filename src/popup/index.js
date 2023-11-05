@@ -7,37 +7,42 @@ import { getState, setState } from '../utils/state.js'
 // Create a connection to the background script
 const PORT = chrome.runtime.connect({ name: "popup" })
 
-const placeIcons = () => {
+PORT.onMessage.addListener(async ({ type, data }) => {
+    if (!['enabled', 'now-playing'].includes(type)) return
+
+    if (type == 'enabled')  {
+        const enabled = data == {} ? false : data
+        await extToggle.initialize(enabled, loadExtOffState)
+    }
+
+    if (type == 'now-playing' && (!data || data == {})) return
+    await setCoverImage(data)
+})
+
+function placeIcons() {
     const root = createRootContainer()
     const rootEl = parseNodeString(root)
     document.body.appendChild(rootEl)
     extToggle.setupEvents(loadExtOffState)
 }
 
-const setTrackInfo = ({ title, artists, textColor = '#000' }) => {
+function setNowPlayingTextElement({ element, text, textColor }) {
+    element.innerHTML = `<p>${text}</p>`
+    element.style.color = textColor
+
+    if (text.length < 28) return element.classList.remove('marquee')
+
+    element.innerHTML += `&emsp;&emsp;${element.innerHTML}&emsp;&emsp;`
+    element.classList.add('marquee')
+}
+
+function setTrackInfo({ title, artists, textColor = '#000' }) {
     if (!title || !artists) return
 
     const { titleElement, artistsElement } = getElements()
 
-    titleElement.innerHTML = `<p>${title}</p>`
-    artistsElement.innerHTML = `<p>${artists}</p>`
-
-    titleElement.style.color = textColor
-    artistsElement.style.color = textColor
-
-    if (title.length > 27) {
-        titleElement.innerHTML += `&emsp;&emsp;${titleElement.innerHTML}&emsp;&emsp;`
-        titleElement.classList.add('marquee')
-    } else {
-        titleElement.classList.remove('marquee')
-    }
-
-    if (artists.length > 27) {
-        artistsElement.innerHTML += `&emsp;&emsp;${artistsElement.innerHTML}&emsp;&emsp;`
-        artistsElement.classList.add('marquee')
-    } else {
-        artistsElement.classList.remove('marquee')
-    }
+    setNowPlayingTextElement({ element: titleElement, text: title, textColor })
+    setNowPlayingTextElement({ element: artistsElement, text: artists, textColor })
 }
 
 const setCoverImage = async ({ cover, title, artists }) => {
@@ -388,7 +393,7 @@ async function loadExtOffState(enabled) {
     if (!currentData?.isSkipped) await setCoverImage(currentData)
 }
 
-const loadInitialData = async () => {
+async function loadInitialData() {
     const enabled = await getState('enabled')
     const { data, loaded } = await setupFromStorage()
     const currentData = await getState('now-playing')
