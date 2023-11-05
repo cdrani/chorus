@@ -19,13 +19,16 @@ async function load() {
     const enabled = JSON.parse(sessionStorage.getItem('enabled') ?? 'true')
     
     enabled ? await app.connect() : app.disconnect()
+    spotifyVideo.element.active = enabled
 
     document.addEventListener('app.enabled', async e => {
         const { enabled } = e.detail
 
-        if (!enabled.oldValue) { await store.populate() }
-        
+        const currentlyEnabled = sessionStorage.getItem('enabled') ?? 'true'
+        if (enabled.newValue == JSON.parse(currentlyEnabled)) return
+
         sessionStorage.setItem('enabled', enabled.newValue)
+        spotifyVideo.element.active = enabled.newValue
         enabled.newValue ? await app.connect() : app.disconnect()
     })
 

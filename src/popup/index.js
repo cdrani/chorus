@@ -26,7 +26,7 @@ function setNowPlayingTextElement({ element, text, textColour }) {
 
     if (text.length < 28) return element.classList.remove('marquee')
 
-    element.innerHTML += `&emsp;&emsp;${element.innerHTML}&emsp;&emsp;`
+    element.innerHTML += `&ensp;&bullet;&ensp;${element.innerHTML}&ensp;&centerdot;&ensp;`
     element.classList.add('marquee')
 }
 

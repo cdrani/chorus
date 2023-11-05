@@ -53,13 +53,11 @@ window.addEventListener('message', async (event) => {
     }
 })
 
-chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+chrome.runtime.onMessage.addListener(message => {
     const messageKey = Object.keys(message)
     const changedKey = messageKey.find(key => ['enabled', 'auth_token', 'device_id'].includes(key))
 
     if (!changedKey) return
 
-    const event = { eventType: `app.${changedKey}`, detail: { [changedKey]: message[changedKey] } }
-    sendEventToPage(event)
-    sendResponse(event)
+    sendEventToPage({ eventType: `app.${changedKey}`, detail: { [changedKey]: message[changedKey] } })
 })
