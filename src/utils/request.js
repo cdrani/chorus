@@ -14,7 +14,7 @@ const getAuthHeader = async () => {
     return authHeader
 }
 
-export const request = async ({ url, options, cb = null }) => {
+export const request = async ({ url, options }) => {
     try {
         const response = await fetch(url, options)
 
@@ -27,5 +27,4 @@ export const request = async ({ url, options, cb = null }) => {
             return jsonResponse
         }
     } catch (error) { throw error } 
-    finally { if (cb) await cb() }
 }
