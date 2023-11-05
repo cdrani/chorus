@@ -30,6 +30,10 @@ window.addEventListener('message', async (event) => {
             response = await sendBackgroundMessage({ key: payload.key, data: payload.values })
             sendEventToPage({ eventType: 'artist.disco.response', detail:  response })
             break
+        case 'play.shared': 
+            response = await sendBackgroundMessage({ key: payload.key, data: payload.values })
+            sendEventToPage({ eventType: 'play.shared.response', detail:  response })
+            break
         case 'storage.set':
             const { key, values } = payload
             response = await setState({ key, values })

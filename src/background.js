@@ -1,5 +1,7 @@
 import { setState, getState } from './utils/state.js'
 import { getActiveTab, sendMessage } from './utils/messaging.js'
+
+import { playSharedTrack } from './services/player.js'
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 
 let ENABLED = true
@@ -78,13 +80,19 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
 )
 
 chrome.runtime.onMessage.addListener(({ key, data }, _, sendResponse) => {
-    if (key !== 'artist.disco') return
+    switch (key) {
+      case 'artist.disco':
+        createArtistDiscoPlaylist(data)
+            .then(result => sendResponse({ state: 'completed', data: result }))
+            .catch(error => sendResponse({ state: 'error', error: error.message }))
+        return true
+      case 'play.shared':
+        playSharedTrack(data)
+            .then(result => sendResponse({ state: 'completed', data: result }))
+            .catch(error => sendResponse({ state: 'error', error: error.message }))
 
-    createArtistDiscoPlaylist(data)
-        .then(result => sendResponse({ state: 'completed', data: result }))
-        .catch(error => sendResponse({ state: 'error', error: error.message }))
-
-    return true
+        return true
+    }
 })
 
 chrome.commands.onCommand.addListener(async command => {
