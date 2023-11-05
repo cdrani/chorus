@@ -7,7 +7,7 @@ const INPUT = `src/manifest.${TARGET}.json`
 export default {
     input: INPUT,
     output: {
-        dir: TARGET,
+        dir: 'dist',
         format: 'esm',
         // sourcemap: true
     },
