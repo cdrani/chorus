@@ -19,7 +19,8 @@ export default class Snip {
     }
 
     async read() {
-        return (await currentData.readTrack())
+        const track = await currentData.readTrack()
+        return track
     }
 
     reset() {
@@ -75,6 +76,8 @@ export default class Snip {
 
     get _elements() {
         return {
+            title: document.getElementById('track-title'),
+            artists: document.getElementById('track-artists'),
             inputRight: document.getElementById('input-end'),
             inputLeft: document.getElementById('input-start'),
         }
