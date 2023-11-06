@@ -59,13 +59,13 @@ async function sendArtistDiscoMessage() {
     })
 
     if (state == 'completed') {
-        const alertMessage = `Playlist "${data.artist_name}" Created. Redirecting...`
-        alert.displayAlert({ type: 'success', message: alertMessage, duration: 2000 })
-        setTimeout(() => { location.pathname = `/playlist/${data.playlist.id}` }, 500)
-    } else {
-        const alertMessage = 'Something is wrong. Uh... Please Try Again.'
-        alert.displayAlert({ type: 'error', message: alertMessage })
-    }
+        const alertMessage = `Playlist "${artist_name}" Added.`
+        alert.displayAlert({ type: 'success', message: alertMessage, duration: 5000, link: data.playlist.url })
+        return
+    } 
+
+    const alertMessage = 'Something is wrong. Uh... Please Try Again.'
+    alert.displayAlert({ type: 'error', message: alertMessage })
 }
 
 function loadArtistDiscoUI() {

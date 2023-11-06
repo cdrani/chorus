@@ -1,6 +1,6 @@
 export const createAlert = () => `
     <div id="chorus-alert">
-        <p id="chorus-alert-message" style="font-size:1.25rem;color:#fff;"></p>
+        <div id="chorus-alert-message" style="font-size:1.25rem;color:#fff;"></div>
         <button 
             id="chorus-alert-close-button"
             class="chorus-text-button"
