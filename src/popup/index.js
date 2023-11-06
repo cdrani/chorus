@@ -20,13 +20,24 @@ PORT.onMessage.addListener(async ({ type, data }) => {
     await setCoverImage(data)
 })
 
+function getTextNode({ text, isShortText }) {
+    const shortTextHtml = `<p>${text}</p>`
+    const displayText = isShortText
+        ? shortTextHtml
+        : `<div>${shortTextHtml}&ensp;&bullet;&ensp;${shortTextHtml}&ensp;&centerdot;&ensp;</div>` 
+
+    return parseNodeString(displayText) 
+}
+
 function setNowPlayingTextElement({ element, text, textColour }) {
-    element.innerHTML = `<p>${text}</p>`
+    const isShortText = text.length < 28
+    const textNode = getTextNode({ isShortText, text })
+
+    element.replaceChildren(textNode)
     element.style.color = textColour
 
-    if (text.length < 28) return element.classList.remove('marquee')
+    if (isShortText) return element.classList.remove('marquee')
 
-    element.innerHTML += `&ensp;&bullet;&ensp;${element.innerHTML}&ensp;&centerdot;&ensp;`
     element.classList.add('marquee')
 }
 
