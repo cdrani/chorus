@@ -1,4 +1,7 @@
 #chorus-alert {
+    position: absolute;
+    bottom: 10%;
+    right: 2.5%;
     display: none;
     justify-content: space-between;
     align-items: center;
@@ -8,10 +11,7 @@
     padding-right:.75rem;
     min-width: 320px;
     max-width: fit-content;
-    background: green;
-    position: absolute;
-    bottom: 10%;
-    right: 2.5%;
+    background: forestgreen;
 }
 
 #chorus {
