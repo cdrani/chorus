@@ -1,5 +1,7 @@
 import { setState, getState } from './utils/state.js'
 import { getActiveTab, sendMessage } from './utils/messaging.js'
+
+import { playSharedTrack } from './services/player.js'
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 
 let ENABLED = true
@@ -31,7 +33,7 @@ function updateBadgeState({ changes, changedKey }) {
     setBadgeInfo(ENABLED)
 }
 
-chrome.storage.onChanged.addListener(async changes => {
+chrome.storage.onChanged.addListener(changes => {
     const keys = Object.keys(changes)
     const changedKey = keys.find(key => (
         ['now-playing', 'enabled', 'auth_token', 'device_id'].includes(key)
@@ -41,15 +43,12 @@ chrome.storage.onChanged.addListener(async changes => {
 
     updateBadgeState({ changes, changedKey })
 
-    if (['now-playing', 'enabled'].includes(changedKey)) {
-        if (changedKey == 'now-playing' && !ENABLED) return
-
-        if (changedKey == 'now-playing') {
-            return popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
-        }
+    if (changedKey == 'now-playing' && ENABLED) {
+        return popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
     }
 
-    await sendMessage({ message: { [changedKey]: changes[changedKey].newValue }})
+    const messageValue = changedKey == 'enabled' ? changes[changedKey] : changes[changedKey].newValue
+    sendMessage({ message: { [changedKey]: messageValue }})
 })
 
 chrome.webRequest.onBeforeRequest.addListener(details => {
@@ -81,12 +80,19 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
 )
 
 chrome.runtime.onMessage.addListener(({ key, data }, _, sendResponse) => {
-    if (key == 'artist.disco') { 
+    switch (key) {
+      case 'artist.disco':
         createArtistDiscoPlaylist(data)
-            .then((data) => sendResponse({ state: 'completed', data }))
+            .then(result => sendResponse({ state: 'completed', data: result }))
             .catch(error => sendResponse({ state: 'error', error: error.message }))
+        return true
+      case 'play.shared':
+        playSharedTrack(data)
+            .then(result => sendResponse({ state: 'completed', data: result }))
+            .catch(error => sendResponse({ state: 'error', error: error.message }))
+
+        return true
     }
-    return true
 })
 
 chrome.commands.onCommand.addListener(async command => {

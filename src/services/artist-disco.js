@@ -75,15 +75,17 @@ async function addTracksToPlaylist({ playlist, trackURIs }) {
 }
 
 async function createArtistDiscoPlaylist({ artist_name, artist_id }) {
-    try {
-        const albumsIds = await fetchArtistAlbumIds(artist_id)
-        const trackURIs = await fetchTrackURIs(albumsIds)
-        const playlist = await createPlaylist(artist_name)
-        await addTracksToPlaylist({ playlist, trackURIs })
-        return { artist_name, playlist }
-    } catch(error) {
-        return { error: error.message }
-    }
+    return new Promise(async (resolve, reject) => {
+        try {
+            const albumsIds = await fetchArtistAlbumIds(artist_id)
+            const trackURIs = await fetchTrackURIs(albumsIds)
+            const playlist = await createPlaylist(artist_name)
+            await addTracksToPlaylist({ playlist, trackURIs })
+            resolve({ artist_name, playlist })
+        } catch (error) {
+            reject(error)
+        }
+    });
 }
 
 export { createArtistDiscoPlaylist }

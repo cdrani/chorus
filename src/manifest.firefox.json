@@ -2,11 +2,13 @@
   "short_name": "Chorus",
   "name": "Chorus - Spotify Enhancer",
   "description": "Enhance Spotify with controls to save favourite snips, auto-skip tracks, and set global and custom speed. More to come!",
-  "version": "1.16.0",
+  "version": "1.16.1",
   "manifest_version": 3,
   "author": "cdrani",
   "action": {
-    "default_icon": "icons/logo.png",
+    "default_icon": {
+      "32": "icons/logo.png"
+    },
     "default_popup": "popup/index.html"
   },
   "icons": {
@@ -19,22 +21,14 @@
   "content_scripts": [
     {
       "run_at": "document_idle",
-      "js": [
-        "content-script.js"
-      ],
-      "css": [
-        "styles.css"
-      ],
-      "matches": [
-        "*://open.spotify.com/*"
-      ]
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "matches": ["*://open.spotify.com/*"]
     }
   ],
   "web_accessible_resources": [
     {
-      "matches": [
-        "*://open.spotify.com/*"
-      ],
+      "matches": ["*://open.spotify.com/*"],
       "resources": [
         "styles.css",
         "utils/*.js",
@@ -44,7 +38,8 @@
         "observers/*.js",
         "stores/*.js",
         "actions/*.js",
-        "data/*.js"
+        "data/*.js",
+        "services/*.js"
       ]
     }
   ],
@@ -86,21 +81,11 @@
       "description": "Add track to block list"
     }
   },
-  "permissions": [
-    "tabs",
-    "storage",
-    "activeTab",
-    "scripting",
-    "webRequest",
-    "unlimitedStorage"
-  ],
-  "host_permissions": [
-    "*://*.spotify.com/*"
-  ],
+  "permissions": ["tabs", "storage", "activeTab", "scripting", "webRequest", "unlimitedStorage"],
+  "host_permissions": ["*://*.spotify.com/*"],
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "type": "module",
+    "scripts": ["background.js"]
   },
   "browser_specific_settings": {
     "gecko": {

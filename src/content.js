@@ -30,6 +30,10 @@ window.addEventListener('message', async (event) => {
             response = await sendBackgroundMessage({ key: payload.key, data: payload.values })
             sendEventToPage({ eventType: 'artist.disco.response', detail:  response })
             break
+        case 'play.shared': 
+            response = await sendBackgroundMessage({ key: payload.key, data: payload.values })
+            sendEventToPage({ eventType: 'play.shared.response', detail:  response })
+            break
         case 'storage.set':
             const { key, values } = payload
             response = await setState({ key, values })
@@ -53,11 +57,11 @@ window.addEventListener('message', async (event) => {
     }
 })
 
-chrome.runtime.onMessage.addListener((message,_, sendResponse) => {
+chrome.runtime.onMessage.addListener(message => {
     const messageKey = Object.keys(message)
     const changedKey = messageKey.find(key => ['enabled', 'auth_token', 'device_id'].includes(key))
 
-    if (changedKey) sendEventToPage({ eventType: `app.${changedKey}`, detail: { [changedKey]: message[changedKey] } })
-    sendResponse({ eventType: `app.${changedKey}`, detail: { [changedKey]: message[changedKey] } })
-    return true
+    if (!changedKey) return
+
+    sendEventToPage({ eventType: `app.${changedKey}`, detail: { [changedKey]: message[changedKey] } })
 })

@@ -64,14 +64,16 @@ export default class CurrentSnip extends Snip {
     }
 
     async save() {
-        const { inputLeft, inputRight } = this._elements
         const track = await this.read()
+        const { inputLeft, inputRight, title, artists } = this._elements
         const { id, isSkipped, endTime: prevEndTime } = track
 
+        const trackId = id ?? `${title.textContent} by ${artists.textContent}`
         const result = await this._store.saveTrack({
-            id,
+            id: trackId,
             value: {
                 ...track,
+                id: trackId,
                 isSnip: true,
                 startTime: inputLeft.value,
                 endTime: inputRight.value,

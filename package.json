@@ -4,10 +4,8 @@
   "type": "module",
   "version": "1.16.0",
   "scripts": {
-    "build:chrome": "TARGET=chrome rollup -c",
-    "watch:chrome": "TARGET=chrome rollup -c -w",
-    "build:firefox": "TARGET=firefox rollup -c",
-    "watch:firefox": "TARGET=firefox rollup -c -w"
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
   },
   "devDependencies": {
     "rollup": "3.28.1",

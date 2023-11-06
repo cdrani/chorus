@@ -4,12 +4,7 @@ async function getActiveTab() {
 }
 
 function messenger({ tabId, message }) {
-    return new Promise((resolve, reject) => {
-        chrome.tabs.sendMessage(tabId, message, response => {
-            if (chrome.runtime.lastError) return reject({ error: chrome.runtime.lastError })
-            return resolve(response)
-        })
-    })
+    chrome.tabs.sendMessage(tabId, message)
 }
 
 async function sendMessage({ message }) {
