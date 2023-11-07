@@ -55,13 +55,31 @@ class DataStore {
         return this.#cache.getKey(id)    
     }
 
-    async saveTrack({ id, value }) {
-        const response = await this.#dispatcher.sendEvent({
-            eventType: 'storage.set',
-            detail: { key: id, values: value },
+    async removeTrack(id) {
+        await this.#dispatcher.sendEvent({
+            eventType: 'storage.delete',
+            detail: { key: id },
         })
+    }
 
-        this.#cache.update({ key: id, value: response })
+    shouldRemoveTrack({ isSkipped, playbackRate = '1', isSnip }) {
+        if (isSkipped || isSnip || playbackRate != '1') return false
+      
+        return true
+    }
+
+    async saveTrack({ id, value }) {
+        let response
+        if (this.shouldRemoveTrack(value)) {
+            this.removeTrack(id)
+        } else {
+            response = await this.#dispatcher.sendEvent({
+                eventType: 'storage.set',
+                detail: { key: id, values: value },
+            })
+        } 
+
+        this.#cache.update({ key: id, value: response ?? value })
         return this.#cache.getKey(id)
     }
 

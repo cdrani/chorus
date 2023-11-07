@@ -46,8 +46,7 @@ window.addEventListener('message', async (event) => {
             break
 
         case 'storage.delete':
-            response = await removeState(payload.key)
-            sendEventToPage({ eventType: 'storage.delete.response', detail: response })
+            await removeState(payload.key)
             break
 
         case 'storage.populate':
