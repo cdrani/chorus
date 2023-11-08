@@ -1,52 +1,36 @@
+import Reverb from '../models/reverb.js'
 import VideoElement from '../models/video/video.js'
 
 class SpotifyVideo {
-    #video
-    #tries = 0
-    #originalCreateElement = document.createElement
-
     constructor() {
-        this.#overloadCreateElement()
+        this._video
+        this._reverb
+        this._originalCreateElement = document.createElement
         this.#init()
     }
 
-    #overloadCreateElement() {
+    #init() {
         const self = this
 
         document.createElement = function (tagName) {
-            const element = self.#originalCreateElement.apply(this, arguments)
+            const element = self._originalCreateElement.apply(this, arguments)
 
             if (tagName === 'video') {
-                self.#video = new VideoElement(element)
+                self._reverb = new Reverb(element)
+                self._video = new VideoElement(element)
                 
-                document.createElement = self.#originalCreateElement
+                document.createElement = self._originalCreateElement
             }
             return element
         }
     }
 
-    #init = () => {
-        try {
-            this.#tries++
-            this.#checkForMainEl()
-        } catch {
-            if (this.#tries <= 20) {
-                setTimeout(this.#init, 500)
-                return
-            }
-        }
-    }
-
-    #checkForMainEl() {
-        const mainEl = document.getElementById('main')
-
-        if (mainEl === null) {
-            throw new Error('Main container element not found')
-        }
-    }
-
     get element() {
-        return this.#video
+        return this._video
+    }
+
+    get reverb() {
+        return this._reverb
     }
 }
 

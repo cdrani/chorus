@@ -10,9 +10,10 @@ import NowPlayingObserver from '../observers/now-playing.js'
 import ArtistDiscoObserver from '../observers/artist-disco.js'
 
 export default class App {
-    constructor(video) {
+    constructor({ video, reverb }) {
         this._store = store
         this._video = video
+        this._reverb = reverb
 
         this._active = true
         this._intervalId = null
@@ -48,6 +49,7 @@ export default class App {
     disconnect() {
         this._active = false
         this._video.reset()
+        this._reverb.applyReverbEffect('none')
 
         this._nowPlayingIcons.clearIcons()
         this._trackListObserver.disconnect()
@@ -67,6 +69,8 @@ export default class App {
 
         this.#resetInterval()
         this.#reInit()
+
+        await this._reverb.applyReverbEffect('trente')
     }
 
     #reInit() {

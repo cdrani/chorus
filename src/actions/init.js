@@ -5,7 +5,7 @@ import App from '../models/app.js'
 
 async function load() {
     await store.populate()
-    const app = new App(spotifyVideo.element)
+    const app = new App({ video: spotifyVideo.element, reverb: spotifyVideo.reverb })
     const enabled = JSON.parse(sessionStorage.getItem('enabled') ?? 'true')
     
     enabled ? await app.connect() : app.disconnect()
