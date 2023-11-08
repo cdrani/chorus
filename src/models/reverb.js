@@ -1,4 +1,4 @@
-import { PARAMS, getParamsListForEffect } from '../lib/reverb/presets.js'
+import { getParamsListForEffect } from '../lib/reverb/presets.js'
 
 export default class Reverb {
     constructor(video)  {
@@ -40,7 +40,6 @@ export default class Reverb {
     #applyReverbEffectParams(effect) {
         const paramsList = getParamsListForEffect(effect)
         paramsList.forEach(({ name, value }) => {
-            // this._parameters[name] = value
             this._reverb.parameters.get(name).linearRampToValueAtTime(value, this._audioContext.currentTime + 0.195)
         })
     }

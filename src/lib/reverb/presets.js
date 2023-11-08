@@ -1,4 +1,4 @@
-export const PARAMS = [
+const PARAMS = [
     'preDelay',
     'bandwidth',
     'diffuse',
