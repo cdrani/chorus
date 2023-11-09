@@ -5,8 +5,7 @@ export default class VideoElement {
         this._video = video
         this._active = sessionStorage.getItem('enabled') == 'true'
         this._isEditing = false
-        this._video.autoplay = false
-
+        this._video.crossOrigin = 'anonymous'
         this._videoOverride = new VideoOverride(this)
     }
 
