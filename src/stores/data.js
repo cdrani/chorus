@@ -3,7 +3,7 @@ import Dispatcher from '../events/dispatcher.js'
 import { currentSongInfo } from '../utils/song.js'
 import { playback } from '../utils/playback.js'
 
-const DO_NOT_INCLUDE = [ 'now-playing', 'device_id', 'auth_token', 'enabled', 'globals', 'chorus-seek']
+const DO_NOT_INCLUDE = ['reverb', 'now-playing', 'device_id', 'auth_token', 'enabled', 'globals', 'chorus-seek']
 
 class DataStore {
     #cache
@@ -66,6 +66,20 @@ class DataStore {
         if (isSkipped || isSnip || playbackRate != '1') return false
       
         return true
+    }
+
+    getReverb() {
+        const cacheValue = this.#cache.getValue({ key: 'reverb', value: 'none' })
+        return cacheValue
+    }
+
+    async saveReverb(effect) {
+        await this.#dispatcher.sendEvent({
+            eventType: 'storage.set',
+            detail: { key: 'reverb', values: effect },
+        })
+
+        this.#cache.update({ key: 'reverb', value: effect })
     }
 
     async saveTrack({ id, value }) {
