@@ -17,6 +17,7 @@ export default class ActionListeners extends Listeners {
         this.#deleteTrackListener()
         this.#resetSpeedListener()
 
+        this.#saveReverbListener()
         this._setup = true
     }
 
@@ -47,6 +48,14 @@ export default class ActionListeners extends Listeners {
         const speedSaveButton = document.getElementById('chorus-speed-save-button')
         speedSaveButton?.addEventListener('click', async () => {
             await this._speed.save()
+            this._hide()
+        })
+    }
+
+    #saveReverbListener() {
+        const reverbSaveButton = document.getElementById('chorus-effects-save-button')
+        reverbSaveButton?.addEventListener('click', async () => {
+            await this._reverb.saveSelection()
             this._hide()
         })
     }

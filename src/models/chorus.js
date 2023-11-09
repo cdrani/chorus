@@ -1,6 +1,7 @@
 import { createSnipControls } from '../components/snip/snip-controls.js'
 import { createSpeedControls } from '../components/speed/speed-controls.js'
 import { createSeekControls } from '../components/seek/seek-controls.js'
+import { createEffectsControls } from '../components/effects/effects-controls.js'
 
 import HeaderListeners from '../events/listeners/header-listeners.js'
 import ActionListeners from '../events/listeners/action-listeners.js'
@@ -43,9 +44,11 @@ export default class Chorus {
         const snipControlsEl = parseNodeString(createSnipControls())
         const speedControlsEl = parseNodeString(createSpeedControls())
         const seekControlsEl = parseNodeString(createSeekControls())
+        const effectsControlsEl = parseNodeString(createEffectsControls())
 
         this.chorusControls.appendChild(snipControlsEl)
         this.chorusControls.appendChild(speedControlsEl)
+        this.chorusControls.appendChild(effectsControlsEl)
         this.chorusControls.appendChild(seekControlsEl)
     }
 

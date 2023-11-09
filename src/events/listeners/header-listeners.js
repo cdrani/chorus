@@ -6,7 +6,7 @@ export default class HeaderListeners extends Listeners {
 
         this._setup = false
         this._viewInFocus = null
-        this._VIEWS = ['snip', 'speed', 'seek']
+        this._VIEWS = ['snip', 'speed', 'effects', 'seek']
     }
 
     init() {
@@ -15,6 +15,7 @@ export default class HeaderListeners extends Listeners {
         this.#snipViewToggle()
         this.#seekViewToggle()
         this.#speedViewToggle()
+        this.#effectsViewToggle()
         this.#closeModalListener()
 
         this._currentView = 'snip'
@@ -27,7 +28,6 @@ export default class HeaderListeners extends Listeners {
             await this._speed.reset()
         }
 
-        this._currentView = 'snip'
         this._hide()
     }
 
@@ -63,6 +63,14 @@ export default class HeaderListeners extends Listeners {
         speedButton?.addEventListener('click', async () => {
             this._currentView = 'speed'
             await this._speed.init()
+        })
+    }
+
+    #effectsViewToggle() {
+        const effectsButton = document.getElementById('chorus-effects-button')
+        effectsButton?.addEventListener('click', async () => {
+            this._currentView = 'effects'
+            await this._reverb.init()
         })
     }
 

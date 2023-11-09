@@ -17,6 +17,7 @@ export const createHeader = () => `
             <div style="display:flex;height:25px;align-items:center;justify-content:space-around;">
                 ${createHeaderButton({ role: 'snip', ariaLabel: 'Snip Controls', additionalStyles: 'background-color:green;' })}
                 ${createHeaderButton({ role: 'speed', ariaLabel: 'Speed Controls', additionalStyles: 'margin-left:.5rem;' })}
+                ${createHeaderButton({ role: 'effects', ariaLabel: 'Effects Controls', additionalStyles: 'margin-left:.5rem;' })}
                 ${createHeaderButton({ role: 'seek', ariaLabel: 'Seek Controls', additionalStyles: 'margin:0 .5rem;' })}
             </div>
 
