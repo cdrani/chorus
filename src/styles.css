@@ -339,3 +339,28 @@ input[type=number]::-webkit-outer-spin-button {
 [role=artist-disco][aria-label]:hover:after {
     display: inline-block;
 }
+
+.selector {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 3px;
+    padding-right: 1.5px;
+    width: auto;
+    height: auto;
+    text-align: center;
+    cursor: pointer;
+    z-index: 1000;
+    position: relative;
+}
+
+.select {
+    background-color: transparent;
+    color: rgb(179, 179, 179);
+    border-width: initial;
+    border-style: initial;
+    border-color: rgb(130, 51, 51);
+    border-image: initial;
+    cursor: pointer;
+    text-transform: capitalize;
+}
