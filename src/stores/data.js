@@ -28,7 +28,7 @@ class DataStore {
                 value.isSkipped = endTime == 0
             }
 
-            this.#cache.update({ key, value: JSON.stringify(value) })
+            this.#cache.update({ key, value: typeof value !== 'string' ? JSON.stringify(value) : value })
         })
     }
 
@@ -80,6 +80,7 @@ class DataStore {
         })
 
         this.#cache.update({ key: 'reverb', value: effect })
+        return this.#cache.getKey(id)
     }
 
     async saveTrack({ id, value }) {

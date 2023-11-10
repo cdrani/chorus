@@ -71,12 +71,7 @@ export default class App {
         this.#resetInterval()
         this.#reInit()
 
-        let effect = 'none'
-        try {
-            const parsedEffect = JSON.parse(sessionStorage.getItem('reverb'))
-            effect = parsedEffect ?? 'none'
-        } catch (e) {}
-
+        const effect = sessionStorage.getItem('reverb') ?? 'none'
         sessionStorage.setItem('reverb', effect)
         await this._reverb.applyReverbEffect(effect)
     }
