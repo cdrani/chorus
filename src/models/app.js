@@ -71,7 +71,14 @@ export default class App {
         this.#resetInterval()
         this.#reInit()
 
-        await this._reverb.applyReverbEffect('trente')
+        let effect = 'none'
+        try {
+            const parsedEffect = JSON.parse(sessionStorage.getItem('reverb'))
+            effect = parsedEffect ?? 'none'
+        } catch (e) {}
+
+        sessionStorage.setItem('reverb', effect)
+        await this._reverb.applyReverbEffect(effect)
     }
 
     #reInit() {
@@ -80,10 +87,7 @@ export default class App {
             if (!this._intervalId) return
 
             const chorus = document.getElementById('chorus')
-
-            if (!chorus) {
-                this._nowPlayingIcons.placeIcons()
-            }
+            if (!chorus) this._nowPlayingIcons.placeIcons()
         }, 3000)
     }
 }

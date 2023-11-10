@@ -1,4 +1,4 @@
-import Reverb from '../models/reverb.js'
+import Reverb from '../models/reverb/reverb.js'
 import VideoElement from '../models/video/video.js'
 
 class SpotifyVideo {
