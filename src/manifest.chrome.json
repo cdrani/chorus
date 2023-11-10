@@ -39,7 +39,8 @@
         "stores/*.js",
         "actions/*.js",
         "data/*.js",
-        "services/*.js"
+        "services/*.js",
+        "lib/*/*.js"
       ]
     }
   ],
