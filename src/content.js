@@ -5,7 +5,8 @@ const loadScript = filePath => {
     const script = document.createElement('script')
     script.src = chrome.runtime.getURL(filePath)
     script.type = 'module'
-    document.body.appendChild(script)
+    document.head.appendChild(script)
+    script.onload = () => { script.remove() }
 }
 
 loadScript('actions/init.js')
