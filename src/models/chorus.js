@@ -11,9 +11,13 @@ import { spotifyVideo } from '../actions/overload.js'
 
 export default class Chorus {
     constructor(songTracker) {
+        this._songTracker = songTracker
         this._video = spotifyVideo.element
-        this.headerListeners = new HeaderListeners(songTracker)
-        this.actionListeners = new ActionListeners(songTracker)
+    }
+
+    init() {
+        this.headerListeners = new HeaderListeners(this._songTracker)
+        this.actionListeners = new ActionListeners(this._songTracker)
     }
 
     get isShowing() {

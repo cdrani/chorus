@@ -61,6 +61,7 @@ export default class App {
 
     async connect() {
         this._active = true
+        this._chorus.init()
 
         this._nowPlayingIcons.placeIcons()
         this._trackListObserver.observe()
