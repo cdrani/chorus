@@ -10,6 +10,8 @@ const loadScript = filePath => {
 }
 
 loadScript('actions/init.js')
+sessionStorage.setItem('soundsDir', chrome.runtime.getURL('/lib/sounds/'))
+sessionStorage.setItem('reverbPath', chrome.runtime.getURL('/lib/reverb/reverb.js'))
 
 const sendEventToPage = ({ eventType, detail }) => {
     window.postMessage({
