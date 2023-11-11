@@ -24,33 +24,24 @@ export default class ActionListeners extends Listeners {
 
     #resetSpeedListener() {
         const resetButton = document.getElementById('chorus-speed-reset-button')
-        resetButton?.addEventListener('click', async () => {
-            await this._speed.reset()
-        })
+        resetButton?.addEventListener('click', async () => await this._speed.reset())
     }
 
     #deleteTrackListener() {
         const deleteButton = document.getElementById('chorus-snip-remove-button')
         deleteButton?.addEventListener('click', async () => {
-            await this._snip.delete()
-            this._hide()
+            await this._snip.delete(); this._hide()
         })
     }
 
     #saveTrackListener() {
         const saveButton = document.getElementById('chorus-snip-save-button')
-        saveButton?.addEventListener('click', async () => {
-            await this._snip.save()
-            this._hide()
-        })
+        saveButton?.addEventListener('click', async () => await this._snip.save())
     }
 
     #saveSpeedListener() {
         const speedSaveButton = document.getElementById('chorus-speed-save-button')
-        speedSaveButton?.addEventListener('click', async () => {
-            await this._speed.save()
-            this._hide()
-        })
+        speedSaveButton?.addEventListener('click', async () => await this._speed.save())
     }
 
     #saveReverbListener() {
@@ -65,16 +56,10 @@ export default class ActionListeners extends Listeners {
 
     #saveSeekListener() {
         const seekSaveButton = document.getElementById('chorus-seek-save-button')
-        seekSaveButton?.addEventListener('click', async () => {
-            await this._seek.save()
-            this._hide()
-        })
+        seekSaveButton?.addEventListener('click', async () => await this._seek.save())
     }
 
-    #handleShare() {
-        this._snip.share()
-        this._hide()
-    }
+    #handleShare() { this._snip.share(); this._hide() }
 
     #shareTrackListener() {
         const shareButton = document.getElementById('chorus-snip-share-button')
