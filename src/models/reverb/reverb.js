@@ -1,40 +1,63 @@
-import { getParamsListForEffect } from '../../lib/reverb/presets.js'
+import { drinkPresets, getParamsListForEffect } from '../../lib/reverb/presets.js'
 
 export default class Reverb {
     constructor(video)  {
         this._video = video
     }
 
-    async setup() {
+    #isDigital(effect) {
+        return drinkPresets.includes(effect)
+    }
+
+    async setReverbEffect(effect) {
+        this.#setup()
+        if (effect == 'none') return this.#disconnect()
+
+        await (this.#isDigital(effect) ? this.#createDigitalReverb(effect) : this.#createImpulseReverb(effect))
+        this.#connect()
+    }
+
+    #setup() {
         this._audioContext = this._audioContext ?? new AudioContext()
         this._source = this._source ?? this._audioContext.createMediaElementSource(this._video)
         this._gain = this._gain ?? this._audioContext.createGain()
-        await this._audioContext.audioWorklet
-          .addModule('chrome-extension://lcmijjhfgdfhlakhialnfdlcmmafhiig/lib/reverb/reverb.js')
+    }
 
-        this._reverb = this._reverb ?? 
-            new AudioWorkletNode(this._audioContext, 'UXFDReverb', { outputChannelCount: [2] })
-
+    #connect() {
         this._source.disconnect()
-
         this._source.connect(this._gain)
         this._gain.connect(this._reverb)
         this._reverb.connect(this._audioContext.destination)
-
     }
 
-    disconnect() {
+    async #createDigitalReverb(effect) {
+        const modulePath = sessionStorage.getItem('reverbPath')
+        await this._audioContext.audioWorklet.addModule(modulePath)
+        this._reverb = new AudioWorkletNode(this._audioContext, 'UXFDReverb', { outputChannelCount: [2] })
+        this.#applyReverbEffect(effect)
+    }
+
+    async #createImpulseReverb(effect) {
+        let convolver = this._audioContext.createConvolver()
+
+        const soundsDir = sessionStorage.getItem('soundsDir')
+        let response = await fetch(`${soundsDir}${effect}.wav`)
+        let arraybuffer = await response.arrayBuffer()
+        convolver.buffer = await this._audioContext.decodeAudioData(arraybuffer)
+        this._reverb = convolver
+    }
+
+    #disconnect() {
         this._source?.disconnect()
+        this._reverb?.disconnect()
         this._source?.connect(this._audioContext.destination)
     }
 
-    async applyReverbEffect(effect) {
-        if (effect == 'none') return this.disconnect()
+    async #applyReverbEffect(effect) {
+        if (effect == 'none') return this.#disconnect()
 
-        try {
-            await this.setup()
-            this.#applyReverbEffectParams(effect)
-        } catch (error) { console.error('EROROROROROROR: ', error)}
+        try { this.#applyReverbEffectParams(effect) }
+        catch (error) { console.error({ ERROR:  error })}
     }
 
     #applyReverbEffectParams(effect) {
