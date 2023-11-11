@@ -7,34 +7,48 @@ export default class ReverbController {
         this._reverb = spotifyVideo.reverb
     }
 
-    async init() {
+    init() {
         const effect = this._store.getReverb() ?? 'none'
-        await this.#setupEvents(effect)
+        this.#setupEvents(effect)
     }
 
-    async #setupEvents(effect) {
-        const { drinkEffectSelect } = this.elements
+    #setupEvents(effect) {
+        const { drinkEffectSelect, convolverEffectSelect, presetSelection } = this.elements
+        effect == 'none' ? this.setValuesToNone() : (presetSelection.textContent = effect)
 
-        drinkEffectSelect.value = effect
-        await this._reverb.applyReverbEffect(effect)
-
-        drinkEffectSelect.onchange = async () => { await this.handleSelection() }
+        drinkEffectSelect.onchange = async (e) => { await this.handleSelection(e) }
+        convolverEffectSelect.onchange = async (e) => { await this.handleSelection(e) }
     }
 
     get elements() {
-        return { drinkEffectSelect: document.getElementById('drink-effect-presets') }
+        return { 
+            presetSelection: document.getElementById('preset-selection'),
+            drinkEffectSelect: document.getElementById('drink-effect-presets'),
+            convolverEffectSelect: document.getElementById('convolver-effect-presets') 
+        }
     }
 
-    get selection() {
-        const { drinkEffectSelect: { value } } = this.elements 
-        return value
-    }
-
-    async handleSelection() {
-        await this._reverb.applyReverbEffect(this.selection)
+    async handleSelection(e) {
+        const { target: { value } } = e
+        await this._reverb.setReverbEffect(value)
+        
+        this.elements.presetSelection.textContent = value
     }
 
     async saveSelection() {
-        await this._store.saveReverb(this.selection)
+        await this._store.saveReverb(this.elements.presetSelection.textContent)
+    }
+
+    setValuesToNone() {
+        const { presetSelection, drinkEffectSelect, convolverEffectSelect } = this.elements
+        presetSelection.textContent = 'none' 
+        drinkEffectSelect.value = 'none'
+        convolverEffectSelect.value = 'none'
+    }
+
+    async clearReverb() {
+        this.setValuesToNone()
+        await this.saveSelection()
+        await this._reverb.setReverbEffect('none')
     }
 }

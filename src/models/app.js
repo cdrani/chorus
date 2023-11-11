@@ -49,7 +49,6 @@ export default class App {
     disconnect() {
         this._active = false
         this._video.reset()
-        this._reverb.applyReverbEffect('none')
 
         this._nowPlayingIcons.clearIcons()
         this._trackListObserver.disconnect()
@@ -57,6 +56,7 @@ export default class App {
         this._artistDiscoObserver.disconnect()
         
         this.#resetInterval()
+        this._reverb.setReverbEffect('none')
     }
 
     async connect() {
@@ -73,7 +73,7 @@ export default class App {
 
         const effect = sessionStorage.getItem('reverb') ?? 'none'
         sessionStorage.setItem('reverb', effect)
-        await this._reverb.applyReverbEffect(effect)
+        await this._reverb.setReverbEffect(effect)
     }
 
     #reInit() {

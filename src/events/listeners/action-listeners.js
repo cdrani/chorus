@@ -18,6 +18,7 @@ export default class ActionListeners extends Listeners {
         this.#resetSpeedListener()
 
         this.#saveReverbListener()
+        this.#resetReverbListener()
         this._setup = true
     }
 
@@ -54,10 +55,12 @@ export default class ActionListeners extends Listeners {
 
     #saveReverbListener() {
         const reverbSaveButton = document.getElementById('chorus-effects-save-button')
-        reverbSaveButton?.addEventListener('click', async () => {
-            await this._reverb.saveSelection()
-            this._hide()
-        })
+        reverbSaveButton?.addEventListener('click', async () => await this._reverb.saveSelection())
+    }
+
+    #resetReverbListener() {
+        const reverbResetButton = document.getElementById('chorus-effects-reset-button')
+        reverbResetButton?.addEventListener('click', async () => await this._reverb.clearReverb())
     }
 
     #saveSeekListener() {
