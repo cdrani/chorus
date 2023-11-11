@@ -4,6 +4,8 @@ import { currentData } from '../../data/current.js'
 import { songState } from '../../data/song-state.js'
 import { parseNodeString } from '../../utils/parser.js'
 import { spotifyVideo } from '../../actions/overload.js'
+import { playback } from '../../utils/playback.js'
+import { secondsToTime } from '../../utils/time.js'
 
 export default class SeekIcons {
     constructor() {
@@ -49,6 +51,7 @@ export default class SeekIcons {
     removeIcons() {
         const seekBack = document.getElementById('seek-player-rw-button')
         const seekForward = document.getElementById('seek-player-ff-button')
+        if (!seekBack) return
 
         seekBack.style.display = 'none'
         seekForward.style.display = 'none'
@@ -123,10 +126,12 @@ export default class SeekIcons {
 
     async #calculateCurrentTime({ role, seekTime }) {
         const { startTime, endTime } = await songState()
-        const currentTime = this._video.currentTime
+        let currentTime = parseInt(this._video.currentTime, 10)
+        if (currentTime !== playback.current()) currentTime = playback.current()
+
         const newTimeFF = Math.min(parseInt(currentTime + seekTime, 10), parseInt(endTime, 10) - 0.5)
         const newStartTime = currentTime < parseInt(startTime) ? 0 : startTime
-        const newTimeRW = Math.max(parseInt(currentTime - seekTime, 10), parseInt(newStartTime, 10) - 0.5)
+        const newTimeRW = Math.max(parseInt(currentTime - seekTime, 10), parseInt(newStartTime, 10), 0)
         
         return role == 'ff' ? newTimeFF : newTimeRW
     }
@@ -138,6 +143,7 @@ export default class SeekIcons {
 
         const newTime = await this.#calculateCurrentTime({ role, seekTime })
         this._video.currentTime = newTime
+        document.querySelector('[data-testid="playback-position"]').textContent = secondsToTime(newTime)
     }
 
     #setupListeners() {
