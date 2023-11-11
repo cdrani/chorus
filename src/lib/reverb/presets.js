@@ -1,9 +1,8 @@
-const PARAMS = [ 'preDelay', 'bandwidth', 'diffuse', 'decay', 'damping', 'excursion', 'wet', 'dry' ]
+const PARAMS = ['preDelay','bandwidth','diffuse','decay','damping','excursion','wet','dry']
 
 const PRESETS = {
     //          preDelay bandwidth diffuse  decay    damping  excursion  wet      dry
-    espresso: [ 1525   , 0.5683  , 0.5    , 0.3226 , 0.6446 , 0        , 0.2921 , 0.4361 ],
-    demi:     [ 596    , 0.983   , 0.9    , 0.8271 , 0.2975 , 0.8      , 0.1402 , 0.9000 ],
+    demi:     [ 1525   , 0.5683  , 0.5    , 0.3226 , 0.6446 , 0        , 0.2921 , 0.4361 ],
     short:    [ 596    , 0.983   , 0.9    , 0.8271 , 0.2975 , 2.8      , 0.1402 , 0.9000 ], 
     tall:     [ 0      , 0.9999  , 1      , 0.5    , 0.005  , 16       , 0.6    , 0.3    ], 
     grande:   [ 0      , 0.999   , 0.6    , 0.78   , 0.37   , 12       , 0.5015 , 0.5012 ], 
@@ -12,10 +11,13 @@ const PRESETS = {
     quaranta: [ 0      , 0.999   , 1      , 0.88   , 0.35   , 12       , 0.915  , 0.194  ], 
 }
 
-export const drinkPresetNames = [ 'none', 'espresso', 'demi', 'short', 'tall', 'grande', 'venti', 'trenta', 'quaranta' ]
+const drinkPresets = ['demi','short','tall','grande','venti','trenta','quaranta' ]
+const convolverPresets = ['cinema','diffusor','kick','matrix','muffler','room','binaural','telephone']
 
-export const getParamsListForEffect = effect => {
+const getParamsListForEffect = effect => {
     const effectValues = PRESETS[effect] 
     const paramsList = effectValues.map((value, idx) => ({ name: PARAMS[idx], value }))
     return paramsList
 }
+
+export { drinkPresets, convolverPresets, getParamsListForEffect }
