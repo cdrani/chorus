@@ -40,7 +40,8 @@
         "actions/*.js",
         "data/*.js",
         "services/*.js",
-        "lib/*/*.js"
+        "lib/**/*.js",
+        "lib/sounds/*.wav"
       ]
     }
   ],
