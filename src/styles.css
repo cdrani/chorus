@@ -88,6 +88,42 @@
     border-color: #e5e7eb;
 }
 
+.success {
+    background-color: green;
+    
+    &:hover {
+        background-color: darkgreen;
+    }
+
+    &:active {
+        background-color: darkolivegreen;
+    }
+}
+
+.danger {
+    background-color: crimson;
+    
+    &:hover {
+        background-color: firebrick;
+    }
+
+    &:active {
+        background-color: maroon;
+    }
+}
+
+.share {
+    background-color: darkviolet;
+    
+    &:hover {
+        background-color: blueviolet;
+    }
+
+    &:active {
+        background-color: rebeccapurple;
+    }
+}
+
 .chorus-close-button,
 .chorus-close-button:hover {
     padding: 0;
@@ -125,7 +161,7 @@
 .chorus-text-button {
     display: flex;
     align-items: center;
-    background-color: #535353;
+    /* background-color: #535353; */
     color: #fff;
     font-weight: 600;
     font-size: .75rem;
