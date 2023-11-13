@@ -32,10 +32,6 @@ class DataStore {
         })
     }
 
-    removeTrack(id) {
-        this.#cache.removeKey(id)
-    }
-
     getTrack({ id, value = {}}) {
         const cacheValue = this.#cache.getValue({ key: id, value })
         return cacheValue
@@ -55,14 +51,7 @@ class DataStore {
         return this.#cache.getKey(id)    
     }
 
-    async removeTrack(id) {
-        await this.#dispatcher.sendEvent({
-            eventType: 'storage.delete',
-            detail: { key: id },
-        })
-    }
-
-    shouldRemoveTrack({ isSkipped, playbackRate = '1', isSnip }) {
+    #shouldDeleteTrack({ isSkipped, playbackRate = '1', isSnip }) {
         if (isSkipped || isSnip || playbackRate != '1') return false
       
         return true
@@ -85,27 +74,24 @@ class DataStore {
 
     async saveTrack({ id, value }) {
         let response
-        if (this.shouldRemoveTrack(value)) {
-            this.removeTrack(id)
+        if (this.#shouldDeleteTrack(value)) {
+            await this.deleteTrack(id)
         } else {
             response = await this.#dispatcher.sendEvent({
                 eventType: 'storage.set',
                 detail: { key: id, values: value },
             })
-        } 
+        }
 
         this.#cache.update({ key: id, value: response ?? value })
         return this.#cache.getKey(id)
     }
 
-    async deleteTrack({ id, value }) {
+    async deleteTrack(id) {
         await this.#dispatcher.sendEvent({
             eventType: 'storage.delete',
             detail: { key: id },
         })
-
-        this.#cache.update({ key: id, value: { ...value, isSnip: false } })
-        return this.#cache.getKey(id)
     }
 }
 
