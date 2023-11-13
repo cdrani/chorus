@@ -1,5 +1,6 @@
 import { store } from '../../stores/data.js'
 import { spotifyVideo } from '../../actions/overload.js'
+import { drinkPresets } from '../../lib/reverb/presets.js'
 
 export default class ReverbController {
     constructor() {
@@ -14,7 +15,14 @@ export default class ReverbController {
 
     #setupEvents(effect) {
         const { drinkEffectSelect, convolverEffectSelect, presetSelection } = this.elements
-        effect == 'none' ? this.setValuesToNone() : (presetSelection.textContent = effect)
+
+        if (effect == 'none') {
+            this.setValuesToNone()
+        } else {
+            presetSelection.textContent = effect
+            const selectedElement = drinkPresets.includes(effect) ? drinkEffectSelect : convolverEffectSelect
+            selectedElement.value = effect
+        }
 
         drinkEffectSelect.onchange = async (e) => { await this.handleSelection(e) }
         convolverEffectSelect.onchange = async (e) => { await this.handleSelection(e) }
@@ -29,9 +37,13 @@ export default class ReverbController {
     }
 
     async handleSelection(e) {
-        const { target: { value } } = e
+        const { target: { value, id } } = e
         await this._reverb.setReverbEffect(value)
-        
+
+        const { convolverEffectSelect, drinkEffectSelect } = this.elements
+        const nonSelectedElement = id?.startsWith('drink') ? convolverEffectSelect : drinkEffectSelect
+        nonSelectedElement.value = 'none'
+
         this.elements.presetSelection.textContent = value
     }
 
