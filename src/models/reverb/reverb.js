@@ -14,7 +14,7 @@ export default class Reverb {
         if (effect == 'none') return this.#disconnect()
 
         await (this.#isDigital(effect) ? this.#createDigitalReverb(effect) : this.#createImpulseReverb(effect))
-        this.#connect()
+        if (this.#isDigital(effect)) this.#connect()
     }
 
     #setup() {
@@ -38,17 +38,22 @@ export default class Reverb {
     }
 
     async #createImpulseReverb(effect) {
-        let convolver = this._audioContext.createConvolver()
-
+        this._convolverNode = this._audioContext.createConvolver()
         const soundsDir = sessionStorage.getItem('soundsDir')
-        let response = await fetch(`${soundsDir}${effect}.wav`)
-        let arraybuffer = await response.arrayBuffer()
-        convolver.buffer = await this._audioContext.decodeAudioData(arraybuffer)
-        this._reverb = convolver
+
+        const response = await fetch(`${soundsDir}${effect}.wav`)
+        const arraybuffer = await response.arrayBuffer()
+        this._convolverNode.buffer = await this._audioContext.decodeAudioData(arraybuffer)
+
+        this._source.connect(this._convolverNode)
+        this._convolverNode.connect(this._gain)
+        this._gain.connect(this._audioContext.destination)
     }
 
     #disconnect() {
         this._source?.disconnect()
+        this._gain?.disconnect()
+        this._convolverNode?.disconnect()
         this._reverb?.disconnect()
         this._source?.connect(this._audioContext.destination)
     }
