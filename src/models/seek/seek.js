@@ -5,29 +5,20 @@ import { store } from '../../stores/data.js'
 import { currentData } from '../../data/current.js'  
 
 export default class Seek {
-    #store
-    #controls
-    #seekIcons
-
     constructor() {
-        this.#store = store
-        this.#seekIcons = new SeekIcons()
-        this.#controls = new SeekController()
+        this._store = store
+        this._seekIcons = new SeekIcons()
+        this._controls = new SeekController()
     }
 
     async init() {
         const data = await currentData.getSeekValues()
-        this.#controls.init(data)
+        this._controls.init(data)
     }
 
     get #inputValues() {
-        const { rwInput, ffInput, seekCheckbox } = this.#controls.elements
-
-        return  {
-            rw: rwInput.value,
-            ff: ffInput.value,
-            updateShows: seekCheckbox.checked
-        }
+        const { rwInput, ffInput, seekCheckbox } = this._controls.elements
+        return  { rw: rwInput.value, ff: ffInput.value, updateShows: seekCheckbox.checked }
     }
 
     async save() {
@@ -35,23 +26,22 @@ export default class Seek {
         await this.#saveSeeking({ rw, ff, updateShows })
     }
 
+    async reset() {
+        const { updateShows } = this.#inputValues
+        const seekTimeValue = updateShows ? 15 : 10
+        await this.#saveSeeking({ rw: seekTimeValue, ff: seekTimeValue, updateShows })
+        await this.init()
+    }
+
     async #saveSeeking({ rw, ff, updateShows }) {
         const { shows, global } = await currentData.getSeekValues()
-
-        await this.#store.saveTrack({
+        await this._store.saveTrack({
             id: 'chorus-seek',
             value: {
-                shows: {
-                    ...shows,
-                    ...updateShows && { rw, ff } 
-                },
-                global: {
-                    ...global,
-                    ...!updateShows && { rw, ff }
-                }
+                shows: { ...shows, ...updateShows && { rw, ff } }, 
+                global: { ...global, ...!updateShows && { rw, ff } }
             },
         })
-        
-        await this.#seekIcons.setSeekLabels()
+        await this._seekIcons.setSeekLabels()
     }
 }

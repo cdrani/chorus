@@ -9,16 +9,19 @@ export default class ActionListeners extends Listeners {
     init() {
         if (this._setup) return
 
+        this.#resetSeekListener()
         this.#saveSeekListener()
-        this.#saveTrackListener()
-        this.#saveSpeedListener()
 
         this.#shareTrackListener()
         this.#deleteTrackListener()
-        this.#resetSpeedListener()
+        this.#saveTrackListener()
 
-        this.#saveReverbListener()
+        this.#resetSpeedListener()
+        this.#saveSpeedListener()
+
         this.#resetReverbListener()
+        this.#saveReverbListener()
+
         this._setup = true
     }
 
@@ -57,6 +60,11 @@ export default class ActionListeners extends Listeners {
     #saveSeekListener() {
         const seekSaveButton = document.getElementById('chorus-seek-save-button')
         seekSaveButton?.addEventListener('click', async () => await this._seek.save())
+    }
+
+    #resetSeekListener() {
+        const seekResetButton = document.getElementById('chorus-seek-reset-button')
+        seekResetButton?.addEventListener('click', async () => await this._seek.reset())
     }
 
     #handleShare() { this._snip.share(); this._hide() }
