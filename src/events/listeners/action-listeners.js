@@ -67,10 +67,8 @@ export default class ActionListeners extends Listeners {
         seekResetButton?.addEventListener('click', async () => await this._seek.reset())
     }
 
-    #handleShare() { this._snip.share(); this._hide() }
-
     #shareTrackListener() {
         const shareButton = document.getElementById('chorus-snip-share-button')
-        shareButton?.addEventListener('click', () => this.#handleShare())
+        shareButton?.addEventListener('click', () => this._snip.share())
     }
 }
