@@ -12,7 +12,7 @@ const PRESETS = {
 }
 
 const drinkPresets = ['demi','short','tall','grande','venti','trenta','quaranta' ]
-const convolverPresets = ['cinema','diffusor','kick','matrix','muffler','room','binaural','telephone']
+const convolverPresets = ['diffusor','kick','muffler','telephone']
 
 const getParamsListForEffect = effect => {
     const effectValues = PRESETS[effect] 
