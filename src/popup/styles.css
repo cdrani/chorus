@@ -54,34 +54,3 @@ label.chorus-common {
     color: #b3b3b3;
     align-items: center;
 }
-
-.container {
-    max-width: 200px;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.marquee {
-    white-space: nowrap;
-    overflow: hidden;
-    display: inline-block;
-    animation: marquee 10s linear infinite;
-}
-
-.marquee p {
-    display: inline-block;
-}
-
-.track-text {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-@keyframes marquee {
-    0% {
-        transform: translate3d(0, 0, 0);
-    }
-    100% {
-        transform: translate3d(-50%, 0, 0);
-    }
-}

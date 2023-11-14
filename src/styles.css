@@ -398,5 +398,35 @@ input[type=number]::-webkit-outer-spin-button {
     border-color: rgb(130, 51, 51);
     border-image: initial;
     cursor: pointer;
-    text-transform: capitalize;
+}
+
+.container {
+    max-width: 282px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.marquee {
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    animation: marquee 10s linear infinite !important;
+}
+
+.marquee p {
+    display: inline-block;
+}
+
+.track-text {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-50%, 0, 0);
+    }
 }
