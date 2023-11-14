@@ -11,7 +11,7 @@ export const createEffectsSelector = ({ labelName, name, optionNames }) => `
                 class="select"
                 id="${name}-presets"
                 name="${name}-presets"
-                style="color:#fff;margin-left:1rem;font-size:1rem;text-align:end"
+                style="color:#fff;font-size:1rem;text-align:end"
             >
                 <option name="none" value="none">-----</option>
                 ${createOptions(optionNames)}

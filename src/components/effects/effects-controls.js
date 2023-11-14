@@ -5,12 +5,13 @@ import { convolverPresets, drinkPresets } from '../../lib/reverb/presets.js'
 export const createEffectsControls = () => `
     <div id="chorus-effects-controls" style="display: none">
         <div style="display:flex;flex-direction:column;justify-content:space-evenly;height:6rem;">
-            ${createEffectsSelector({ name: 'drink-effect', labelName: 'Drink Size', optionNames: drinkPresets })}
-            ${createEffectsSelector({ name: 'convolver-effect', labelName: 'Convolver', optionNames: convolverPresets })}
+            ${createEffectsSelector({ name: 'drink-effect', labelName: 'cup-sized reverb', optionNames: drinkPresets })}
+            ${createEffectsSelector({ name: 'convolver-effect', labelName: 'impulse reverb', optionNames: convolverPresets })}
 
-            <div style="font-size:1rem;color:#b3b3b3;text-transform:capitalize">
+            <hr/>
+            <div style="font-size:1rem;color:#b3b3b3;">
                 <p style="display:flex;justify-content:space-between;width:100%;padding-right:.125rem;">
-                    Effect: <span id="preset-selection" style="color:#fff"></span>
+                    effect <span id="preset-selection" style="color:#fff"></span>
                 </p>
             </div>
         </div>
