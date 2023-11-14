@@ -13,8 +13,11 @@ export default class Reverb {
         this.#setup()
         if (effect == 'none') return this.#disconnect()
 
-        await (this.#isDigital(effect) ? this.#createDigitalReverb(effect) : this.#createImpulseReverb(effect))
-        if (this.#isDigital(effect)) this.#connect()
+        const isDigital = this.#isDigital(effect)
+        await (isDigital ? this.#createDigitalReverb(effect) : this.#createImpulseReverb(effect))
+        if (!isDigital) return
+
+        this.#connect(); this.#applyReverbEffect(effect)
     }
 
     #setup() {
@@ -30,15 +33,16 @@ export default class Reverb {
         this._reverb.connect(this._audioContext.destination)
     }
 
-    async #createDigitalReverb(effect) {
+    async #createDigitalReverb() {
         const modulePath = sessionStorage.getItem('reverbPath')
         await this._audioContext.audioWorklet.addModule(modulePath)
-        this._reverb = new AudioWorkletNode(this._audioContext, 'UXFDReverb', { outputChannelCount: [2] })
-        this.#applyReverbEffect(effect)
+        this._reverb = this._reverb ?? new AudioWorkletNode(
+            this._audioContext, 'UXFDReverb', { channelCountMode: 'explicit', channelCount: 1, outputChannelCount: [2] }
+        )
     }
 
     async #createImpulseReverb(effect) {
-        this._convolverNode = this._audioContext.createConvolver()
+        this._convolverNode = this._convolverNode ?? this._audioContext.createConvolver()
         const soundsDir = sessionStorage.getItem('soundsDir')
 
         const response = await fetch(`${soundsDir}${effect}.wav`)
@@ -52,9 +56,6 @@ export default class Reverb {
 
     #disconnect() {
         this._source?.disconnect()
-        this._gain?.disconnect()
-        this._convolverNode?.disconnect()
-        this._reverb?.disconnect()
         this._source?.connect(this._audioContext.destination)
     }
 
