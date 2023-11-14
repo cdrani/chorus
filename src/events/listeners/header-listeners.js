@@ -68,9 +68,9 @@ export default class HeaderListeners extends Listeners {
 
     #effectsViewToggle() {
         const effectsButton = document.getElementById('chorus-effects-button')
-        effectsButton?.addEventListener('click', async () => {
+        effectsButton?.addEventListener('click', () => {
             this._currentView = 'effects'
-            await this._reverb.init()
+            this._reverb.init()
         })
     }
 
