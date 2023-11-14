@@ -56,22 +56,6 @@
     width: 320px;
 }
 
-#chorus-settings {
-    width: 240px;
-    padding: .5rem .75rem;
-    background-color: #171717;
-}
-
-#chorus-settings input {
-    margin-left: .5rem;
-    width: 56px;
-    border-radius: .125rem;
-    padding-left: .125rem;
-    padding-right: .125rem;
-    text-align: center;
-    font-size: .875rem
-}
-
 .chorus-text-button:hover {
     background-color: #9B9B9B;
     cursor: pointer;
@@ -133,10 +117,6 @@
     background-color: unset;
 }
 
-#chorus button:disabled {
-    cursor: not-allowed;
-}
-
 .chorus-icon-active,
 .chorus-icon-active:hover {
     color: #2edb64;
@@ -161,7 +141,6 @@
 .chorus-text-button {
     display: flex;
     align-items: center;
-    /* background-color: #535353; */
     color: #fff;
     font-weight: 600;
     font-size: .75rem;
@@ -175,6 +154,7 @@ input[type=number]::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: #fff;
     -moz-appearance: textfield;
     -webkit-appearance: textfield;
+    appearance: textfield;
     opacity: 1; /* Firefox */
 }
 
@@ -376,27 +356,14 @@ input[type=number]::-webkit-outer-spin-button {
     display: inline-block;
 }
 
-.selector {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-left: 3px;
-    padding-right: 1.5px;
-    width: auto;
-    height: auto;
-    text-align: center;
-    cursor: pointer;
-    z-index: 1000;
-    position: relative;
+hr {
+    width: 100%;
 }
 
 .select {
     background-color: transparent;
-    color: rgb(179, 179, 179);
-    border-width: initial;
-    border-style: initial;
-    border-color: rgb(130, 51, 51);
-    border-image: initial;
+    color: #fff;
+    border: none;
     cursor: pointer;
 }
 
