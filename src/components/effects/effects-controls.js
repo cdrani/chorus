@@ -3,7 +3,7 @@ import { createEffectsSelector } from './effects-selector.js'
 import { convolverPresets, drinkPresets } from '../../lib/reverb/presets.js'
 
 export const createEffectsControls = () => `
-    <div id="chorus-effects-controls" style="display: none">
+    <div id="chorus-fx-controls" style="display: none">
         <div style="display:flex;flex-direction:column;justify-content:space-evenly;height:6rem;">
             ${createEffectsSelector({ name: 'drink-effect', labelName: 'cup-sized reverb', optionNames: drinkPresets })}
             ${createEffectsSelector({ name: 'convolver-effect', labelName: 'impulse reverb', optionNames: convolverPresets })}

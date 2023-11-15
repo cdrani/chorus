@@ -6,7 +6,7 @@ export default class HeaderListeners extends Listeners {
 
         this._setup = false
         this._viewInFocus = null
-        this._VIEWS = ['snip', 'speed', 'effects', 'seek']
+        this._VIEWS = ['snip', 'speed', 'fx', 'seek']
     }
 
     init() {
@@ -61,9 +61,9 @@ export default class HeaderListeners extends Listeners {
     }
 
     #effectsViewToggle() {
-        const effectsButton = document.getElementById('chorus-effects-button')
+        const effectsButton = document.getElementById('chorus-fx-button')
         effectsButton?.addEventListener('click', () => {
-            this._currentView = 'effects'
+            this._currentView = 'fx'
             this._reverb.init()
         })
     }
