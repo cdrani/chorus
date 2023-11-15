@@ -56,6 +56,8 @@ export default class App {
         this._artistDiscoObserver.disconnect()
         
         this.#resetInterval()
+
+        navigator.userAgent.includes('Firefox') && this._reverb.setReverbEffect('none')
     }
 
     connect() {

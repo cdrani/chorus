@@ -12,7 +12,7 @@ import Dispatcher from '../events/dispatcher.js'
 export default class SongTracker {
     constructor() {
         this._init = true
-        this._playedSnip = false
+        this._reverbSet = false
         this._currentSongState = null
         this._video = spotifyVideo.element
         this._dispatcher = new Dispatcher()
@@ -51,28 +51,40 @@ export default class SongTracker {
         await this.#applyEffects(this._currentSongState)
     }
 
+    get #isPlaying() {
+        const playButton = document.querySelector('[data-testid="control-button-playpause"]')
+        if (!playButton) return false
+
+        return playButton.getAttribute('aria-label') == 'Pause'
+    }
+
     get #isLooping() {
         const repeatButton = document.querySelector('[data-testid="control-button-repeat"]')
         return repeatButton?.getAttribute('aria-label') === 'Disable repeat'
     }
 
-    get #muteButton() {
-        return document.querySelector('[data-testid="volume-bar-toggle-mute-button"]')
-    }
+    get #muteButton() { return document.querySelector('[data-testid="volume-bar-toggle-mute-button"]') }
 
-    get #isMute() {
-        return this.#muteButton?.getAttribute('aria-label') == 'Unmute'
-    }
+    get #isMute() { return this.#muteButton?.getAttribute('aria-label') == 'Unmute' }
 
     #mute() { if (!this.#isMute) this.#muteButton?.click() }
     #unMute() { if (this.#isMute) this.#muteButton?.click() }
 
-    #setupListeners() {
-        this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate)
+    get #isFirefox() { return !navigator.userAgent.includes('Firefox') }
+
+    async #setReverb () {
+        if (this._reverbSet) return
+
+        const effect = sessionStorage.getItem('reverb') ?? 'none'
+        await spotifyVideo.reverb.setReverbEffect(effect)
+        this._reverbSet = true
     }
+
+    #setupListeners() { this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate) }
 
     clearListeners() {
         this._video.element.removeEventListener('timeupdate', this.#handleTimeUpdate)
+        this._reverbSet = false
     }
 
     async #applyEffects({ isShared, isSnip, playbackRate, preservesPitch }) {
@@ -117,15 +129,13 @@ export default class SongTracker {
         this._init = false
     }
 
-    get #nextButton() {
-        return document.querySelector('[data-testid="control-button-skip-forward"]')
-    }
+    get #nextButton() { return document.querySelector('[data-testid="control-button-skip-forward"]') }
 
-    get #playbackPosition() {
-        return document.querySelector('[data-testid="playback-position"]')
-    }
+    get #playbackPosition() { return document.querySelector('[data-testid="playback-position"]') }
 
-    #handleTimeUpdate = () => {
+    #handleTimeUpdate = async () => {
+        if (this.#isPlaying && this.#isFirefox && !this._reverbSet) await this.#setReverb()
+
         if (this._video.isEditing) return
         if (!this._currentSongState) return
 

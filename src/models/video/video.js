@@ -11,6 +11,8 @@ export default class VideoElement {
 
     set active(value) {
         this._active = value
+        if (navigator.userAgent.includes('Firefox')) return
+
         const effect = sessionStorage.getItem('reverb') ?? 'none'
         this._reverb.setReverbEffect(value ? effect : 'none')
     }
@@ -29,13 +31,13 @@ export default class VideoElement {
 
     get element() { return this._video }
 
-    set currentTime(value) { if (this._video) (this._video.currentTime = value) }
+    set currentTime(value) { if (this._video) this._video.currentTime = value }
 
     get currentTime() { return this._video?.currentTime }
 
     clearCurrentSpeed() { this._video.removeAttribute('currentSpeed') }
 
-    set preservesPitch(value) { if (this._video) (this._video.preservesPitch = value) }
+    set preservesPitch(value) { if (this._video) this._video.preservesPitch = value }
 
     get currentSpeed() { return this._video.getAttribute('currentSpeed') }
 
