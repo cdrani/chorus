@@ -21,7 +21,7 @@ export default class Reverb {
     }
 
     #setup() {
-        this._audioContext = this._audioContext ?? new AudioContext()
+        this._audioContext = this._audioContext ?? new AudioContext({ latencyHint: 'playback' })
         this._source = this._source ?? this._audioContext.createMediaElementSource(this._video)
         this._gain = this._gain ?? this._audioContext.createGain()
     }
