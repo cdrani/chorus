@@ -37,22 +37,23 @@ window.addEventListener('message', async (event) => {
             response = await sendBackgroundMessage({ key: payload.key, data: payload.values })
             sendEventToPage({ eventType: 'play.shared.response', detail:  response })
             break
+        case 'play.seek':
+            response = await sendBackgroundMessage({ key: payload.key, data: payload.values })
+            sendEventToPage({ eventType: 'play.seek.response', detail:  response })
+            break
         case 'storage.set':
             const { key, values } = payload
             response = await setState({ key, values })
             sendEventToPage({ eventType: 'storage.set.response', detail: response })
             break
-
         case 'storage.get':
             response = await getState(payload?.key)
             sendEventToPage({ eventType: 'storage.get.response', detail: response })
             break
-
         case 'storage.delete':
             await removeState(payload.key)
             sendEventToPage({ eventType: 'storage.delete.response', detail: response })
             break
-
         case 'storage.populate':
             response = await getState(null)
             sendEventToPage({ eventType: 'storage.populate.response', detail: response })

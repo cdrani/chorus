@@ -3,7 +3,7 @@ import { songState } from '../data/song-state.js'
 import { spotifyVideo } from '../actions/overload.js'
 
 import { playback } from '../utils/playback.js'
-import { timeToSeconds } from '../utils/time.js'
+import { secondsToTime, timeToSeconds } from '../utils/time.js'
 import { currentSongInfo } from '../utils/song.js'
 import { highlightElement } from '../utils/higlight.js'
 
@@ -30,6 +30,13 @@ export default class SongTracker {
         await this._dispatcher.sendEvent({
             eventType: 'play.shared',
             detail: { key: 'play.shared', values: { track_id, position} },
+        })
+    }
+
+    async #dispatchSeekToPosition(position) {
+        await this._dispatcher.sendEvent({
+            eventType: 'play.seek',
+            detail: { key: 'play.seek', values: { position } },
         })
     }
 
@@ -121,7 +128,7 @@ export default class SongTracker {
             const currentPositionTime = parseInt(currentPosition, 10) * 1000
 
             if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
-                this._video.currentTime = startTime
+                await this.#dispatchSeekToPosition(parsedStartTime)
             } 
         }
 
