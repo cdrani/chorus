@@ -17,21 +17,16 @@ class SpotifyVideo {
 
             if (tagName === 'video') {
                 self._reverb = new Reverb(element)
-                self._video = new VideoElement(element)
-                
+                self._video = new VideoElement({ video: element, reverb: self._reverb })
                 document.createElement = self._originalCreateElement
             }
             return element
         }
     }
 
-    get element() {
-        return this._video
-    }
+    get element() { return this._video }
 
-    get reverb() {
-        return this._reverb
-    }
+    get reverb() { return this._reverb }
 }
 
 export const spotifyVideo = new SpotifyVideo()

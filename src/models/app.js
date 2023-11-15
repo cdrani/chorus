@@ -56,10 +56,9 @@ export default class App {
         this._artistDiscoObserver.disconnect()
         
         this.#resetInterval()
-        this._reverb.setReverbEffect('none')
     }
 
-    async connect() {
+    connect() {
         this._active = true
         this._chorus.init()
 
@@ -70,10 +69,6 @@ export default class App {
 
         this.#resetInterval()
         this.#reInit()
-
-        const effect = sessionStorage.getItem('reverb') ?? 'none'
-        sessionStorage.setItem('reverb', effect)
-        await this._reverb.setReverbEffect(effect)
     }
 
     #reInit() {

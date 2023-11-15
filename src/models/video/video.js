@@ -1,9 +1,9 @@
 import VideoOverride from './video-override.js'
 
 export default class VideoElement {
-    constructor(video) {
+    constructor({ video, reverb }) {
         this._video = video
-        this._active = sessionStorage.getItem('enabled') == 'true'
+        this._reverb = reverb
         this._isEditing = false
         this._video.crossOrigin = 'anonymous'
         this._videoOverride = new VideoOverride(this)
@@ -11,19 +11,15 @@ export default class VideoElement {
 
     set active(value) {
         this._active = value
+        const effect = sessionStorage.getItem('reverb') ?? 'none'
+        this._reverb.setReverbEffect(value ? effect : 'none')
     }
 
-    get active() {
-        return this._active
-    }
+    get active() { return this._active }
 
-    get isEditing() {
-        return this._isEditing
-    }
+    get isEditing() { return this._isEditing }
 
-    set isEditing(editing) {
-        this._isEditing = editing
-    }
+    set isEditing(editing) { this._isEditing = editing }
 
     reset() {
         this.clearCurrentSpeed()
@@ -31,67 +27,23 @@ export default class VideoElement {
         this.preservesPitch = true
     }
 
-    get element() {
-        return this._video
-    }
+    get element() { return this._video }
 
-    set currentTime(value) {
-        if (this._video) {
-            this._video.currentTime = value
-        }
-    }
+    set currentTime(value) { if (this._video) (this._video.currentTime = value) }
 
-    play() {
-        this._video.play()
-    }
+    get currentTime() { return this._video?.currentTime }
 
-    pause() {
-        this._video.pause()
-    }
+    clearCurrentSpeed() { this._video.removeAttribute('currentSpeed') }
 
-    get currentTime() {
-        return this._video?.currentTime
-    }
+    set preservesPitch(value) { if (this._video) (this._video.preservesPitch = value) }
 
-    clearCurrentSpeed() {
-        this._video.removeAttribute('currentSpeed') 
-    }
+    get currentSpeed() { return this._video.getAttribute('currentSpeed') }
 
-    set preservesPitch(value) {
-        if (this._video) {
-            this._video.preservesPitch = value
-        }
-    }
+    set currentSpeed(value) { this._video.setAttribute('currentSpeed', value) }
 
-    get currentSpeed() {
-        return this._video.getAttribute('currentSpeed')
-    }
+    get preservesPitch() { return this._video ? this._video.preservesPitch : true }
 
-    set currentSpeed(value) {
-        this._video.setAttribute('currentSpeed', value)
-    }
+    set playbackRate(value) { this._video.playbackRate = this._active ? { source: 'chorus', value } : value }
 
-    get preservesPitch() {
-        return this._video ? this._video.preservesPitch : true
-    }
-
-    set playbackRate(value) {
-        if (this._active) {
-            this._video.playbackRate = { source: 'chorus', value: value }
-        } else {
-            this._video.playbackRate = value
-        }
-    }
-
-    get playbackRate() {
-        return this._video ? this._video.playbackRate : 1
-    }
-
-    get volume() {
-        return this._video.volume
-    }
-
-    set volume(value) {
-        this._video.volume = value
-    }
+    get playbackRate() { return this._video ? this._video.playbackRate : 1 }
 }
