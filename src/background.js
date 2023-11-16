@@ -88,12 +88,11 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
     const messageHandler = {
         'play.shared': playSharedTrack,
         'play.seek': seekTrackToPosition,
-        'artist-disco': createArtistDiscoPlaylist,
+        'artist.disco': createArtistDiscoPlaylist,
     }
     const handlerFn = messageHandler[key]
-    if (!handlerFn) return
-
-    promiseHandler(handlerFn(values), sendResponse)
+    handlerFn ? promiseHandler(handlerFn(values), sendResponse)
+              : sendResponse({ state: 'error', error: 'key not not configured'})
     return true
 })
 
