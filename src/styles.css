@@ -56,15 +56,6 @@
     width: 320px;
 }
 
-.chorus-text-button:hover {
-    background-color: #9B9B9B;
-    cursor: pointer;
-}
-
-#chorus button:hover {
-    cursor: pointer;
-}
-
 #chorus button,
 #chorus input {
     border-width: 0 !important;
@@ -364,7 +355,6 @@ hr {
     background-color: transparent;
     color: #fff;
     border: none;
-    cursor: pointer;
 }
 
 .container {
