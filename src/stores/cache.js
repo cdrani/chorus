@@ -5,7 +5,9 @@ export default class CacheStore {
     }
 
     getKey(key) {
-        return JSON.parse(this.#cache.getItem(key))
+        const result = this.#cache.getItem(key)
+        try { return JSON.parse(result) }
+        catch (error) { return result }
     }
 
     getValue({ key, value }) {

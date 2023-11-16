@@ -10,9 +10,10 @@ import NowPlayingObserver from '../observers/now-playing.js'
 import ArtistDiscoObserver from '../observers/artist-disco.js'
 
 export default class App {
-    constructor(video) {
+    constructor({ video, reverb }) {
         this._store = store
         this._video = video
+        this._reverb = reverb
 
         this._active = true
         this._intervalId = null
@@ -55,10 +56,13 @@ export default class App {
         this._artistDiscoObserver.disconnect()
         
         this.#resetInterval()
+
+        navigator.userAgent.includes('Firefox') && this._reverb.setReverbEffect('none')
     }
 
-    async connect() {
+    connect() {
         this._active = true
+        this._chorus.init()
 
         this._nowPlayingIcons.placeIcons()
         this._trackListObserver.observe()
@@ -75,10 +79,7 @@ export default class App {
             if (!this._intervalId) return
 
             const chorus = document.getElementById('chorus')
-
-            if (!chorus) {
-                this._nowPlayingIcons.placeIcons()
-            }
+            if (!chorus) this._nowPlayingIcons.placeIcons()
         }, 3000)
     }
 }

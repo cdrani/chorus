@@ -56,36 +56,47 @@
     width: 320px;
 }
 
-#chorus-settings {
-    width: 240px;
-    padding: .5rem .75rem;
-    background-color: #171717;
-}
-
-#chorus-settings input {
-    margin-left: .5rem;
-    width: 56px;
-    border-radius: .125rem;
-    padding-left: .125rem;
-    padding-right: .125rem;
-    text-align: center;
-    font-size: .875rem
-}
-
-.chorus-text-button:hover {
-    background-color: #9B9B9B;
-    cursor: pointer;
-}
-
-#chorus button:hover {
-    cursor: pointer;
-}
-
 #chorus button,
 #chorus input {
     border-width: 0 !important;
     border-style: solid !important;
     border-color: #e5e7eb;
+}
+
+.success {
+    background-color: green;
+    
+    &:hover {
+        background-color: darkgreen;
+    }
+
+    &:active {
+        background-color: darkolivegreen;
+    }
+}
+
+.danger {
+    background-color: crimson;
+    
+    &:hover {
+        background-color: firebrick;
+    }
+
+    &:active {
+        background-color: maroon;
+    }
+}
+
+.share {
+    background-color: darkviolet;
+    
+    &:hover {
+        background-color: blueviolet;
+    }
+
+    &:active {
+        background-color: rebeccapurple;
+    }
 }
 
 .chorus-close-button,
@@ -95,10 +106,6 @@
     font-size: 1rem;
     border: none !important;
     background-color: unset;
-}
-
-#chorus button:disabled {
-    cursor: not-allowed;
 }
 
 .chorus-icon-active,
@@ -125,7 +132,6 @@
 .chorus-text-button {
     display: flex;
     align-items: center;
-    background-color: #535353;
     color: #fff;
     font-weight: 600;
     font-size: .75rem;
@@ -139,6 +145,7 @@ input[type=number]::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: #fff;
     -moz-appearance: textfield;
     -webkit-appearance: textfield;
+    appearance: textfield;
     opacity: 1; /* Firefox */
 }
 
@@ -338,4 +345,46 @@ input[type=number]::-webkit-outer-spin-button {
 [role=settings][aria-label]:hover:after,
 [role=artist-disco][aria-label]:hover:after {
     display: inline-block;
+}
+
+hr {
+    margin: 0;
+    width: 100%;
+}
+
+.select {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+}
+
+.container {
+    max-width: 282px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.marquee {
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    animation: marquee 10s linear infinite !important;
+}
+
+.marquee p {
+    display: inline-block;
+}
+
+.track-text {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-50%, 0, 0);
+    }
 }

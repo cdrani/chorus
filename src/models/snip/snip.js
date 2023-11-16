@@ -6,6 +6,7 @@ import SliderControls from '../slider/slider-controls.js'
 import { timeToSeconds } from '../../utils/time.js'
 import { currentData } from '../../data/current.js'
 import { copyToClipBoard } from '../../utils/clipboard.js'
+import { setTrackInfo } from '../../utils/track-info.js'
 
 export default class Snip {
     constructor() {
@@ -88,10 +89,6 @@ export default class Snip {
     }
 
     _setTrackInfo({ title, artists }) {
-        const titleElement = document.getElementById('track-title')
-        const artistsElement = document.getElementById('track-artists')
-
-        titleElement.textContent = title
-        artistsElement.textContent = artists
+        setTrackInfo({ title, artists, chorusView: true })
     }
 }

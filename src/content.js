@@ -5,17 +5,16 @@ const loadScript = filePath => {
     const script = document.createElement('script')
     script.src = chrome.runtime.getURL(filePath)
     script.type = 'module'
-    document.body.appendChild(script)
+    document.head.appendChild(script)
+    script.onload = () => { script.remove() }
 }
 
 loadScript('actions/init.js')
+sessionStorage.setItem('soundsDir', chrome.runtime.getURL('/lib/sounds/'))
+sessionStorage.setItem('reverbPath', chrome.runtime.getURL('/lib/reverb/reverb.js'))
 
 const sendEventToPage = ({ eventType, detail }) => {
-    window.postMessage({
-        type: 'FROM_CONTENT_SCRIPT',
-        requestType: eventType,
-        payload: detail
-    }, window.location.origin)
+    window.postMessage({ type: 'FROM_CONTENT_SCRIPT', requestType: eventType, payload: detail }, window.location.origin)
 }
 
 window.addEventListener('message', async (event) => {
@@ -23,37 +22,21 @@ window.addEventListener('message', async (event) => {
     if (event.data.type !== 'FROM_PAGE_SCRIPT') return
 
     const { requestType, payload } = event.data
-    let response
+    const messageHandlers = {
+        'play.seek': sendBackgroundMessage,
+        'play.shared': sendBackgroundMessage,
+        'artist.disco': sendBackgroundMessage,
+        'storage.populate': () => getState(null),
+        'storage.get': ({ key }) => getState(key),
+        'storage.delete': ({ key }) => removeState(key),
+        'storage.set': ({ key, values }) => setState({ key, values }),
+    };
 
-    switch (requestType) {
-        case 'artist.disco': 
-            response = await sendBackgroundMessage({ key: payload.key, data: payload.values })
-            sendEventToPage({ eventType: 'artist.disco.response', detail:  response })
-            break
-        case 'play.shared': 
-            response = await sendBackgroundMessage({ key: payload.key, data: payload.values })
-            sendEventToPage({ eventType: 'play.shared.response', detail:  response })
-            break
-        case 'storage.set':
-            const { key, values } = payload
-            response = await setState({ key, values })
-            sendEventToPage({ eventType: 'storage.set.response', detail: response })
-            break
+    const handlerFn = messageHandlers[requestType]
+    if (!handlerFn) return
 
-        case 'storage.get':
-            response = await getState(payload?.key)
-            sendEventToPage({ eventType: 'storage.get.response', detail: response })
-            break
-
-        case 'storage.delete':
-            await removeState(payload.key)
-            break
-
-        case 'storage.populate':
-            response = await getState(null)
-            sendEventToPage({ eventType: 'storage.populate.response', detail: response })
-            break
-    }
+    const response = await handlerFn(payload)
+    sendEventToPage({ eventType: `${requestType}.response`, detail: response })
 })
 
 chrome.runtime.onMessage.addListener(message => {

@@ -1,8 +1,9 @@
 import Snip from './snip.js'
-
-import { currentSongInfo } from '../../utils/song.js'
-import { spotifyVideo } from '../../actions/overload.js'
 import { currentData } from '../../data/current.js'
+import { spotifyVideo } from '../../actions/overload.js'
+
+import { playback } from '../../utils/playback.js'
+import { currentSongInfo } from '../../utils/song.js'
 
 export default class CurrentSnip extends Snip {
     constructor(songTracker) {
@@ -58,8 +59,11 @@ export default class CurrentSnip extends Snip {
     }
 
     async delete() {
-        await super._delete()
-        const updatedValues = await this.read()
+        const track = await this.read()
+        const updatedValues = await this._store.saveTrack({ 
+            id: currentSongInfo().id,
+            value: { ...track, isSnip: false, startTime: 0, endTime: playback.duration() }
+        })
         await this._songTracker.updateCurrentSongData(updatedValues)
     }
 

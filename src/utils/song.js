@@ -60,15 +60,9 @@ const getTrackId = row => {
 }
 
 const getArtists = row => {
-    const artistsList = row.querySelectorAll('span > a')
+    const artistsList = row.querySelectorAll('span > div > a')
+    // Here means we are at artist page and can get name from h1
+    if (!artistsList.length) return document.querySelector('span[data-testid="entityTitle"] > h1').textContent
 
-    if (!artistsList.length) {
-        // Here means we are at artist page and can get name from h1
-        return document.querySelector('span[data-testid="entityTitle"] > h1').textContent
-    }
-
-    return Array.from(artistsList)
-        .filter(artist => artist.href.includes('artist'))
-        .map(artist => artist.textContent)
-        .join(', ')
+    return Array.from(artistsList).filter(artist => artist.href.includes('artist')).map(artist => artist.textContent).join(', ')
 }

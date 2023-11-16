@@ -1,10 +1,14 @@
-export const createTextButton = ({ id, text, style }) => `
-    <button
-        id="chorus-${id}-button"
-        class="chorus-text-button"
-        style="padding:0 10px;height:100%;font-size:1rem;${style || ''}"
-    >
-        <span>${text}</span>
-    </button>
-`
+const classNames = { share: 'share', save: 'success', reset: 'danger', remove: 'danger' }
 
+export const createTextButton = ({ id, text, style }) => {
+    const btnTypeClass = classNames[id?.split('-')?.at(-1)]
+    return `
+        <button
+            id="chorus-${id}-button"
+            class="chorus-text-button ${btnTypeClass ?? ''}"
+            style="padding:0 10px;height:100%;font-size:1rem;${style || ''}"
+        >
+            <span>${text}</span>
+        </button>
+    `
+}

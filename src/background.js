@@ -1,8 +1,8 @@
 import { setState, getState } from './utils/state.js'
 import { getActiveTab, sendMessage } from './utils/messaging.js'
 
-import { playSharedTrack } from './services/player.js'
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
+import { playSharedTrack, seekTrackToPosition } from './services/player.js'
 
 let ENABLED = true
 let popupPort = null
@@ -79,20 +79,22 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
     ['requestHeaders']
 )
 
-chrome.runtime.onMessage.addListener(({ key, data }, _, sendResponse) => {
-    switch (key) {
-      case 'artist.disco':
-        createArtistDiscoPlaylist(data)
-            .then(result => sendResponse({ state: 'completed', data: result }))
-            .catch(error => sendResponse({ state: 'error', error: error.message }))
-        return true
-      case 'play.shared':
-        playSharedTrack(data)
-            .then(result => sendResponse({ state: 'completed', data: result }))
-            .catch(error => sendResponse({ state: 'error', error: error.message }))
+function promiseHandler(promise, sendResponse) {
+    promise.then(result => sendResponse({ state: 'completed', data: result }))
+          .catch(error => sendResponse({ state: 'error', error: error.message }))
+}
 
-        return true
+chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
+    const messageHandler = {
+        'play.shared': playSharedTrack,
+        'play.seek': seekTrackToPosition,
+        'artist-disco': createArtistDiscoPlaylist,
     }
+    const handlerFn = messageHandler[key]
+    if (!handlerFn) return
+
+    promiseHandler(handlerFn(values), sendResponse)
+    return true
 })
 
 chrome.commands.onCommand.addListener(async command => {

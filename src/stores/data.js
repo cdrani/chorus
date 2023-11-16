@@ -3,7 +3,7 @@ import Dispatcher from '../events/dispatcher.js'
 import { currentSongInfo } from '../utils/song.js'
 import { playback } from '../utils/playback.js'
 
-const DO_NOT_INCLUDE = [ 'now-playing', 'device_id', 'auth_token', 'enabled', 'globals', 'chorus-seek']
+const DO_NOT_INCLUDE = ['reverb', 'now-playing', 'device_id', 'auth_token', 'enabled', 'globals', 'chorus-seek']
 
 class DataStore {
     #cache
@@ -28,12 +28,8 @@ class DataStore {
                 value.isSkipped = endTime == 0
             }
 
-            this.#cache.update({ key, value: JSON.stringify(value) })
+            this.#cache.update({ key, value: typeof value !== 'string' ? JSON.stringify(value) : value })
         })
-    }
-
-    removeTrack(id) {
-        this.#cache.removeKey(id)
     }
 
     getTrack({ id, value = {}}) {
@@ -55,42 +51,47 @@ class DataStore {
         return this.#cache.getKey(id)    
     }
 
-    async removeTrack(id) {
-        await this.#dispatcher.sendEvent({
-            eventType: 'storage.delete',
-            detail: { key: id },
-        })
-    }
-
-    shouldRemoveTrack({ isSkipped, playbackRate = '1', isSnip }) {
+    #shouldDeleteTrack({ isSkipped, playbackRate = '1', isSnip }) {
         if (isSkipped || isSnip || playbackRate != '1') return false
       
         return true
     }
 
+    getReverb() {
+        const cacheValue = this.#cache.getValue({ key: 'reverb', value: 'none' })
+        return cacheValue
+    }
+
+    async saveReverb(effect) {
+        await this.#dispatcher.sendEvent({
+            eventType: 'storage.set',
+            detail: { key: 'reverb', values: effect },
+        })
+
+        this.#cache.update({ key: 'reverb', value: effect })
+        return this.#cache.getKey(id)
+    }
+
     async saveTrack({ id, value }) {
         let response
-        if (this.shouldRemoveTrack(value)) {
-            this.removeTrack(id)
+        if (this.#shouldDeleteTrack(value)) {
+            await this.deleteTrack(id)
         } else {
             response = await this.#dispatcher.sendEvent({
                 eventType: 'storage.set',
                 detail: { key: id, values: value },
             })
-        } 
+        }
 
         this.#cache.update({ key: id, value: response ?? value })
         return this.#cache.getKey(id)
     }
 
-    async deleteTrack({ id, value }) {
+    async deleteTrack(id) {
         await this.#dispatcher.sendEvent({
             eventType: 'storage.delete',
             detail: { key: id },
         })
-
-        this.#cache.update({ key: id, value: { ...value, isSnip: false } })
-        return this.#cache.getKey(id)
     }
 }
 

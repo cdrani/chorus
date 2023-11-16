@@ -5,10 +5,11 @@ import App from '../models/app.js'
 
 async function load() {
     await store.populate()
-    const app = new App(spotifyVideo.element)
+
+    const app = new App({ video: spotifyVideo.element, reverb: spotifyVideo.reverb })
     const enabled = JSON.parse(sessionStorage.getItem('enabled') ?? 'true')
     
-    enabled ? await app.connect() : app.disconnect()
+    enabled ? app.connect() : app.disconnect()
     spotifyVideo.element.active = enabled
 
     document.addEventListener('app.enabled', async e => {
@@ -19,7 +20,7 @@ async function load() {
 
         sessionStorage.setItem('enabled', enabled.newValue)
         spotifyVideo.element.active = enabled.newValue
-        enabled.newValue ? await app.connect() : app.disconnect()
+        enabled.newValue ? app.connect() : app.disconnect()
     })
 
     document.addEventListener('app.device_id', async e => {

@@ -1,8 +1,8 @@
 export default class SeekController {
-    #data 
+    constructor() { this._data = null }
 
     init(data) {
-        if (!this.#data) {
+        if (!this._data) {
             this.#setupEvents()
         }
 
@@ -16,7 +16,7 @@ export default class SeekController {
         this.#setCheckedUI(seekChecked)
         this.#highlightSeekValue(seekChecked)
 
-        this.#data = data
+        this._data = data
     }
 
     #setupEvents() {
@@ -72,7 +72,7 @@ export default class SeekController {
         const { checked } = seekCheckbox
         this.#setCheckedUI(checked)
 
-        const { shows, global } = this.#data
+        const { shows, global } = this._data
         
         rwInput.value = checked ? shows.rw : global.rw
         ffInput.value = checked ? shows.ff : global.ff

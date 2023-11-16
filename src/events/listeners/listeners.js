@@ -1,6 +1,7 @@
 import Seek from '../../models/seek/seek.js'
 import Speed from '../../models/speed/speed.js'
 import CurrentSnip from '../../models/snip/current-snip.js'
+import ReverbController from '../../models/reverb/reverb-controller.js'
 import { spotifyVideo } from '../../actions/overload.js'
 
 export default class Listeners {
@@ -9,6 +10,7 @@ export default class Listeners {
         this._seek = new Seek()
         this._speed = new Speed()
         this._snip = new CurrentSnip(songTracker)
+        this._reverb = new ReverbController()
     }
 
     _hide() {

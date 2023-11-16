@@ -1,6 +1,7 @@
 import { extToggle } from './toggle.js'
 import { createRootContainer } from './ui.js'
 
+import { setTrackInfo } from '../utils/track-info.js'
 import { parseNodeString } from '../utils/parser.js'
 import { getState, setState } from '../utils/state.js'
 import { getImageBackgroundAndTextColours } from '../utils/image-colours.js'
@@ -19,36 +20,6 @@ PORT.onMessage.addListener(async ({ type, data }) => {
     if (type == 'now-playing' && (!data || data == {})) return
     await setCoverImage(data)
 })
-
-function getTextNode({ text, isShortText }) {
-    const shortTextHtml = `<p>${text}</p>`
-    const displayText = isShortText
-        ? shortTextHtml
-        : `<div>${shortTextHtml}&ensp;&bullet;&ensp;${shortTextHtml}&ensp;&centerdot;&ensp;</div>` 
-
-    return parseNodeString(displayText) 
-}
-
-function setNowPlayingTextElement({ element, text, textColour }) {
-    const isShortText = text.length < 28
-    const textNode = getTextNode({ isShortText, text })
-
-    element.replaceChildren(textNode)
-    element.style.color = textColour
-
-    if (isShortText) return element.classList.remove('marquee')
-
-    element.classList.add('marquee')
-}
-
-function setTrackInfo({ title, artists, textColour = '#000' }) {
-    if (!title || !artists) return
-
-    const { titleElement, artistsElement } = getElements()
-
-    setNowPlayingTextElement({ element: titleElement, text: title, textColour })
-    setNowPlayingTextElement({ element: artistsElement, text: artists, textColour })
-}
 
 async function updatePopupUIState(popupState) {
     await setState({ key: 'popup-ui', values: popupState })
@@ -91,9 +62,7 @@ function getElements() {
     return {
         cover: document.getElementById('cover'),
         double: document.getElementById('double'),
-        chorusPopup: document.getElementById('chorus'),
-        titleElement: document.getElementById('track-title'),
-        artistsElement: document.getElementById('track-artists'),
+        chorusPopup: document.getElementById('chorus')
     }
 }
 

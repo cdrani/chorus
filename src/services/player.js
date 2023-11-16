@@ -20,4 +20,16 @@ function playSharedTrack({ track_id, position }) {
     })
 }
 
-export { playSharedTrack }
+
+function seekTrackToPosition({ position }) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const options = await setOptions({ method: 'PUT' })
+            const device_id = await getState('device_id')
+            const url = `${API_URL}/seek?position_ms=${position}&device_id=${device_id}`
+            const response = await request({ url, options })
+            resolve(response)
+        } catch (error) { reject(error) }
+    })
+}
+export { playSharedTrack, seekTrackToPosition }
