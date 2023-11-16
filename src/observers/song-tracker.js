@@ -3,7 +3,7 @@ import { songState } from '../data/song-state.js'
 import { spotifyVideo } from '../actions/overload.js'
 
 import { playback } from '../utils/playback.js'
-import { secondsToTime, timeToSeconds } from '../utils/time.js'
+import { timeToSeconds } from '../utils/time.js'
 import { currentSongInfo } from '../utils/song.js'
 import { highlightElement } from '../utils/higlight.js'
 
@@ -77,7 +77,7 @@ export default class SongTracker {
     #mute() { if (!this.#isMute) this.#muteButton?.click() }
     #unMute() { if (this.#isMute) this.#muteButton?.click() }
 
-    get #isFirefox() { return !navigator.userAgent.includes('Firefox') }
+    get #isFirefox() { return navigator.userAgent.includes('Firefox') }
 
     async #setReverb () {
         if (this._reverbSet) return
