@@ -19,7 +19,7 @@ export const currentSongInfo = () => {
         cover: image?.src,
         ...contextType && {
             type: contextType,
-            trackId, 
+            track_id: trackId,
             url: `${location.origin}/${contextType}/${trackId}`,
         }
     }
@@ -44,18 +44,18 @@ export const trackSongInfo = row => {
         artists: getArtists(row),
         id: `${title} by ${artists}`,
         endTime: timeToSeconds(songLength),
-        ...trackInfo && {...trackInfo }
+        ...trackInfo, 
     }
 }    
 
 const getTrackId = row => {
     const trackIdUrl = row.querySelector('a[data-testid="internal-track-link"]')?.href
-    if (!trackIdUrl) return
+    if (!trackIdUrl) return {}
 
     const url = trackIdUrl.split('.com').at(1)
     return {
         url,
-        trackId: url.split('/').at(2)
+        track_id: url.split('/').at(2)
     }
 }
 
