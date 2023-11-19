@@ -57,6 +57,7 @@
 }
 
 #chorus button,
+.chorus-text-button,
 #chorus input {
     border-width: 0 !important;
     border-style: solid !important;
@@ -345,6 +346,22 @@ input[type=number]::-webkit-outer-spin-button {
 [role=settings][aria-label]:hover:after,
 [role=artist-disco][aria-label]:hover:after {
     display: inline-block;
+}
+
+#lyrics-ui {
+    position: absolute;
+    z-index: 10;
+    right: 10%;
+    bottom: 10%;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    width: 7.25rem;
+
+    & button {
+        padding: 0 8px 2px 8px;
+        font-size: 1rem;
+    }
 }
 
 hr {

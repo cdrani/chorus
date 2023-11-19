@@ -1,6 +1,7 @@
 import { store } from '../stores/data.js'
 import { currentData } from '../data/current.js'
 
+import LyricSnip from '../models/snip/lyric-snip.js'
 import SeekIcons from '../models/seek/seek-icon.js'
 import { currentSongInfo } from '../utils/song.js'
 
@@ -12,14 +13,19 @@ export default class NowPlayingObserver {
         this._songTracker = songTracker
 
         this._chorus = chorus
+        this._lyrics = new LyricSnip()
         this._seekIcons = new SeekIcons()
     }
+
+    get #lyricsAvailable() { return !!this.#lyricsIcon }
+    get #lyricsIcon() { return document.querySelector('[data-testid="lyrics-button"]') }
 
     async observe() {
         const target = document.querySelector('[data-testid="now-playing-widget"]')
         this._observer = new MutationObserver(this.#mutationHandler)
         this._observer.observe(target, { attributes: true })
 
+        this._lyrics.active = this.#lyricsAvailable
         this.#toggleSnipUI()
         this._seekIcons.init()
         await this.setNowPlayingData()
@@ -54,6 +60,7 @@ export default class NowPlayingObserver {
             if (!this.#isAnchor(mutation)) return
             if (!this.#songChanged) return
 
+            this._lyrics.active = this.#lyricsAvailable
             this._currentSongId = this.#songId
             if (this._chorus.isShowing) this._snip.init()
 
