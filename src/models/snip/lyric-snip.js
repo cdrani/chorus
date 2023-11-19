@@ -1,22 +1,29 @@
 import Dispatcher from '../../events/dispatcher.js'
+import { currentData } from '../../data/current.js'
+
+import Alert from '../alert.js'
 import { currentSongInfo } from '../../utils/song.js'
 import { parseNodeString } from '../../utils/parser.js'
-import { currentData } from '../../data/current.js'
+import { copyToClipBoard } from '../../utils/clipboard.js'
 
 export default class LyricSnip {
     constructor() { 
-        this.#createUI()
         this._active = false
-        this._dispatcher = new Dispatcher()
         this._selectionTimes = {}
+
+        this.#createUI()
+        this.#setupButtonEvents()
+
+        this._alert = new Alert()
+        this._dispatcher = new Dispatcher()
     }
 
     set active(active) {
-        if (active !== this._active && active) this.#setupListeners() 
+        if (!this._active || active) this.#setupListeners() 
         this._active = active
     }
 
-    get #lyricsShareBtn() { return document.getElementById('lyrics-share')}
+    get #lyricsShareBtn() { return document.getElementById('lyrics-share') }
     get #lyricsSaveBtn() { return document.getElementById('lyrics-save')}
 
     get #lyricsWrapper() { return document.querySelector('main > div > div > div') }
@@ -29,21 +36,29 @@ export default class LyricSnip {
     }
 
     #setupButtonEvents() {
-        this.#lyricsShareBtn.addEventListener('click', this.#shareSnip)
         this.#lyricsSaveBtn.addEventListener('click', this.#saveSnip)
+        this.#lyricsShareBtn?.addEventListener('click', this.#shareSnip)
     }
 
+    #warningMessage() {
+        this._alert.displayAlert({ type: 'danger', message: 'Highlight lyrics to share or save.' })
+    }
+
+    #saveSnip = async () => {}
+
     #shareSnip = async () => {
-        const { playbackRate = '1.00', preservesPitch = true } = await currentData.readTrack()
+        if (!Object.keys(this._selectionTimes).length) return this.#warningMessage()
+           
+        const { url, playbackRate = '1.00', preservesPitch = true } = await currentData.readTrack()
         const pitch = preservesPitch ? 1 : 0
         const rate = parseFloat(playbackRate) * 100
 
-        const { tempEndTime = startTime, tempStartTime = endTime } = this.tempShareTimes
+        const { startTime, endTime } = this._selectionTimes
         
-        const shareURL = `${this.trackURL}?ch=${tempStartTime}-${tempEndTime}-${rate}-${pitch}`
+        const shareURL = `${url}?ch=${startTime}-${endTime}-${rate}-${pitch}`
         copyToClipBoard(shareURL)
 
-        // this.displayAlert()
+        this._alert.displayAlert({ link: shareURL, linkMessage: 'Visit Shareable Snip', duration: 5000 })
     }
 
     get #inLyricsView() {
@@ -52,12 +67,11 @@ export default class LyricSnip {
 
     #handleLyricsIcon = () => {
         setTimeout(() => {
-            this.#lyricsAvailable
-                ? this.#lyricsWrapper?.addEventListener('mouseup', this.#handleHighlight) 
-                : this.#lyricsWrapper?.removeEventListener('mouseup', this.#handleHighlight) 
-
-            this.#toggleUI(this.#lyricsAvailable)
-        }, 150)
+            const setup = this.#lyricsAvailable
+            setup ? this.#lyricsWrapper?.addEventListener('mouseup', this.#handleHighlight) 
+                  : this.#lyricsWrapper?.removeEventListener('mouseup', this.#handleHighlight) 
+            this.#toggleUI(setup)
+        }, 250)
     }
 
     #handleHighlight = async () => {
@@ -65,6 +79,7 @@ export default class LyricSnip {
         const selectedText = selection.toString().split('\n')
         if (selection.isCollapsed || !selectedText?.length) return
   
+        this.#disableLyricsButtons(true)
         const startElement = selection.getRangeAt(0).startContainer.parentNode.parentNode
 
         const textAboveSelection = this.#getTextAboveSelection(startElement)
@@ -89,10 +104,13 @@ export default class LyricSnip {
 
         if (response?.error) return
 
-        const lines = response.data.lyrics.lines.slice(startPoint, startPoint + selectedText.length)
-        const startTime = parseFloat(lines.at(0).startTimeMs) / 1000
-        const endTime = parseFloat(lines.at(-1).startTimeMs) / 1000
+        const lines = response.data.lyrics.lines.slice(startPoint, startPoint + selectedText.length + 1)
+        const startTime = parseInt(lines.at(0).startTimeMs / 1000)
+        const endTime = parseInt(lines.at(-1).startTimeMs / 1000)
         this._selectionTimes = { startTime, endTime }
+
+        this.#toggleUI(true)
+        this.#disableLyricsButtons(false)
     }
 
     get #lyricsAvailable() {
@@ -106,14 +124,19 @@ export default class LyricSnip {
     }
     
     #createUI() {
-        const ui =  parseNodeString(`
+        const ui = parseNodeString(`
             <div id="lyrics-ui">
-                <button id="lyric-share" class="share chorus-text-button"><span>share</span></button>
-                <button id="lyric-save" class="success chorus-text-button"><span>save</span></button>
+                <button id="lyrics-share" class="share chorus-text-button"><span>share</span></button>
+                <button id="lyrics-save" class="success chorus-text-button"><span>save</span></button>
             </div>
         `)
 
         document.body.appendChild(ui)
+    }
+
+    #disableLyricsButtons(disable) {
+        this.#lyricsSaveBtn.disabled = disable
+        this.#lyricsShareBtn.disabled = disable
     }
 
     removeUI() {
