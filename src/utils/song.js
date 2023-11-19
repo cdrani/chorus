@@ -9,19 +9,19 @@ export const currentSongInfo = () => {
     // Remove 'Now playing: ' prefix
     const id = songLabel?.split('Now playing: ')?.at(1)
 
-    if (!contextType) return { id, cover: image?.src }
-
     const params = new URLSearchParams(anchor?.href)
-    const trackId = params?.get('uri')?.split(`${contextType}:`).at(1)
+    const contextTypeId = params?.get('uri')?.split(`${contextType}:`).at(1)
+    const contextTypeIdFromHead = document.querySelector('link[rel="canonical"]')
+        ?.href?.split(`${contextType ?? 'track'}/`)?.at(-1)
 
+    const trackId = contextTypeId ?? contextTypeIdFromHead
+    const type = contextType ?? 'track'
     return  {
         id,
+        type,
         cover: image?.src,
-        ...contextType && {
-            type: contextType,
-            track_id: trackId,
-            url: `${location.origin}/${contextType}/${trackId}`,
-        }
+        track_id: trackId,
+        url: `${location.origin}/${type}/${trackId}`,
     }
 
 }
