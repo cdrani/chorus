@@ -1,11 +1,15 @@
 import { getState } from './state.js'
 
-export const setOptions = async ({ method = 'GET', body = null }) => {
+export const setOptions = async ({ method = 'GET', body = null, includePlatform = false }) => {
     const authHeader = await getAuthHeader()
     return {
         method,
         body: body ? JSON.stringify(body) : null,
-        headers: { Authorization: authHeader, 'Content-Type': 'application/json' },
+        headers: { 
+            Authorization: authHeader,
+            'Content-Type': 'application/json',
+            ...includePlatform && { 'App-Platform': 'WebPlayer' }
+        },
     }
 }
 
