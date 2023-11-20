@@ -6,34 +6,23 @@ import { currentSongInfo } from '../../utils/song.js'
 import { parseNodeString } from '../../utils/parser.js'
 import { copyToClipBoard } from '../../utils/clipboard.js'
 
-export default class LyricSnip {
+class LyricsSnip {
     constructor() { 
-        this._active = false
         this._selectionTimes = {}
-
-        this.#createUI()
-        this.#setupButtonEvents()
-
         this._alert = new Alert()
         this._dispatcher = new Dispatcher()
     }
 
-    set active(active) {
-        if (!this._active || active) this.#setupListeners() 
-        this._active = active
+    init() {
+        this.#createUI()
+        this.#setupButtonEvents()
+        if (this.#lyricsAvailable) this.toggleUI(true)
     }
 
     get #lyricsShareBtn() { return document.getElementById('lyrics-share') }
     get #lyricsSaveBtn() { return document.getElementById('lyrics-save')}
 
     get #lyricsWrapper() { return document.querySelector('main > div > div > div') }
-    get #lyricsIcon() { return document.querySelector('[data-testid="lyrics-button"]') }
-
-    #setupListeners() { 
-        if (this.#lyricsAvailable) this.#handleLyricsIcon()
-
-        this.#lyricsIcon?.addEventListener('click', this.#handleLyricsIcon) 
-    }
 
     #setupButtonEvents() {
         this.#lyricsSaveBtn.addEventListener('click', this.#saveSnip)
@@ -61,20 +50,16 @@ export default class LyricSnip {
         this._alert.displayAlert({ link: shareURL, linkMessage: 'Visit Shareable Snip', duration: 5000 })
     }
 
-    get #inLyricsView() {
-        return location.pathname.endsWith('lyrics')
-    }
+    get #inLyricsView() { return location.pathname.endsWith('lyrics') }
 
-    #handleLyricsIcon = () => {
-        setTimeout(() => {
-            const setup = this.#lyricsAvailable
-            setup ? this.#lyricsWrapper?.addEventListener('mouseup', this.#handleHighlight) 
-                  : this.#lyricsWrapper?.removeEventListener('mouseup', this.#handleHighlight) 
-            this.#toggleUI(setup)
-        }, 250)
+    #setupHighlightListener = () => {
+        this.#lyricsWrapper?.removeEventListener('mouseup', this.#handleHighlight) 
+        this.#lyricsWrapper?.addEventListener('mouseup', this.#handleHighlight) 
     }
 
     #handleHighlight = async () => {
+        this._selectionTimes = {}
+
         const selection = window.getSelection()
         const selectedText = selection.toString().split('\n')
         if (selection.isCollapsed || !selectedText?.length) return
@@ -108,8 +93,6 @@ export default class LyricSnip {
         const startTime = parseInt(lines.at(0).startTimeMs / 1000)
         const endTime = parseInt(lines.at(-1).startTimeMs / 1000)
         this._selectionTimes = { startTime, endTime }
-
-        this.#toggleUI(true)
         this.#disableLyricsButtons(false)
     }
 
@@ -118,9 +101,12 @@ export default class LyricSnip {
         return !!this.#lyricsWrapper
     }
 
-    #toggleUI(show) {
-        const lyricsUI = document.getElementById('lyrics-ui')
-        lyricsUI.style.display = show ? 'flex' : 'none'
+    get #lyricsUI() { return document.getElementById('lyrics-ui') }
+
+    toggleUI(show) {
+        if (!this.#lyricsUI) this.#createUI()
+        this.#lyricsUI.style.display = show ? 'flex' : 'none'
+        if (show) this.#setupHighlightListener()
     }
     
     #createUI() {
@@ -139,7 +125,7 @@ export default class LyricSnip {
         this.#lyricsShareBtn.disabled = disable
     }
 
-    removeUI() {
-        document.getElementById('lyrics-ui').remove()
-    }
+    removeUI() { document.getElementById('lyrics-ui').remove() }
 }
+
+export const lyricsSnip = new LyricsSnip()
