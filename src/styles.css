@@ -352,7 +352,7 @@ input[type=number]::-webkit-outer-spin-button {
     position: absolute;
     z-index: 99999;
     right: 20px;
-    bottom: 12.5%;
+    bottom: 100px;
     display: none;
     justify-content: space-between;
     align-items: center;
