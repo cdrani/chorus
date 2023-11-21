@@ -1,17 +1,13 @@
 import { store } from '../../stores/data.js'
-
-import Alert from '../alert.js'
 import SliderControls from '../slider/slider-controls.js'
 
 import { timeToSeconds } from '../../utils/time.js'
 import { currentData } from '../../data/current.js'
-import { copyToClipBoard } from '../../utils/clipboard.js'
 import { setTrackInfo } from '../../utils/track-info.js'
 
 export default class Snip {
     constructor() {
         this._store = store
-        this._alert = new Alert()
         this._controls = new SliderControls()
     }
 
@@ -44,16 +40,8 @@ export default class Snip {
     }
 
     async _share() {
-        const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = await this.read()
-        const pitch = preservesPitch ? 1 : 0
-        const rate = parseFloat(playbackRate) * 100
-
-        const { tempEndTime = startTime, tempStartTime = endTime } = this.tempShareTimes
-        
-        const shareURL = `${this.trackURL}?ch=${tempStartTime}-${tempEndTime}-${rate}-${pitch}`
-        copyToClipBoard(shareURL)
-
-        this.displayAlert()
+        const { tempEndTime, tempStartTime } = this.tempShareTimes
+        await this._snipSave.share({ tempStartTime, tempEndTime })
     }
 
     #toggleRemoveButton(showRemove) {
@@ -73,8 +61,6 @@ export default class Snip {
             inputLeft: document.getElementById('input-start'),
         }
     }
-
-    displayAlert() { this._alert.displayAlert() }
 
     _setTrackInfo({ title, artists }) { setTrackInfo({ title, artists, chorusView: true }) }
 }

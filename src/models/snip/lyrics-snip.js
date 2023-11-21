@@ -38,21 +38,13 @@ class LyricsSnip {
         
         const { startTime, endTime } = this._selectionTimes
         await this._snip._snipSave.save({ id: currentSongInfo().id, startTime, endTime })
-        this._alert.displayAlert()
     }
 
     #shareSnip = async () => {
         if (!Object.keys(this._selectionTimes).length) return this.#warningMessage()
            
-        const { url, playbackRate = '1.00', preservesPitch = true } = await currentData.readTrack()
-        const pitch = preservesPitch ? 1 : 0
-        const rate = parseFloat(playbackRate) * 100
-
         const { startTime, endTime } = this._selectionTimes
-        const shareURL = `${url}?ch=${startTime}-${endTime}-${rate}-${pitch}`
-        copyToClipBoard(shareURL)
-
-        this._alert.displayAlert({ link: shareURL, linkMessage: 'Visit Shareable Snip', duration: 3500 })
+        await this._snip.snipSave.share({ startTime, endTime })
     }
 
     #setupHighlightListener = () => {
