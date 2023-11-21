@@ -13,7 +13,8 @@ class LyricsSnip {
         this._dispatcher = new Dispatcher()
     }
 
-    init() {
+    init(snip) {
+        this._snip = snip
         this.#createUI()
         this.#setupButtonEvents()
         if (this.#lyricsAvailable) this.toggleUI(true)
@@ -21,7 +22,6 @@ class LyricsSnip {
 
     get #lyricsShareBtn() { return document.getElementById('lyrics-share') }
     get #lyricsSaveBtn() { return document.getElementById('lyrics-save')}
-
     get #lyricsWrapper() { return document.querySelector('main > div > div > div') }
 
     #setupButtonEvents() {
@@ -33,7 +33,13 @@ class LyricsSnip {
         this._alert.displayAlert({ type: 'danger', message: 'Highlight lyrics to share or save.' })
     }
 
-    #saveSnip = async () => {}
+    #saveSnip = async () => {
+        if (!Object.keys(this._selectionTimes).length) return this.#warningMessage()
+        
+        const { startTime, endTime } = this._selectionTimes
+        await this._snip._snipSave.save({ id: currentSongInfo().id, startTime, endTime })
+        this._alert.displayAlert()
+    }
 
     #shareSnip = async () => {
         if (!Object.keys(this._selectionTimes).length) return this.#warningMessage()
@@ -43,22 +49,20 @@ class LyricsSnip {
         const rate = parseFloat(playbackRate) * 100
 
         const { startTime, endTime } = this._selectionTimes
-        
         const shareURL = `${url}?ch=${startTime}-${endTime}-${rate}-${pitch}`
         copyToClipBoard(shareURL)
 
-        this._alert.displayAlert({ link: shareURL, linkMessage: 'Visit Shareable Snip', duration: 5000 })
+        this._alert.displayAlert({ link: shareURL, linkMessage: 'Visit Shareable Snip', duration: 3500 })
     }
-
-    get #inLyricsView() { return location.pathname.endsWith('lyrics') }
 
     #setupHighlightListener = () => {
-        this.#lyricsWrapper?.removeEventListener('mouseup', this.#handleHighlight) 
-        this.#lyricsWrapper?.addEventListener('mouseup', this.#handleHighlight) 
+        this.#lyricsWrapper?.addEventListener('mouseup', async () => await this.#handleHighlight()) 
     }
 
+    #resetSelectionTimes() { this._selectionTimes = {} }
+
     #handleHighlight = async () => {
-        this._selectionTimes = {}
+        this.#resetSelectionTimes()
 
         const selection = window.getSelection()
         const selectedText = selection.toString().split('\n')
@@ -92,12 +96,20 @@ class LyricsSnip {
         const lines = response.data.lyrics.lines.slice(startPoint, startPoint + selectedText.length + 1)
         const startTime = parseInt(lines.at(0).startTimeMs / 1000)
         const endTime = parseInt(lines.at(-1).startTimeMs / 1000)
+
         this._selectionTimes = { startTime, endTime }
         this.#disableLyricsButtons(false)
     }
 
+    get #inLyricsView() { return location.pathname.endsWith('lyrics') }
+    get #lyricsNotSynced() { return !!document.querySelector('main > div > div > div > p') }
+    get #lyricsDoesNotExist() { return !!document.querySelector('main > div > div > span') }
+
     get #lyricsAvailable() {
         if (!this.#inLyricsView) return false
+        if (this.#lyricsNotSynced) return false
+        if (this.#lyricsDoesNotExist) return false
+
         return !!this.#lyricsWrapper
     }
 
@@ -105,8 +117,10 @@ class LyricsSnip {
 
     toggleUI(show) {
         if (!this.#lyricsUI) this.#createUI()
-        this.#lyricsUI.style.display = show ? 'flex' : 'none'
-        if (show) this.#setupHighlightListener()
+
+        this.#lyricsUI.style.display = (show || this.#lyricsAvailable) ? 'flex' : 'none'
+        if (show || this.#lyricsAvailable) this.#setupHighlightListener()
+        this.#resetSelectionTimes()
     }
     
     #createUI() {
@@ -116,7 +130,6 @@ class LyricsSnip {
                 <button id="lyrics-save" class="success chorus-text-button"><span>save</span></button>
             </div>
         `)
-
         document.body.appendChild(ui)
     }
 

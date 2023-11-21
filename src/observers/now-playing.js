@@ -23,7 +23,7 @@ export default class NowPlayingObserver {
         this._observer = new MutationObserver(this.#mutationHandler)
         this._observer.observe(target, { attributes: true })
 
-        this._lyrics.init()
+        this._lyrics.init(this._snip)
         this.#toggleSnipUI()
         this._seekIcons.init()
         await this.setNowPlayingData()
@@ -61,6 +61,7 @@ export default class NowPlayingObserver {
             this._currentSongId = this.#songId
             if (this._chorus.isShowing) this._snip.init()
 
+            this._lyrics.toggleUI()
             await this.setNowPlayingData()
             await this._songTracker.songChange() 
             this._snip.updateView()
@@ -83,6 +84,7 @@ export default class NowPlayingObserver {
         this._observer?.disconnect()
         this._currentSongId = null
         this._seekIcons.removeIcons()
+        this._lyrics.removeUI()
         this._songTracker.clearListeners()
         this._observer = null
         this.#toggleSnipUI()
