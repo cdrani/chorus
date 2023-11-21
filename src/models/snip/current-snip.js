@@ -1,4 +1,5 @@
 import Snip from './snip.js'
+import SnipSave from './snip-save.js'
 import { currentData } from '../../data/current.js'
 import { spotifyVideo } from '../../actions/overload.js'
 
@@ -9,8 +10,10 @@ export default class CurrentSnip extends Snip {
     constructor(songTracker) {
         super()
 
+        this.name = 'CURRENT_SNIP'
         this._songTracker = songTracker
         this._video = spotifyVideo.element
+        this._snipSave = new SnipSave(this)
     }
 
     async init() {
@@ -28,35 +31,13 @@ export default class CurrentSnip extends Snip {
         super._setTrackInfo({ title, artists })
     }
 
-    get _defaultTrack() {
-        return currentData.readTrack()
-    }
+    get _defaultTrack() { return currentData.readTrack() }
 
-    updateView() {
-        super._updateView()
-    }
+    updateView(data = null) { super._updateView(data) }
 
-    get trackURL() {
-        const { url } = currentSongInfo()
-        return url
-    }
+    get trackURL() { return currentSongInfo().url }
 
-    share() {
-        super._share()
-    }
-
-    skipTrackOnSave({ isSkipped }) {
-        if (isSkipped) {
-            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
-        }
-    }
-
-    setCurrentTime({ prevEndTime, endTime }) {
-        const lastSetThumb = this._video.element.getAttribute('lastSetThumb')
-
-        if (lastSetThumb !== 'end') return
-        this._video.currentTime = Math.max(Math.min(prevEndTime, endTime) - 5, 1)
-    }
+    share() { super._share() }
 
     async delete() {
         const track = await this.read()
@@ -64,31 +45,14 @@ export default class CurrentSnip extends Snip {
             id: currentSongInfo().id,
             value: { ...track, isSnip: false, startTime: 0, endTime: playback.duration() }
         })
-        await this._songTracker.updateCurrentSongData(updatedValues)
+        await this.updateCurrentSongData(updatedValues)
     }
 
+    async updateCurrentSongData(result) { await this._songTracker.updateCurrentSongData(result) }
+
     async save() {
-        const track = await this.read()
         const { inputLeft, inputRight, title, artists } = this._elements
-        const { id, isSkipped, endTime: prevEndTime } = track
-
-        const trackId = id ?? `${title.textContent} by ${artists.textContent}`
-        const result = await this._store.saveTrack({
-            id: trackId,
-            value: {
-                ...track,
-                id: trackId,
-                isSnip: true,
-                startTime: inputLeft.value,
-                endTime: inputRight.value,
-                isSkipped: inputRight.value == 0 || isSkipped,
-            },
-        })
-
-        this.updateView()
-        this.skipTrackOnSave(result)
-        this.setCurrentTime({ prevEndTime, endTime: result.endTime })
-
-        await this._songTracker.updateCurrentSongData(result)
+        const id = `${title.textContent} by ${artists.textContent}`
+        await this._snipSave.save({ id, startTime: inputLeft.value, endTime: inputRight.value })
     }
 }
