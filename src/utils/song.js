@@ -1,5 +1,15 @@
 import { timeToSeconds } from './time.js'
 
+export const getTrackId = () => {
+    const { track_id } = currentSongInfo()
+    if (track_id) return track_id
+
+    const nowPlaying = sessionStorage.getItem('now-playing') 
+    if (!nowPlaying) return // TODO: look into perhaps getting track id from web api based on album id?
+
+    return JSON.parse(nowPlaying).track_id
+}
+
 export const currentSongInfo = () => {
     const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.getAttribute('aria-label')
     const image = document.querySelector('[data-testid="CoverSlotCollapsed__container"] img')
@@ -29,7 +39,7 @@ export const trackSongInfo = row => {
     if (!songLength) return
 
     const artists = getArtists(row)
-    const trackInfo = getTrackId(row)
+    const trackInfo = getTrackIdFromRow(row)
 
     return {
         title,
@@ -42,7 +52,7 @@ export const trackSongInfo = row => {
     }
 }    
 
-const getTrackId = row => {
+const getTrackIdFromRow = row => {
     const trackIdUrl = row.querySelector('a[data-testid="internal-track-link"]')?.href
     if (!trackIdUrl) return {}
 
