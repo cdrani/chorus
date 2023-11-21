@@ -20,10 +20,7 @@ export default class Snip {
 
     reset() { this._controls.setInitialValues() }
 
-    async _delete() {
-        await this._store.deleteTrack(this._defaultTrack)
-        this._updateView()
-    }
+    async delete() { await this._snipSave.delete() }
 
     async _updateView(initData = null) {
         const response = initData ?? await this.read()
@@ -39,7 +36,7 @@ export default class Snip {
         return { tempEndTime: timeToSeconds(tempEndTime), tempStartTime: timeToSeconds(tempStartTime) }
     }
 
-    async _share() {
+    async share() {
         const { tempEndTime, tempStartTime } = this.tempShareTimes
         await this._snipSave.share({ tempStartTime, tempEndTime })
     }

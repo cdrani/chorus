@@ -3,7 +3,6 @@ import SnipSave from './snip-save.js'
 import { currentData } from '../../data/current.js'
 import { spotifyVideo } from '../../actions/overload.js'
 
-import { playback } from '../../utils/playback.js'
 import { currentSongInfo } from '../../utils/song.js'
 
 export default class CurrentSnip extends Snip {
@@ -36,17 +35,6 @@ export default class CurrentSnip extends Snip {
     updateView(data = null) { super._updateView(data) }
 
     get trackURL() { return currentSongInfo().url }
-
-    share() { super._share() }
-
-    async delete() {
-        const track = await this.read()
-        const updatedValues = await this._store.saveTrack({ 
-            id: currentSongInfo().id,
-            value: { ...track, isSnip: false, startTime: 0, endTime: playback.duration() }
-        })
-        await this.updateCurrentSongData(updatedValues)
-    }
 
     async updateCurrentSongData(result) { await this._songTracker.updateCurrentSongData(result) }
 

@@ -1,10 +1,10 @@
 import Alert from '../alert.js'
-
 import { store } from '../../stores/data.js'
 import { spotifyVideo } from '../../actions/overload.js'
 
-import { getTrackId } from '../../utils/song.js'
+import { playback } from '../../utils/playback.js'
 import { copyToClipBoard } from '../../utils/clipboard.js'
+import { getTrackId, currentSongInfo } from '../../utils/song.js'
 
 export default class SnipSave {
     constructor(snip) {
@@ -13,6 +13,23 @@ export default class SnipSave {
         this._video = spotifyVideo.element
 
         this._alert = new Alert()
+    }
+
+    async _delete() {
+        await this._store.deleteTrack(this._defaultTrack)
+        this._updateView()
+    }
+  
+    async delete() {
+        const track = await this._snip.read()
+        const result = await this._store.saveTrack({ 
+            id: currentSongInfo().id,
+            value: { ...track, isSnip: false, startTime: 0, endTime: playback.duration() }
+        })
+
+        if (this._snip.name != 'CURRENT_SNIP') return 
+        this._snip.updateView(result)
+        await this._snip.updateCurrentSongData(result)
     }
 
     #skipTrackOnSave({ isSkipped }) {
@@ -35,11 +52,12 @@ export default class SnipSave {
     }
 
     async save({ id, startTime, endTime }) {
-        const { isSkipped } = await this._store.getTrack({ id })
+        const track = await this._store.getTrack({ id })
+        const isSkipped = endTime == 0 || track.isSkipped
 
         const result = await this._store.saveTrack({
             id,
-            value: { id, ...track, endTime, startTime, isSnip: true, isSkipped: endTime == 0 || isSkipped },
+            value: { id, ...track, endTime, startTime, isSnip: true, isSkipped },
         })
 
         this._snip.updateView(result)
