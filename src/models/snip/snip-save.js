@@ -12,16 +12,9 @@ export default class SnipSave {
         isSkipped && document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
     }
 
-    #setCurrentTime({ prevEndTime, endTime }) {
-        const lastSetThumb = this._video.element.getAttribute('lastSetThumb')
-        if (lastSetThumb !== 'end') return
-
-        this._video.currentTime = Math.max(Math.min(prevEndTime, endTime) - 5, 1)
-    }
-
     async save({ id, startTime, endTime }) {
         const track = await this._store.getTrack({ id })
-        const { isSkipped, endTime: prevEndTime } = track
+        const { isSkipped, endTime } = track
 
         const result = await this._store.saveTrack({
             id,
@@ -32,7 +25,7 @@ export default class SnipSave {
         if (this._snip.name != 'CURRENT_SNIP') return
 
         this.#skipTrackOnSave(result)
-        this.#setCurrentTime({ prevEndTime, endTime: result.endTime })
+        this._video.currentTime = result.startTime
 
         await this._snip.updateCurrentSongData(result)
     }
