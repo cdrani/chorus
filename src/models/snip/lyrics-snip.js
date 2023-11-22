@@ -1,10 +1,8 @@
-import Dispatcher from '../../events/dispatcher.js'
-import { currentData } from '../../data/current.js'
-
 import Alert from '../alert.js'
-import { currentSongInfo } from '../../utils/song.js'
+import Dispatcher from '../../events/dispatcher.js'
+
 import { parseNodeString } from '../../utils/parser.js'
-import { copyToClipBoard } from '../../utils/clipboard.js'
+import { currentSongInfo, getTrackId } from '../../utils/song.js'
 
 class LyricsSnip {
     constructor() { 
@@ -22,7 +20,7 @@ class LyricsSnip {
 
     get #lyricsShareBtn() { return document.getElementById('lyrics-share') }
     get #lyricsSaveBtn() { return document.getElementById('lyrics-save')}
-    get #lyricsWrapper() { return document.querySelector('main > div > div > div') }
+    get #lyricsWrapper() { return document.querySelector('main > div > div:nth-child(2)') }
 
     #setupButtonEvents() {
         this.#lyricsSaveBtn.addEventListener('click', this.#saveSnip)
@@ -48,7 +46,8 @@ class LyricsSnip {
     }
 
     #setupHighlightListener = () => {
-        this.#lyricsWrapper?.addEventListener('mouseup', async () => await this.#handleHighlight()) 
+        // need to wait for ui element to appear
+        setTimeout(() => { this.#lyricsWrapper?.addEventListener('mouseup', this.#handleHighlight) }, 250)
     }
 
     #resetSelectionTimes() { this._selectionTimes = {} }
@@ -61,9 +60,10 @@ class LyricsSnip {
         if (selection.isCollapsed || !selectedText?.length) return
   
         this.#disableLyricsButtons(true)
-        const startElement = selection.getRangeAt(0).startContainer.parentNode.parentNode
 
+        const startElement = selection.getRangeAt(0).startContainer.parentNode.parentNode
         const textAboveSelection = this.#getTextAboveSelection(startElement)
+
         await this.#getLyricsTimeStamps({ selectedText, startPoint: textAboveSelection.length })
     }
 
@@ -80,7 +80,7 @@ class LyricsSnip {
     async #getLyricsTimeStamps({ selectedText, startPoint }) {
         const response = await this._dispatcher.sendEvent({
             eventType: 'lyrics.stamps',
-            detail: { key: 'lyrics.stamps', values: { track_id: currentSongInfo().track_id } }
+            detail: { key: 'lyrics.stamps', values: { track_id: getTrackId() } }
         })
 
         if (response?.error) return
@@ -110,8 +110,9 @@ class LyricsSnip {
     toggleUI(show) {
         if (!this.#lyricsUI) this.#createUI()
 
-        this.#lyricsUI.style.display = (show || this.#lyricsAvailable) ? 'flex' : 'none'
-        if (show || this.#lyricsAvailable) this.#setupHighlightListener()
+        const setupListener = show || this.#lyricsAvailable
+        this.#lyricsUI.style.display = setupListener ? 'flex' : 'none'
+        if (setupListener) this.#setupHighlightListener()
         this.#resetSelectionTimes()
     }
     
