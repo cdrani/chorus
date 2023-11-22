@@ -5,6 +5,7 @@ import NowPlayingIcons from './now-playing-icons.js'
 
 import Chorus from './chorus.js'
 import SongTracker from '../observers/song-tracker.js'
+import PageTitleObserver from '../observers/page-title.js'
 import TrackListObserver from '../observers/track-list.js'
 import NowPlayingObserver from '../observers/now-playing.js'
 import ArtistDiscoObserver from '../observers/artist-disco.js'
@@ -32,8 +33,9 @@ export default class App {
             chorus: this._chorus,
             songTracker: this._songTracker
         })
-        this._trackListObserver = new TrackListObserver(new TrackList(this._songTracker))
+        this._pageTitleObserver = new PageTitleObserver()
         this._artistDiscoObserver = new ArtistDiscoObserver()
+        this._trackListObserver = new TrackListObserver(new TrackList(this._songTracker))
 
         this.#resetInterval()    
         this.#reInit()
@@ -53,6 +55,7 @@ export default class App {
         this._nowPlayingIcons.clearIcons()
         this._trackListObserver.disconnect()
         this._nowPlayingObserver.disconnect()
+        this._pageTitleObserver.disconnect()
         this._artistDiscoObserver.disconnect()
         
         this.#resetInterval()
@@ -67,6 +70,7 @@ export default class App {
         this._nowPlayingIcons.placeIcons()
         this._trackListObserver.observe()
         this._nowPlayingObserver.observe()
+        this._pageTitleObserver.observe()
         this._artistDiscoObserver.observe()
 
         this.#resetInterval()

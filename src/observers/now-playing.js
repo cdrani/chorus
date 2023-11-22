@@ -41,11 +41,10 @@ export default class NowPlayingObserver {
     async setNowPlayingData() {
         const track = await currentData.readTrack()
         await store.setNowPlaying(track)
+        return track
     }
 
-    get #songId() {
-        return currentSongInfo().id
-    }
+    get #songId() { return currentSongInfo().id }
 
     get #songChanged() {
         if (this._currentSongId == null) return true
@@ -61,8 +60,8 @@ export default class NowPlayingObserver {
             this._currentSongId = this.#songId
             if (this._chorus.isShowing) this._snip.init()
 
-            this._lyrics.toggleUI()
-            await this.setNowPlayingData()
+            const { isSnip } = await this.setNowPlayingData()
+            this._lyrics.toggleUI(isSnip)
             await this._songTracker.songChange() 
             this._snip.updateView()
             await this._seekIcons.setSeekLabels()

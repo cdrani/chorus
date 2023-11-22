@@ -1,11 +1,8 @@
-import { lyricsSnip } from '../models/snip/lyrics-snip.js'
-
 export default class TrackListObserver {
     constructor(trackList) {
         this._observer = null
         this._isHidden = true
         this._trackList = trackList
-        this._lyricsSnip = lyricsSnip
     }
 
     observe() {
@@ -46,30 +43,13 @@ export default class TrackListObserver {
             mutation.addedNodes.length >= 1
     }
 
-    #isLyricsMainView(mutation) {
-        return mutation.target.localName == 'main' && 
-                mutation.type == 'attributes' || mutation?.attributeName == 'aria-label'
-    }
-
-    #isOnLyricsView(mutation) {
-        if (mutation.target.ariaLabel !== 'Spotify') return false
-        if (!mutation.target.baseURI.endsWith('/lyrics')) return false
-
-        return true
-    }
-
     #mutationHandler = (mutationsList) => {
         for (const mutation of mutationsList) {
             const trackListChanged = this.#isQueueView(mutation) || this.#isMainView(mutation) || this.#isMoreLoaded(mutation)
-            if (trackListChanged) {
-                if (this.#isMainView(mutation)) this._trackList.setTrackListClickEvent()
-                this._isHidden ? this._trackList.removeBlocking() : this._trackList.setUpBlocking()         
-            }
+            if (!trackListChanged) return
 
-            if (this.#isLyricsMainView(mutation)) {
-                const onLyricsPage = this.#isOnLyricsView(mutation)
-                this._lyricsSnip.toggleUI(onLyricsPage)
-            }
+            if (this.#isMainView(mutation)) this._trackList.setTrackListClickEvent()
+            this._isHidden ? this._trackList.removeBlocking() : this._trackList.setUpBlocking()         
         }
     }
 
