@@ -1,5 +1,5 @@
 import Snip from './snip.js'
-import SnipSave from './snip-save.js'
+import SnipServices from './snip-services.js'
 
 import { trackSongInfo } from '../../utils/song.js'
 import { highlightElement } from '../../utils/higlight.js'
@@ -10,7 +10,7 @@ export default class TrackSnip extends Snip {
 
         this._row = null
         this.name = 'TRACK_SNIP'
-        this._snipSave = new SnipSave(this)
+        this.snipServices = new SnipServices(this)
     }
 
     async init(row) {
@@ -54,7 +54,7 @@ export default class TrackSnip extends Snip {
 
     async save() {
         const { inputLeft, inputRight } = this._elements
-        const id = trackSongInfo(this._row).id
-        await this._snipSave.save({ id, startTime: inputLeft.value, endTime: inputRight.value })
+        const { id } = trackSongInfo(this._row)
+        await this.snipServices.save({ id, startTime: inputLeft.value, endTime: inputRight.value })
     }
 }

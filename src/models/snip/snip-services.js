@@ -6,20 +6,14 @@ import { playback } from '../../utils/playback.js'
 import { copyToClipBoard } from '../../utils/clipboard.js'
 import { getTrackId, currentSongInfo } from '../../utils/song.js'
 
-export default class SnipSave {
+export default class SnipServices {
     constructor(snip) {
         this._snip = snip
         this._store = store
-        this._video = spotifyVideo.element
-
         this._alert = new Alert()
+        this._video = spotifyVideo.element
     }
 
-    async _delete() {
-        await this._store.deleteTrack(this._defaultTrack)
-        this._updateView()
-    }
-  
     async delete() {
         const track = await this._snip.read()
         const result = await this._store.saveTrack({ 

@@ -20,7 +20,7 @@ export default class Snip {
 
     reset() { this._controls.setInitialValues() }
 
-    async delete() { await this._snipSave.delete() }
+    async delete() { await this._snipServices.delete() }
 
     async _updateView(initData = null) {
         const response = initData ?? await this.read()
@@ -38,7 +38,7 @@ export default class Snip {
 
     async share() {
         const { tempEndTime, tempStartTime } = this.tempShareTimes
-        await this._snipSave.share({ tempStartTime, tempEndTime })
+        await this._snipServices.share({ tempStartTime, tempEndTime })
     }
 
     #toggleRemoveButton(showRemove) {

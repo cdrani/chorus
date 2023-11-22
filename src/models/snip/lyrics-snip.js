@@ -35,14 +35,14 @@ class LyricsSnip {
         if (!Object.keys(this._selectionTimes).length) return this.#warningMessage()
         
         const { startTime, endTime } = this._selectionTimes
-        await this._snip._snipSave.save({ id: currentSongInfo().id, startTime, endTime })
+        await this._snip.snipServices.save({ id: currentSongInfo().id, startTime, endTime })
     }
 
     #shareSnip = async () => {
         if (!Object.keys(this._selectionTimes).length) return this.#warningMessage()
            
         const { startTime, endTime } = this._selectionTimes
-        await this._snip.snipSave.share({ startTime, endTime })
+        await this._snip.snipServices.share({ startTime, endTime })
     }
 
     #setupHighlightListener = () => {

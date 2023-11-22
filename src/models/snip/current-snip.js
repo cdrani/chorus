@@ -1,5 +1,5 @@
 import Snip from './snip.js'
-import SnipSave from './snip-save.js'
+import SnipServices from './snip-services.js'
 import { currentData } from '../../data/current.js'
 import { spotifyVideo } from '../../actions/overload.js'
 
@@ -12,7 +12,7 @@ export default class CurrentSnip extends Snip {
         this.name = 'CURRENT_SNIP'
         this._songTracker = songTracker
         this._video = spotifyVideo.element
-        this._snipSave = new SnipSave(this)
+        this.snipServices = new SnipServices(this)
     }
 
     async init() {
@@ -41,6 +41,6 @@ export default class CurrentSnip extends Snip {
     async save() {
         const { inputLeft, inputRight, title, artists } = this._elements
         const id = `${title.textContent} by ${artists.textContent}`
-        await this._snipSave.save({ id, startTime: inputLeft.value, endTime: inputRight.value })
+        await this.snipServices.save({ id, startTime: inputLeft.value, endTime: inputRight.value })
     }
 }
