@@ -2,6 +2,8 @@ import { store } from '../stores/data.js'
 import { currentData } from '../data/current.js'
 
 import SeekIcons from '../models/seek/seek-icon.js'
+import { lyricsSnip } from '../models/snip/lyrics-snip.js'
+
 import { currentSongInfo } from '../utils/song.js'
 
 export default class NowPlayingObserver {
@@ -12,6 +14,7 @@ export default class NowPlayingObserver {
         this._songTracker = songTracker
 
         this._chorus = chorus
+        this._lyrics = lyricsSnip
         this._seekIcons = new SeekIcons()
     }
 
@@ -20,6 +23,7 @@ export default class NowPlayingObserver {
         this._observer = new MutationObserver(this.#mutationHandler)
         this._observer.observe(target, { attributes: true })
 
+        this._lyrics.init(this._snip)
         this.#toggleSnipUI()
         this._seekIcons.init()
         await this.setNowPlayingData()
@@ -37,11 +41,10 @@ export default class NowPlayingObserver {
     async setNowPlayingData() {
         const track = await currentData.readTrack()
         await store.setNowPlaying(track)
+        return track
     }
 
-    get #songId() {
-        return currentSongInfo().id
-    }
+    get #songId() { return currentSongInfo().id }
 
     get #songChanged() {
         if (this._currentSongId == null) return true
@@ -57,7 +60,8 @@ export default class NowPlayingObserver {
             this._currentSongId = this.#songId
             if (this._chorus.isShowing) this._snip.init()
 
-            await this.setNowPlayingData()
+            const { isSnip } = await this.setNowPlayingData()
+            this._lyrics.toggleUI(isSnip)
             await this._songTracker.songChange() 
             this._snip.updateView()
             await this._seekIcons.setSeekLabels()
@@ -79,6 +83,7 @@ export default class NowPlayingObserver {
         this._observer?.disconnect()
         this._currentSongId = null
         this._seekIcons.removeIcons()
+        this._lyrics.removeUI()
         this._songTracker.clearListeners()
         this._observer = null
         this.#toggleSnipUI()

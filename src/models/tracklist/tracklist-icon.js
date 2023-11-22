@@ -50,7 +50,8 @@ export default class TrackListIcon {
     }
 
     async getTrack(id) {
-        return await this._store.getTrack({ id })
+        const track =  await this._store.getTrack({ id })
+        return track
     }
 
     skipJustBlockedSong({ isSkipped, row }) {

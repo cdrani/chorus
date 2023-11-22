@@ -1,5 +1,15 @@
 import { timeToSeconds } from './time.js'
 
+export const getTrackId = () => {
+    const { track_id } = currentSongInfo()
+    if (track_id) return track_id
+
+    const nowPlaying = sessionStorage.getItem('now-playing') 
+    if (!nowPlaying) return // TODO: look into perhaps getting track id from web api based on album id?
+
+    return JSON.parse(nowPlaying).track_id
+}
+
 export const currentSongInfo = () => {
     const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.getAttribute('aria-label')
     const image = document.querySelector('[data-testid="CoverSlotCollapsed__container"] img')
@@ -9,21 +19,15 @@ export const currentSongInfo = () => {
     // Remove 'Now playing: ' prefix
     const id = songLabel?.split('Now playing: ')?.at(1)
 
-    if (!contextType) return { id, cover: image?.src }
-
     const params = new URLSearchParams(anchor?.href)
-    const trackId = params?.get('uri')?.split(`${contextType}:`).at(1)
+    const contextTypeId = params?.get('uri')?.split(`${contextType}:`).at(1)
+    const contextTypeIdFromHead = document.querySelector('link[rel="canonical"]')
+        ?.href?.split(`${contextType ?? 'track'}/`)?.at(-1)
 
-    return  {
-        id,
-        cover: image?.src,
-        ...contextType && {
-            type: contextType,
-            trackId, 
-            url: `${location.origin}/${contextType}/${trackId}`,
-        }
-    }
-
+    const track_id = contextTypeId ?? contextTypeIdFromHead
+    const type = contextType ?? 'track'
+    const url = `${location.origin}/${type}/${track_id}`
+    return  { id, type, cover: image?.src, track_id, url }
 }
 
 export const trackSongInfo = row => {
@@ -35,7 +39,7 @@ export const trackSongInfo = row => {
     if (!songLength) return
 
     const artists = getArtists(row)
-    const trackInfo = getTrackId(row)
+    const trackInfo = getTrackIdFromRow(row)
 
     return {
         title,
@@ -44,25 +48,24 @@ export const trackSongInfo = row => {
         artists: getArtists(row),
         id: `${title} by ${artists}`,
         endTime: timeToSeconds(songLength),
-        ...trackInfo && {...trackInfo }
+        ...trackInfo, 
     }
 }    
 
-const getTrackId = row => {
+const getTrackIdFromRow = row => {
     const trackIdUrl = row.querySelector('a[data-testid="internal-track-link"]')?.href
-    if (!trackIdUrl) return
+    if (!trackIdUrl) return {}
 
     const url = trackIdUrl.split('.com').at(1)
-    return {
-        url,
-        trackId: url.split('/').at(2)
-    }
+    return { url, track_id: url.split('/').at(2) }
 }
 
 const getArtists = row => {
     const artistsList = row.querySelectorAll('span > div > a')
     // Here means we are at artist page and can get name from h1
-    if (!artistsList.length) return document.querySelector('span[data-testid="entityTitle"] > h1').textContent
+    if (!artistsList?.length) { 
+        return document.querySelector('span[data-testid="entityTitle"] > h1')?.textContent || ''
+    }
 
     return Array.from(artistsList).filter(artist => artist.href.includes('artist')).map(artist => artist.textContent).join(', ')
 }

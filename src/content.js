@@ -26,6 +26,7 @@ window.addEventListener('message', async (event) => {
         'play.seek': sendBackgroundMessage,
         'play.shared': sendBackgroundMessage,
         'artist.disco': sendBackgroundMessage,
+        'lyrics.stamps': sendBackgroundMessage,
         'storage.populate': () => getState(null),
         'storage.get': ({ key }) => getState(key),
         'storage.delete': ({ key }) => removeState(key),

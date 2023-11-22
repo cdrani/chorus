@@ -1,6 +1,7 @@
 import { setState, getState } from './utils/state.js'
 import { getActiveTab, sendMessage } from './utils/messaging.js'
 
+import { getLyricsTimeStamps } from './services/lyrics.js'
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 import { playSharedTrack, seekTrackToPosition } from './services/player.js'
 
@@ -88,6 +89,7 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
     const messageHandler = {
         'play.shared': playSharedTrack,
         'play.seek': seekTrackToPosition,
+        'lyrics.stamps': getLyricsTimeStamps,
         'artist.disco': createArtistDiscoPlaylist,
     }
     const handlerFn = messageHandler[key]

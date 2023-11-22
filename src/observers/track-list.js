@@ -11,7 +11,7 @@ export default class TrackListObserver {
 
         const target = document.querySelector('main')
         this._observer = new MutationObserver(this.#mutationHandler)
-        this._observer.observe(target, { subtree: true, childList: true, })
+        this._observer.observe(target, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-label'] })
     }
 
     #isQueueView(mutation) {
@@ -45,12 +45,11 @@ export default class TrackListObserver {
 
     #mutationHandler = (mutationsList) => {
         for (const mutation of mutationsList) {
-            if (this.#isQueueView(mutation) || this.#isMainView(mutation) || this.#isMoreLoaded(mutation)) {
-                if (this.#isMainView(mutation)) {
-                    this._trackList.setTrackListClickEvent()
-                }
-                this._isHidden ? this._trackList.removeBlocking() : this._trackList.setUpBlocking()         
-            }
+            const trackListChanged = this.#isQueueView(mutation) || this.#isMainView(mutation) || this.#isMoreLoaded(mutation)
+            if (!trackListChanged) return
+
+            if (this.#isMainView(mutation)) this._trackList.setTrackListClickEvent()
+            this._isHidden ? this._trackList.removeBlocking() : this._trackList.setUpBlocking()         
         }
     }
 

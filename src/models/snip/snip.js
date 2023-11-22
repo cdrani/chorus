@@ -1,79 +1,54 @@
 import { store } from '../../stores/data.js'
-
-import Alert from '../alert.js'
 import SliderControls from '../slider/slider-controls.js'
 
 import { timeToSeconds } from '../../utils/time.js'
 import { currentData } from '../../data/current.js'
-import { copyToClipBoard } from '../../utils/clipboard.js'
 import { setTrackInfo } from '../../utils/track-info.js'
 
 export default class Snip {
     constructor() {
         this._store = store
-        this._alert = new Alert()
         this._controls = new SliderControls()
     }
 
-    init() {
-        this._controls.init()
-    }
+    init() { this._controls.init() }
 
     async read() {
         const track = await currentData.readTrack()
         return track
     }
 
-    reset() {
-        this._controls.setInitialValues()
-    }
+    reset() { this._controls.setInitialValues() }
 
-    async _delete() {
-        await this._store.deleteTrack(this._defaultTrack)
-        this._updateView()
-    }
+    async delete() { await this._snipServices.delete() }
 
     async _updateView(initData = null) {
         const response = initData ?? await this.read()
-        const { isSnip, isSkip } = response
+        const { isSnip, isSkipped } = response
 
         this.#setUpdateControls(response)
-        this.#toggleRemoveButton(isSnip || isSkip)
+        this.#toggleRemoveButton(isSnip || isSkipped)
     }
 
     get tempShareTimes() {
         const tempEndTime = document.getElementById('chorus-end')?.textContent
         const tempStartTime = document.getElementById('chorus-start')?.textContent
-
-        return {
-            tempEndTime: timeToSeconds(tempEndTime),
-            tempStartTime: timeToSeconds(tempStartTime),
-        }
+        return { tempEndTime: timeToSeconds(tempEndTime), tempStartTime: timeToSeconds(tempStartTime) }
     }
 
-    async _share() {
-        const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = await this.read()
-        const pitch = preservesPitch ? 1 : 0
-        const rate = parseFloat(playbackRate) * 100
-
-        const { tempEndTime = startTime, tempStartTime = endTime } = this.tempShareTimes
-        
-        const shareURL = `${this.trackURL}?ch=${tempStartTime}-${tempEndTime}-${rate}-${pitch}`
-        copyToClipBoard(shareURL)
-
-        this.displayAlert()
+    async share() {
+        const { tempEndTime, tempStartTime } = this.tempShareTimes
+        await this._snipServices.share({ tempStartTime, tempEndTime })
     }
 
     #toggleRemoveButton(showRemove) {
         const removeButton = document.getElementById('chorus-snip-remove-button')
-
         if (!removeButton) return
+
         removeButton.style.display = showRemove ? 'block' : 'none'
     }
 
-    #setUpdateControls(response) {
-        this._controls.updateControls(response)
-    }
+    #setUpdateControls(response) { this._controls.updateControls(response) }
 
     get _elements() {
         return {
@@ -84,11 +59,5 @@ export default class Snip {
         }
     }
 
-    displayAlert() {
-        this._alert.displayAlert()
-    }
-
-    _setTrackInfo({ title, artists }) {
-        setTrackInfo({ title, artists, chorusView: true })
-    }
+    _setTrackInfo({ title, artists }) { setTrackInfo({ title, artists, chorusView: true }) }
 }

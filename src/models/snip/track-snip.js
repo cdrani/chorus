@@ -1,4 +1,5 @@
 import Snip from './snip.js'
+import SnipServices from './snip-services.js'
 
 import { trackSongInfo } from '../../utils/song.js'
 import { highlightElement } from '../../utils/higlight.js'
@@ -8,6 +9,8 @@ export default class TrackSnip extends Snip {
         super(store)
 
         this._row = null
+        this.name = 'TRACK_SNIP'
+        this.snipServices = new SnipServices(this)
     }
 
     async init(row) {
@@ -29,21 +32,11 @@ export default class TrackSnip extends Snip {
 
     get _defaultTrack() {
         const track = trackSongInfo(this._row)
-
-        return {
-            id: track.id,
-            value: {
-                ...track,
-                endTime,
-                startTime: 0,
-                isSnip: false,
-                isSkipped: false,
-            },
-        }
+        return { id: track.id, value: { ...track, endTime, startTime: 0, isSnip: false, isSkipped: false } }
     }
 
     updateView(songStateData) {
-        super._updateView()
+        super._updateView(songStateData)
         this.highlightSnip(songStateData)
     }
 
@@ -53,43 +46,15 @@ export default class TrackSnip extends Snip {
     }
 
     highlightSnip(songStateData) {
-        highlightElement({ 
-            songStateData,
-            property: 'color',
-            context: this._row,
-            selector: 'svg[role="snip"]',
-        })
-
+        highlightElement({ songStateData, property: 'color', context: this._row, selector: 'svg[role="snip"]' })
         this.toggleIconVisibility(songStateData)
     }
 
-    get trackURL() {
-        const { url } = trackSongInfo(this._row)
-        return url
-    }
-
-    share() {
-        super._share()
-    }
-
-    async delete() {
-        await super._delete()
-    }
+    get trackURL() { return trackSongInfo(this._row).url }
 
     async save() {
         const { inputLeft, inputRight } = this._elements
-        const { isSkipped } = await this.read()
-
-        const songStateData = await this._store.saveTrack({
-            id: trackSongInfo(this._row).id,
-            value: {
-                isSnip: true,
-                startTime: inputLeft.value,
-                endTime: inputRight.value,
-                isSkipped: inputRight.value == 0 || isSkipped,
-            },
-        })
-
-        this.updateView(songStateData)
+        const { id } = trackSongInfo(this._row)
+        await this.snipServices.save({ id, startTime: inputLeft.value, endTime: inputRight.value })
     }
 }
