@@ -6,11 +6,16 @@ export default class Alert {
         const messageHTML =  `
             <div style="display:flex;flex-direction:column;">
                 <p>${message ?? 'Snip copied to clipboard.'}</p>
-                ${link 
-                    ? `<p><a style="text-decoration-line:underline" href="${link}">
-                          ${linkMessage ?? 'Go To Playlist.'}
-                      </a></p>`
-                    : ''}
+            ${link 
+                ? `<p>
+                        <a 
+                            style="text-decoration-line:underline"
+                            href="${link}" target="_blank" rel="noreferrer"
+                        >
+                            ${linkMessage ?? 'Go To Playlist.'}
+                        </a>
+                  </p>`
+                : ''}
             </div>
         `
         return parseNodeString(messageHTML)
