@@ -6,6 +6,7 @@ import { currentSongInfo, getTrackId } from '../../utils/song.js'
 
 class LyricsSnip {
     constructor() { 
+        this._isSnip = false
         this._selectionTimes = {}
         this._alert = new Alert()
         this._dispatcher = new Dispatcher()
@@ -19,16 +20,30 @@ class LyricsSnip {
     }
 
     get #lyricsShareBtn() { return document.getElementById('lyrics-share') }
+    get #lyricsDeleteBtn() { return document.getElementById('lyrics-delete')}
     get #lyricsSaveBtn() { return document.getElementById('lyrics-save')}
     get #lyricsWrapper() { return document.querySelector('main > div > div:nth-child(2)') }
 
     #setupButtonEvents() {
         this.#lyricsSaveBtn.addEventListener('click', this.#saveSnip)
         this.#lyricsShareBtn?.addEventListener('click', this.#shareSnip)
+        this.#lyricsDeleteBtn?.addEventListener('click', this.#deleteSnip)
     }
 
     #warningMessage() {
         this._alert.displayAlert({ type: 'danger', message: 'Highlight lyrics to share or save.' })
+    }
+
+    set isSnip(isSnip) {
+        this._isSnip = isSnip
+        this.#lyricsDeleteBtn.style.display = isSnip ? 'block' : 'none'
+    }
+
+    #deleteSnip = async () => {
+        const { isSnip } = await this._snip.read()
+        if (isSnip) await this._snip.snipServices.delete()
+        this.#lyricsDeleteBtn.style.display = 'none'
+        this.isSnip = false
     }
 
     #saveSnip = async () => {
@@ -36,6 +51,7 @@ class LyricsSnip {
         
         const { startTime, endTime } = this._selectionTimes
         await this._snip.snipServices.save({ id: currentSongInfo().id, startTime, endTime })
+        this.isSnip = true
     }
 
     #shareSnip = async () => {
@@ -107,12 +123,12 @@ class LyricsSnip {
 
     get #lyricsUI() { return document.getElementById('lyrics-ui') }
 
-    toggleUI(show) {
+    toggleUI(isSnip) {
         if (!this.#lyricsUI) this.#createUI()
 
-        const setupListener = show || this.#lyricsAvailable
-        this.#lyricsUI.style.display = setupListener ? 'flex' : 'none'
-        if (setupListener) this.#setupHighlightListener()
+        this.isSnip = isSnip
+        this.#lyricsUI.style.display = this.#lyricsAvailable ? 'flex' : 'none'
+        if (this.#lyricsAvailable) this.#setupHighlightListener()
         this.#resetSelectionTimes()
     }
     
@@ -120,6 +136,7 @@ class LyricsSnip {
         const ui = parseNodeString(`
             <div id="lyrics-ui">
                 <button id="lyrics-share" class="share chorus-text-button"><span>share</span></button>
+                <button id="lyrics-delete" class="danger chorus-text-button"><span>delete</span></button>
                 <button id="lyrics-save" class="success chorus-text-button"><span>save</span></button>
             </div>
         `)
@@ -129,6 +146,7 @@ class LyricsSnip {
     #disableLyricsButtons(disable) {
         this.#lyricsSaveBtn.disabled = disable
         this.#lyricsShareBtn.disabled = disable
+        this.#lyricsDeleteBtn.disabled = disable
     }
 
     removeUI() { document.getElementById('lyrics-ui').remove() }

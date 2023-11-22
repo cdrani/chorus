@@ -360,7 +360,12 @@ input[type=number]::-webkit-outer-spin-button {
     display: none;
     justify-content: space-between;
     align-items: center;
-    width: 7.25rem;
+    min-width: 7.25rem;
+
+    #lyrics-delete {
+        display: none;
+        margin: 0 1rem;
+    }
 
     & button {
         &:disabled {
