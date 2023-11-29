@@ -4,7 +4,7 @@ const isHighlightable = ({
     playbackRate = '1',
     preservesPitch = true,
 }) => (
-    isSnip || isSkipped || !preservesPitch || playbackRate !== '1'
+    isSnip || isSkipped || !preservesPitch || !['1', '1.000', '1000'].includes(playbackRate)
 )
 
 export const highlightElement = ({ 
