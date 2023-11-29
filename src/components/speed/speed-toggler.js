@@ -1,17 +1,17 @@
 import { createToggleButton } from '../toggle-button.js'
 
-const createTag = ({ tag, id, text, style = '' }) => `
-    <div style="display:flex;align-items:center;${style}">
-        <span class="chorus-text chorus-pill">${tag}</span>
-        <span class="chorus-text" id="${id}" style="height:100%;margin-left:4px;padding:0 4px">${text}</span>
+const createTag = ({ tag, id, style = '' }) => `
+    <div style="display:flex;align-items:center;${style};">
+        <span class="chorus-text chorus-pill" style="text-align:left;width:46px;padding-left:4px">${tag}</span>
+        <input id="${id}" class="chorus-text" style="color:#fff;width:42px;height:100%;padding:0 4px">
     </div>
 `
 
 export const createSpeedToggler = () => `
-    <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+    <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
         <div style="display:flex;flex-direction:column;justify-content:space-between;">
-            ${createTag({ tag: 'T', id: 'speed-track-value', text: '1x', style: 'margin-bottom:4px' })}
-            ${createTag({ tag: 'G', id: 'speed-global-value', text: '1x' })}
+            ${createTag({ tag: 'Track', id: 'speed-track-value', style: 'margin-bottom:4px' })}
+            ${createTag({ tag: 'Global', id: 'speed-global-value' })}
         </div>
 
         <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end">

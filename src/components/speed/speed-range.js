@@ -8,7 +8,7 @@ export const createSpeedRange = () => `
             <input
                 min="0.1"
                 max="4"
-                step="0.05"
+                step="0.001"
                 type="range"
                 class="input"
                 id="speed-input"
