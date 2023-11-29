@@ -54,7 +54,7 @@ export default class Snip {
     async _share() {
         const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = await this.read()
         const pitch = preservesPitch ? 1 : 0
-        const rate = parseFloat(playbackRate) * 100
+        const rate = parseFloat(playbackRate) * 1000
 
         const { tempEndTime = startTime, tempStartTime = endTime } = this.tempShareTimes
         

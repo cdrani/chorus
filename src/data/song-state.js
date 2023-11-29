@@ -14,7 +14,7 @@ const sharedSnipValues = () => {
         endTime: parseInt(endTime, 10),
         startTime: parseInt(startTime, 10),
         preservesPitch: parseInt(preservesPitch, 10) == 1,
-        playbackRate: parseFloat(playbackRate) / 100,
+        playbackRate: parseFloat(playbackRate) / 1000,
     }
 }
 

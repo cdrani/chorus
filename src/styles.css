@@ -247,6 +247,7 @@ input[type=number]::-webkit-outer-spin-button {
     width: 12px;
     height: 12px;
     border-radius: 50%;
+    cursor: grab;
 }
 
 .input[type="range"]::-webkit-slider-thumb {
@@ -255,6 +256,7 @@ input[type=number]::-webkit-outer-spin-button {
     width: 12px;
     height: 12px;
     border-radius: 50%;
+    cursor: grab;
 }
 
 .slider>.thumb.hover {
