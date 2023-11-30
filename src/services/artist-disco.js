@@ -2,7 +2,7 @@ import { request, setOptions } from '../utils/request.js'
 
 const BASE_PATH = 'https://api.spotify.com/v1'
 
-const generateURL = ({ pathType, param }) => {
+function generateURL({ pathType, param }) {
     const pathName =  {
         me: `/me/playlists`,
         albums: '/albums?ids=param',
@@ -15,13 +15,17 @@ const generateURL = ({ pathType, param }) => {
     return `${BASE_PATH}${pathName[pathType].replace('param', param)}`
 }
 
+async function fetchData(url, params = {}) {
+    const options = await setOptions(params)
+    return await request({ url , options })
+}
+
 async function fetchArtistAlbumIds(artist_id) {
     const albumIds = []
     let url = generateURL({ pathType: 'artists', param: artist_id }) 
 
     while (url) {
-        const options = await setOptions({})
-        let result = await request({ url , options })
+        const result = await fetchData(url)
         result.items.forEach(item => albumIds.push(item.id))
         url = result.next
     }
@@ -36,8 +40,7 @@ async function fetchTrackURIs(albumIds) {
     for (let group = 0; group <= albumIds.length / 20; group++) {
         const albumIdsGroup = albumIds.slice(group * groupSize, (group + 1) * groupSize)
         const url = generateURL({ pathType: 'albums', param: albumIdsGroup.join(',') })
-        const options = await setOptions({})
-        const albumInfo = await request({ url, options })
+        const albumInfo = await fetchData(url)
         const albumGroupsTracks = albumInfo?.albums?.map(({ tracks }) => tracks)
 
         for (const album of albumGroupsTracks) {
@@ -45,8 +48,7 @@ async function fetchTrackURIs(albumIds) {
             let next = album.next
             
             while(next) {
-                const options = await setOptions({})
-                const tracks = request({ url: next, options })
+                const tracks = await fetchData(next)
                 next = tracks.next
                 tracks?.items?.forEach(({ uri }) => trackURIs.push(uri))
             }
@@ -58,8 +60,8 @@ async function fetchTrackURIs(albumIds) {
 
 async function createPlaylist(name) {
     const url = generateURL({ pathType: 'me' })
-    const options = await setOptions({ method: 'POST', body: { name, public: false } }) 
-    const playlist = await request({ url, options })
+    const params = { method: 'POST', body: { name, public: false } }
+    const playlist = await fetchData(url, params)
     return { id: playlist.id, url: playlist.external_urls.spotify }
 }
 
@@ -69,8 +71,8 @@ async function addTracksToPlaylist({ playlist, trackURIs }) {
     for (let group = 0; group < trackURIs.length / groupSize; group++) {
         const trackURIsGroup = trackURIs.slice(group * 100, (group + 1) * 100)
         const url = generateURL({ pathType: 'tracks', param: playlist.id })
-        const options = await setOptions({ method: 'POST', body: { uris: trackURIsGroup }})
-        await request({ url, options })
+        const params = { method: 'POST', body: { uris: trackURIsGroup } }
+        await fetchData(url, params)
     }
 }
 
@@ -82,10 +84,8 @@ async function createArtistDiscoPlaylist({ artist_name, artist_id }) {
             const playlist = await createPlaylist(artist_name)
             await addTracksToPlaylist({ playlist, trackURIs })
             resolve({ artist_name, playlist })
-        } catch (error) {
-            reject(error)
-        }
-    });
+        } catch (error) { reject(error) }
+    })
 }
 
 export { createArtistDiscoPlaylist }
