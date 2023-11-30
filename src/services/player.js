@@ -1,7 +1,7 @@
 import { getState } from '../utils/state.js'
 import { makeRequest, handleRequest } from './api.js'
 
-function playSharedTrack({ track_id, position }) {
+function playSharedTrack({ track_id, position = 0 }) {
     return handleRequest(async () => {
         const body = {
             uris: [`spotify:track:${track_id}`],
@@ -14,7 +14,7 @@ function playSharedTrack({ track_id, position }) {
 }
 
 
-function seekTrackToPosition({ position }) {
+function seekTrackToPosition({ position = 0 }) {
     return handleRequest(async () => {
         const device_id = await getState('device_id')
         const endpoint = `/seek?position_ms=${position}&device_id=${device_id}`
@@ -22,4 +22,10 @@ function seekTrackToPosition({ position }) {
     })
 }
 
-export { playSharedTrack, seekTrackToPosition }
+function getQueue() {
+    return handleRequest(async () => (
+       await makeRequest({ endpoint: '/queue', type: 'player', params: { method: 'GET' } })
+    ))
+}
+
+export { playSharedTrack, seekTrackToPosition, getQueue }
