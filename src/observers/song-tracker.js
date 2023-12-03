@@ -7,6 +7,7 @@ import { timeToSeconds } from '../utils/time.js'
 import { currentSongInfo } from '../utils/song.js'
 import { highlightElement } from '../utils/higlight.js'
 
+import { queue } from '../models/queue.js'
 import Dispatcher from '../events/dispatcher.js'
 
 export default class SongTracker {
@@ -16,6 +17,7 @@ export default class SongTracker {
         this._currentSongState = null
         this._video = spotifyVideo.element
         this._dispatcher = new Dispatcher()
+        this._queue = queue
     }
 
     async init() {
@@ -87,10 +89,24 @@ export default class SongTracker {
         this._reverbSet = true
     }
 
-    #setupListeners() { this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate) }
+    #updateQueue = async () => { await this._queue.updateQueueList() }
+
+    get #playButton() {
+        return document.querySelector('[data-testid="control-button-playpause"]')
+    }
+
+    #setupListeners() { 
+        this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate)
+        // this._video.element.addEventListener('playing', this.#updateQueue)
+        this._video.element.addEventListener('play', this.#updateQueue)
+        // this._video.element.addEventListener('durationchange', this.#updateQueue)
+    }
 
     clearListeners() {
         this._video.element.removeEventListener('timeupdate', this.#handleTimeUpdate)
+        this._video.element.removeEventListener('play', this.#updateQueue)
+        // this._video.element.removeEventListener('pause', this.#updateQueue)
+        // this._video.element.addEventListener('durationchange', this.#updateQueue)
         this._reverbSet = false
     }
 
@@ -100,10 +116,7 @@ export default class SongTracker {
         this._video.playbackRate = this._video.currentSpeed
         this._video.preservesPitch = isShared ? preservesPitch : preferredPitch
 
-        highlightElement({ 
-            selector: '#chorus-icon > svg', 
-            songStateData: { isSnip, isShared, ...track }
-        })
+        highlightElement({ selector: '#chorus-icon > svg', songStateData: { isSnip, isShared, ...track } })
     }
 
     async #setCurrentSongData() {
@@ -113,23 +126,71 @@ export default class SongTracker {
         return songInfo
     }
 
+    async #dispatchPlayFromQueue({ uris, uri, position }) {
+        console.log('dispatchPlayFromQueue ...')
+        return await this._dispatcher.sendEvent({
+            eventType: 'play.queue-position',
+            detail: { key: 'play.queue-position', values: { uris, uri, position } },
+        })
+    }
+
+    async #handleEmptyQueue({ startTime, trackId, isSkipped }) {
+        if (isSkipped) return this.#nextButton.click()
+
+        const parsedStartTime = parseInt(startTime, 10) * 1000
+        const currentPosition = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
+        const currentPositionTime = parseInt(currentPosition, 10) * 1000
+
+        if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
+            const uri = `spotify:track:${trackId}`
+            this.#mute()
+            await this.#dispatchPlayFromQueue({ position: parsedStartTime / 1000, uri })
+            this.#mute()
+        }
+    }
+
+    async #playNextUnSkippedTrack({ startTime, trackId, isSnip, isSkipped }) {
+        if (!isSkipped || !isSkipped) return
+    
+        const list = this._queue.queueList
+
+        if (!list.length) { 
+            await this.#handleEmptyQueue({ trackId, startTime, isSnip, isSkipped })
+            await this._queue.updateQueueList()
+            const list = this._queue.queueList
+
+            const uri = `spotify:track:${trackId}`
+            // await this.#dispatchPlayFromQueue({ position: startTime, uri })
+
+            // const unSkippedTrack = list.find(({ isSkipped }) => !isSkipped)
+            const uris = list.filter(({ isSkipped }) => !isSkipped).map(({ uri }) => uri)
+            console.log({ list, uris })
+            uris.length && await this.#dispatchPlayFromQueue({ position: startTime, uris })
+            this.#mute()
+            return
+        }
+
+
+        const unSkippedTrack = list.find(({ isSkipped }) => !isSkipped)
+        const uris = list.filter(({ isSkipped }) => !isSkipped).map(({ uri }) => uri)
+
+        const { startTime: position = startTime, uri = `spotify:track:${trackId}` } = unSkippedTrack
+
+        await this.#dispatchPlayFromQueue({ position, uris })
+        await this._queue.updateQueueList()
+
+        // this.#unMute()
+    }
+
     async songChange(initialData = null) {
         if (!this._init) this.#mute()
 
         const songStateData = initialData ?? await this.#setCurrentSongData()
         await this.#applyEffects(songStateData)
-        const { isSnip, isSkipped, startTime } = songStateData
+        const { isSnip, isSkipped, track_id, trackId, startTime } = songStateData
 
-        if (isSkipped) {
-            return this.#nextButton.click()
-        } else if (isSnip) {
-            const parsedStartTime = parseInt(startTime, 10) * 1000
-            const currentPosition = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
-            const currentPositionTime = parseInt(currentPosition, 10) * 1000
-
-            if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
-                await this.#dispatchSeekToPosition(parsedStartTime)
-            } 
+        if (this._init || isSnip || isSkipped) { 
+            await this.#playNextUnSkippedTrack({ startTime, trackId: track_id ?? trackId, isSkipped, isSnip })
         }
 
         this.#unMute()
