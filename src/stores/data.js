@@ -15,6 +15,7 @@ class DataStore {
     }
 
     async populate() {
+        sessionStorage.clear()
         const response = await this.#dispatcher.sendEvent({
             eventType: 'storage.populate',
             detail: {},
