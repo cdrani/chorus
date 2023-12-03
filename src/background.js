@@ -2,7 +2,13 @@ import { setState, getState } from './utils/state.js'
 import { getActiveTab, sendMessage } from './utils/messaging.js'
 
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
-import { getQueue, playSharedTrack, seekTrackToPosition } from './services/player.js'
+import { 
+    getQueue,
+    playSharedTrack,
+    getRecentlyPlayed,
+    seekTrackToPosition,
+    playFromQueuePosition,
+} from './services/player.js'
 
 let ENABLED = true
 let popupPort = null
@@ -88,8 +94,10 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
     const messageHandler = {
         'play.queue': getQueue,
         'play.shared': playSharedTrack,
+        'play.recent': getRecentlyPlayed,
         'play.seek': seekTrackToPosition,
         'artist.disco': createArtistDiscoPlaylist,
+        'play.queue-position': playFromQueuePosition,
     }
     const handlerFn = messageHandler[key]
     handlerFn ? promiseHandler(handlerFn(values), sendResponse)
