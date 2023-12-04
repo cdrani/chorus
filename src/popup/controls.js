@@ -21,34 +21,42 @@ class ExtControls {
 
     setFill({ backgroundColour, textColour }) {
         const { playBtn } = this.btns
-        const { playIcon, heartIcon, shuffleIcon, blockIcon, nextIcon, previousIcon, rwIcon, ffIcon } = this.icons
+        const { 
+            playIcon, heartIcon, repeatIcon, shuffleIcon, blockIcon, nextIcon, previousIcon, rwIcon, ffIcon
+        } = this.icons
 
         playBtn.style.backgroundColor = textColour
         playIcon.style.fill = backgroundColour
 
         shuffleIcon.style.stroke = textColour
+        shuffleIcon.style.fill = textColour
         blockIcon.style.stroke = textColour
+        blockIcon.style.fill = textColour
         heartIcon.style.stroke = textColour
+        heartIcon.style.strokeWidth = 1.5
 
         previousIcon.style.fill = textColour
         nextIcon.style.fill = textColour
+        repeatIcon.style.fill = textColour
+        repeatIcon.style.stroke = textColour
 
         rwIcon.style.stroke = textColour
-        rwIcon.style.strokeWidth =8 
+        rwIcon.style.strokeWidth = 6 
         ffIcon.style.stroke = textColour
-        ffIcon.style.strokeWidth = 8
+        ffIcon.style.strokeWidth = 6
     }
 
     get btns() {
         return {
-            playBtn: document.getElementById('play-btn'),
-            heartBtn: document.getElementById('heart-btn'),
-            blockBtn: document.getElementById('block-btn'),
             ffBtn: document.getElementById('ff-btn'),
             rwBtn: document.getElementById('rw-btn'),
             nextBtn: document.getElementById('next-btn'),
-            previousBtn: document.getElementById('previous-btn'),
+            playBtn: document.getElementById('play-btn'),
+            heartBtn: document.getElementById('heart-btn'),
+            blockBtn: document.getElementById('block-btn'),
+            repeatBtn: document.getElementById('repeat-btn'),
             shuffleBtn: document.getElementById('shuffle-btn'),
+            previousBtn: document.getElementById('previous-btn'),
         }
     }
 
@@ -60,6 +68,7 @@ class ExtControls {
             nextIcon: document.getElementById('next-icon'),
             heartIcon: document.getElementById('heart-icon'),
             blockIcon: document.getElementById('block-icon'),
+            repeatIcon: document.getElementById('repeat-icon'),
             shuffleIcon: document.getElementById('shuffle-icon'),
             previousIcon: document.getElementById('previous-icon'),
         }
