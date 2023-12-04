@@ -1,5 +1,5 @@
 async function getActiveTab() {
-    const result = await chrome.tabs.query({ active: true, url: ['*://open.spotify.com/*'] })
+    const result = await chrome.tabs.query({ url: ['*://open.spotify.com/*'] })
     return result?.at(0)
 }
 
