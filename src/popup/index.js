@@ -1,4 +1,5 @@
 import { extToggle } from './toggle.js'
+import { extControls } from './controls.js'
 import { createRootContainer } from './ui.js'
 
 import { setTrackInfo } from '../utils/track-info.js'
@@ -15,6 +16,7 @@ PORT.onMessage.addListener(async ({ type, data }) => {
     if (type == 'enabled')  {
         const enabled = data == {} ? false : data
         await extToggle.initialize(enabled, loadExtOffState)
+        extControls.initialize(PORT)
     }
 
     if (type == 'now-playing' && (!data || data == {})) return
@@ -29,6 +31,7 @@ async function updatePopupUI({ src, title, artists, textColour, backgroundColour
     const { cover, chorusPopup } = getElements()
 
     chorusPopup.style.backgroundColor = backgroundColour
+    extControls.setFill({ textColour, backgroundColour })
 
     cover.src = src
 
@@ -71,6 +74,7 @@ function loadImageData({ src, title, artists, backgroundColour, textColour }) {
 
     cover.src = src
     chorusPopup.style.backgroundColor = backgroundColour
+    extControls.setFill({ textColour, backgroundColour })
     setTrackInfo({ title, artists, textColour })
 }
 
@@ -126,11 +130,10 @@ async function loadInitialData() {
     const currentData = await getState('now-playing')
 
     await extToggle.initialize(enabled, loadExtOffState)
-    if (!data && !currentData) return loadDefaultUI()
+    extControls.initialize(PORT)
 
-    if (enabled && loaded & data?.title == currentData?.title) {
-        return extToggle.setFill(data.textColour)
-    }
+    if (!data && !currentData) return loadDefaultUI()
+    if (enabled && loaded & data?.title == currentData?.title) return extToggle.setFill(data.textColour)
 
     if (enabled && !currentData?.isSkipped) await setCoverImage(currentData)
 }
