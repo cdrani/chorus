@@ -11,6 +11,12 @@ chrome.runtime.onConnect.addListener(port => {
     if (port.name !== 'popup') return
 
     popupPort = port
+    port.onMessage.addListener(async message => {
+        if (message?.type !== 'controls') return
+
+        await executeButtonClick({ command: message.key })
+    })
+
     port.onDisconnect.addListener(() => (popupPort = null))
 })
 
@@ -96,9 +102,14 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
     return true
 })
 
-chrome.commands.onCommand.addListener(async command => {
+async function executeButtonClick({ command, isShortCutKey = false }) {
     const tab = await getActiveTab()
     if (!tab) return
+
+    if (command == 'on/off') {
+        const enabled = await getState('enabled')        
+        return chrome.storage.local.set({ enabled: !enabled })
+    } 
 
     const chorusMap = {
         'settings': '#chorus-icon',
@@ -117,20 +128,18 @@ chrome.commands.onCommand.addListener(async command => {
         'save/unsave': '[data-testid="now-playing-widget"] > [data-testid="add-button"]',
     }
 
-    if (command == 'on/off') {
-        const enabled = await getState('enabled')        
-        chrome.storage.local.set({ enabled: !enabled })
-        return
-    } 
-
     const selector = chorusMap[command] || mediaMap[command]
     const isChorusCommand = Object.keys(chorusMap).includes(command)
 
-    if (!ENABLED && isChorusCommand) return
+    if (isShortCutKey && !ENABLED && isChorusCommand) return
 
     await chrome.scripting.executeScript({
         args: [selector],
         target: { tabId: tab.id },
         func: selector => document.querySelector(selector)?.click(),
     })
+}
+
+chrome.commands.onCommand.addListener(async command => {
+    await executeButtonClick({ command, isShortCutKey: true })
 })
