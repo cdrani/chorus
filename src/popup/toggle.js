@@ -1,5 +1,5 @@
-import { createToggleButton } from '../components/toggle-button.js'
 import { setState } from '../utils/state.js'
+import { createToggleButton } from '../components/toggle-button.js'
 
 class ExtToggle {
     constructor() {
@@ -7,13 +7,9 @@ class ExtToggle {
         this._eventsSet = false
     }
 
-    set on(enabled) {
-        this._on = enabled 
-    }
+    set on(enabled) { this._on = enabled }
 
-    get on() {
-        return this._on
-    }
+    get on() { return this._on }
 
     get ui() {
         return createToggleButton({
@@ -24,19 +20,17 @@ class ExtToggle {
         })
     }
 
-    async initialize(checked, callback) {
-        this.on = checked
-        await this.#setCheckedUI(checked)
-        callback(checked)
+    async initialize({ enabled, callback }) {
+        this.on = enabled
+        await this.#setCheckedUI(enabled)
+        callback(enabled)
     }
 
     setupEvents(callback) {
-        const { extToggleButton } = this.elements
+        const extToggleButton = document.getElementById('ext-toggle-button')
         if (this._eventsSet) return
 
-        extToggleButton.onclick = async () =>  {
-            await this.#toggleExtCheckbox(callback)
-        }
+        extToggleButton.onclick = async () =>  { await this.#toggleExtCheckbox(callback) }
         this._eventsSet = true 
     }
 
@@ -69,11 +63,9 @@ class ExtToggle {
 
     get elements() {
         return {
-            extToggleOn: document.getElementById('ext-toggle-on'),
-            extToggleOff: document.getElementById('ext-toggle-off'),
-
             extCheckbox: document.getElementById('ext-checkbox'),
-            extToggleButton: document.getElementById('ext-toggle-button'),
+            extToggleOn: document.getElementById('ext-toggle-on'),
+            extToggleOff: document.getElementById('ext-toggle-off')
         }
     }
 }
