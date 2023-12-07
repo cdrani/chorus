@@ -1,12 +1,22 @@
 import { parseNodeString } from './parser.js'
 
+const ANCHOR_TEXT = 'Open Spotify Tab'
+
 function getTextNode({ text, isShortText }) {
-    const shortTextHtml = `<p>${text}</p>`
+    const childText = text == ANCHOR_TEXT ? `<a id="spotify-tab" href="https://open.spotify.com" target="_blank">${text}</a>` : text
+    const shortTextHtml = `<p>${childText}</p>`
     const displayText = isShortText
         ? shortTextHtml
         : `<div>${shortTextHtml}&ensp;&bullet;&ensp;${shortTextHtml}&ensp;&centerdot;&ensp;</div>` 
 
     return parseNodeString(displayText) 
+}
+
+function setSpotifyAnchorColour(textColour) {
+    const anchor = document.getElementById('spotify-tab') 
+    if (!anchor) return
+
+    anchor.style.color = textColour
 }
 
 function setNowPlayingTextElement({ element, text, textColour, chorusView }) {
@@ -15,6 +25,7 @@ function setNowPlayingTextElement({ element, text, textColour, chorusView }) {
 
     element.replaceChildren(textNode)
     element.style.color = textColour
+    setSpotifyAnchorColour(textColour)
 
     isShortText ? element.classList.remove('marquee') : element.classList.add('marquee')
 }
