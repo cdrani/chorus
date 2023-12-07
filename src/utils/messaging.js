@@ -3,6 +3,11 @@ async function getActiveTab() {
     return result?.at(0)
 }
 
+async function activeOpenTab() {
+    const tab = await getActiveTab()
+    return { active: !!tab?.id, tabId: tab?.id }
+}
+
 function messenger({ tabId, message }) {
     chrome.tabs.sendMessage(tabId, message)
 }
@@ -23,4 +28,4 @@ function sendBackgroundMessage(message){
     })
 }
 
-export { sendMessage, sendBackgroundMessage, getActiveTab }
+export { sendMessage, sendBackgroundMessage, getActiveTab, activeOpenTab }
