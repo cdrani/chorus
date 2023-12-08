@@ -17,7 +17,7 @@ class ExtControls {
         if (this._eventsSet) return
 
         Object.values(this.btns).forEach(btn => {
-            btn.onclick = () => { this._port.postMessage({ type: 'controls', key: btn.getAttribute('role') }) }
+            btn.onclick = () => { this._port?.postMessage({ type: 'controls', key: btn.getAttribute('role') }) }
             btn.onmouseover = () => { btn.style.scale = 1.125 }
             btn.onmouseout = () => { btn.style.scale = 1 }
         })
@@ -57,7 +57,7 @@ class ExtControls {
         blockIcon.style.strokeWidth = 0.8
 
         heartIcon.style.stroke = textColour
-        heartIcon.style.strokeWidth = 1.5
+        heartIcon.style.strokeWidth = 2
 
         previousIcon.style.fill = textColour
         previousIcon.style.stroke = textColour
@@ -117,12 +117,18 @@ class ExtControls {
         span.style.backgroundColour = textColour
     }
 
-    updateIcons({ type, key, result }) {
-        if (!['play/pause', 'repeat', 'save/unsave', 'shuffle'].includes(key)) return
+    #updateSeek({ key, state }) {
+        const isRewind = key.endsWith('rewind')
+        const span = isRewind ? this.spans.rwSpan : this.spans.ffSpan
+        const seekValue = state.split(' ').at(-1)
+        span.textContent = parseInt(seekValue, 10)
+    }
 
+    updateIcons({ type, key, result }) {
         const btn = document.querySelector(`[role="${key}"]`)
         const svg = btn.lastElementChild
 
+        if (key.startsWith('seek')) return this.#updateSeek({ key, state: result })
         if (key == 'save/unsave') return this.#updateHeart({ svg, state: result })
         if (key == 'shuffle') return this.#updateShuffle({ type, key, svg, state: result })
 

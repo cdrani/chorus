@@ -19,9 +19,10 @@ async function getUIState({ selector, tabId }) {
 }
 
 async function getMediaControlsState(tabId) {
-    const requiredKeys = ['repeat', 'shuffle', 'play/pause', 'save/unsave']
-    const selectors = Object.keys(mediaKeys).map(key => (
-        requiredKeys.includes(key) ? mediaKeys[key] : undefined
+    const requiredKeys = ['repeat', 'shuffle', 'play/pause', 'save/unsave', 'seek-rewind', 'seek-fastforward']
+    const selectorKeys = { ...mediaKeys, ...chorusKeys }
+    const selectors = Object.keys(selectorKeys).map(key => (
+        requiredKeys.includes(key) ? selectorKeys[key] : undefined
     )).filter(Boolean)
 
     const promises = selectors.map(selector => (
