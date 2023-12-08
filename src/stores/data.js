@@ -74,7 +74,9 @@ class DataStore {
 
     async saveTrack({ id, value }) {
         let response
-        if (this.#shouldDeleteTrack(value)) {
+        const isTrack = !['chorus-seek', 'globals'].includes(id)
+
+        if (isTrack && this.#shouldDeleteTrack(value)) {
             await this.deleteTrack(id)
         } else {
             response = await this.#dispatcher.sendEvent({
