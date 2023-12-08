@@ -18,6 +18,8 @@ class ExtControls {
 
         Object.values(this.btns).forEach(btn => {
             btn.onclick = () => { this._port.postMessage({ type: 'controls', key: btn.getAttribute('role') }) }
+            btn.onmouseover = () => { btn.style.scale = 1.125 }
+            btn.onmouseout = () => { btn.style.scale = 1 }
         })
 
         this._eventsSet = true 
@@ -30,8 +32,13 @@ class ExtControls {
         mediaContainer.style.display = active ? 'flex' : 'none'
     }
 
-    setFill({ backgroundColour, textColour }) {
-        this._colours = { backgroundColour, textColour }
+    #setColours({ textColour, backgroundColour }) {
+        if (textColour) this._colours.textColour =  textColour
+        if (backgroundColour) this._colours.backgroundColour = backgroundColour
+    }
+
+    setFill({ textColour, backgroundColour }) {
+        this.#setColours({ textColour, backgroundColour })
         const { playBtn } = this.btns
         const { rwSpan, ffSpan } = this.spans
         const { 
@@ -40,26 +47,34 @@ class ExtControls {
 
         playBtn.style.backgroundColor = textColour
         playIcon.style.fill = backgroundColour
+        playIcon.style.stroke = backgroundColour
 
         shuffleIcon.style.stroke = textColour
         shuffleIcon.style.fill = textColour
+
         blockIcon.style.stroke = textColour
         blockIcon.style.fill = textColour
+        blockIcon.style.strokeWidth = 0.8
+
         heartIcon.style.stroke = textColour
         heartIcon.style.strokeWidth = 1.5
 
         previousIcon.style.fill = textColour
+        previousIcon.style.stroke = textColour
+
         nextIcon.style.fill = textColour
+        nextIcon.style.stroke = textColour
+
         repeatIcon.style.fill = textColour
         repeatIcon.style.stroke = textColour
-        repeatIcon.style.strokeWidth = 0.2
+        repeatIcon.style.strokeWidth = 0.5
 
         rwIcon.style.stroke = textColour
-        rwIcon.style.strokeWidth = 6 
+        rwIcon.style.strokeWidth = 7 
         rwSpan.style.color = textColour
 
         ffIcon.style.stroke = textColour
-        ffIcon.style.strokeWidth = 6
+        ffIcon.style.strokeWidth = 7
         ffSpan.style.color = textColour
     }
 
@@ -88,6 +103,7 @@ class ExtControls {
         const enabled = type == 'state' ? state?.includes('disable') : state?.includes('enable')
         span.style.display = enabled ? 'inline' : 'none'
         span.style.backgroundColour = textColour
+        span.style.color = textColour
     }
 
     #updateRepeat({ type, key, svg, state }) {
