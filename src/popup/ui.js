@@ -8,7 +8,7 @@ const coverImage = () => `
 
 const trackText = id => `
     <div class="container" style="max-width:200px">
-        <div class="track-text" id="${id}" style="font-size:14px;"></div>
+        <div class="track-text" id="${id}" style="font-size:14px;font-weight:500"></div>
     </div>
 `
 
