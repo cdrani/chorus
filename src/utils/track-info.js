@@ -20,7 +20,7 @@ function setSpotifyAnchorColour(textColour) {
 }
 
 function setNowPlayingTextElement({ element, text, textColour, chorusView }) {
-    const isShortText = text.length < (chorusView ? 43 : 28)
+    const isShortText = text.length < (chorusView ? 43 : 25)
     const textNode = getTextNode({ isShortText, text })
 
     element.replaceChildren(textNode)
