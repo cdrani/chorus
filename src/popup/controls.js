@@ -101,8 +101,11 @@ class ExtControls {
 
         const span = document.getElementById(`${key}-dot`)
         const enabled = type == 'state' ? state?.includes('disable') : state?.includes('enable')
+        this.#updateSpan({ span, enabled, textColour })
+    }
+
+    #updateSpan({ span, enabled, textColour }) {
         span.style.display = enabled ? 'inline' : 'none'
-        span.style.backgroundColour = textColour
         span.style.color = textColour
     }
 
@@ -113,14 +116,13 @@ class ExtControls {
 
         const span = document.getElementById(`${key}-dot`)
         const enabled = type == 'state' ? state?.search(/(one)|(disable)/g) >= 0 : state?.includes('enable')
-        span.style.display = enabled ? 'inline' : 'none'
-        span.style.backgroundColour = textColour
+        this.#updateSpan({ span, enabled, textColour })
     }
 
     #updateSeek({ key, state }) {
         const isRewind = key.endsWith('rewind')
         const span = isRewind ? this.spans.rwSpan : this.spans.ffSpan
-        const seekValue = state.split(' ').at(-1)
+        const seekValue = state?.split(' ')?.at(-1) ?? 10
         span.textContent = parseInt(seekValue, 10)
     }
 
@@ -132,9 +134,11 @@ class ExtControls {
         if (key == 'save/unsave') return this.#updateHeart({ svg, state: result })
         if (key == 'shuffle') return this.#updateShuffle({ type, key, svg, state: result })
 
-        const pathKey = this.#getPathKey({ type, key, result })
-        const newPath = parseNodeString('<svg xmlns="http://www.w3.org/2000/svg">' + SVG_PATHS[pathKey] + '</svg>')
-        svg.replaceChildren(...newPath.childNodes)
+        if (['repeat', 'play/pause'].includes(key)) {
+            const pathKey = this.#getPathKey({ type, key, result })
+            const newPath = parseNodeString(`<svg xmlns="http://www.w3.org/2000/svg">${SVG_PATHS[pathKey]}</svg>`)
+            svg.replaceChildren(...newPath.childNodes)
+        }
 
         if (key == 'repeat') return this.#updateRepeat({ type, key, svg, state: result })
 
