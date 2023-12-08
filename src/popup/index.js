@@ -47,6 +47,11 @@ async function updatePopupUI({ src, title, artists, textColour, backgroundColour
     await updatePopupUIState({ title, artists, textColour, src, backgroundColour })
 }
 
+function setExtFillColours({ textColour, backgroundColour }) {
+    extToggle.setFill(textColour)
+    extControls.setFill({ textColour, backgroundColour })
+}
+
 async function setCoverImage({ cover, title, artists }) {
     const { double } = getElements()
     if (!double || !cover) return
@@ -55,7 +60,7 @@ async function setCoverImage({ cover, title, artists }) {
     if (double.complete) { 
         const { textColour, backgroundColour } = getImageBackgroundAndTextColours(double)
         await updatePopupUI({ src: cover, title, artists, textColour, backgroundColour })
-        extToggle.setFill(textColour)
+        setExtFillColours({ textColour, backgroundColour })
     }
 }
 
@@ -82,7 +87,7 @@ function loadImageData({ src, title, artists, backgroundColour, textColour }) {
 
     cover.src = src
     chorusPopup.style.backgroundColor = backgroundColour
-    extControls.setFill({ textColour, backgroundColour })
+    setExtFillColours({ textColour, backgroundColour })
     setTrackInfo({ title, artists, textColour })
 }
 
@@ -108,9 +113,11 @@ function loadDefaultUI({ enabled, active }) {
     if (artists && title) setTrackInfo({ title, artists })
 
     chorusPopup.style.backgroundColor = '#1ED760'
-    extToggle.setFill('#000')
+
+    setExtFillColours({ textColour: '#000', backgroundColour: '#1ED760' })
     extControls.updateControlsState(active && enabled)
 }
+
 
 async function loadExtOffState(enabled) {
     const { active } = await activeOpenTab()
@@ -124,8 +131,8 @@ async function loadExtOffState(enabled) {
     if (!data && !currentData) return loadDefaultUI({ active, enabled })
 
     cover.style.transform = 'unset'
-    extControls.updateControlsState(active)
-    if (loaded & data?.title == currentData?.title) return extToggle.setFill(data.textColour)
+    extControls.updateControlsState(active && currentData)
+    if (loaded & data?.title == currentData?.title) return setExtFillColours(data)
 
     if (!currentData?.isSkipped) await setCoverImage(currentData)
 }
@@ -148,7 +155,7 @@ async function loadInitialData() {
     await initializeUI({ enabled, active, callback: loadExtOffState })
 
     if (!data && !currentData) return loadDefaultUI({ active, enabled })
-    if (mediaUIDisplay && loaded & data?.title == currentData?.title) return extToggle.setFill(data.textColour)
+    if (mediaUIDisplay && loaded & data?.title == currentData?.title) return setExtFillColours(data)
 
     if (mediaUIDisplay && !currentData?.isSkipped) await setCoverImage(currentData)
 }
