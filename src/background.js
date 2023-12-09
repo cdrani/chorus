@@ -1,5 +1,6 @@
 import { setState, getState } from './utils/state.js'
-import { getActiveTab, sendMessage } from './utils/messaging.js'
+import { mediaKeys, chorusKeys } from './utils/selectors.js'
+import { activeOpenTab, sendMessage } from './utils/messaging.js'
 
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 import { playSharedTrack, seekTrackToPosition } from './services/player.js'
@@ -7,10 +8,59 @@ import { playSharedTrack, seekTrackToPosition } from './services/player.js'
 let ENABLED = true
 let popupPort = null
 
-chrome.runtime.onConnect.addListener(port => {
+async function getUIState({ selector, tabId }) {
+    const result = await chrome.scripting.executeScript({
+        args: [selector],
+        target: { tabId },
+        func: selector => document.querySelector(selector)?.getAttribute('aria-label').toLowerCase()
+    })
+
+    return result?.at(0).result
+}
+
+async function getMediaControlsState(tabId) {
+    const requiredKeys = ['repeat', 'shuffle', 'play/pause', 'save/unsave', 'seek-rewind', 'seek-fastforward']
+    const selectorKeys = { ...mediaKeys, ...chorusKeys }
+    const selectors = Object.keys(selectorKeys).map(key => (
+        requiredKeys.includes(key) ? selectorKeys[key] : undefined
+    )).filter(Boolean)
+
+    const promises = selectors.map(selector => (
+        new Promise(resolve => {
+            if (!selector.includes('add-button')) return resolve(getUIState({ selector, tabId }))
+            return setTimeout(() => resolve(getUIState({ selector, tabId })), 500)
+        })
+    ))
+
+    const results = await Promise.allSettled(promises)
+    const state = results.map((item, idx) => ({ data: item.value, key: requiredKeys[idx] }))
+    return state
+}
+
+async function setMediaState({ active, tabId }) {
+    popupPort.postMessage({ type: 'ui-state', data: { active } })
+
+    if (!active) return
+
+    const state = await getMediaControlsState(tabId)
+    return popupPort.postMessage({ type: 'state', data: state })
+}
+
+chrome.runtime.onConnect.addListener(async port => {
     if (port.name !== 'popup') return
 
     popupPort = port
+    const { active, tabId } = await activeOpenTab()
+    await setMediaState({ active, tabId })
+
+    port.onMessage.addListener(async message => {
+        if (message?.type !== 'controls') return
+
+        const { selector, tabId } = await executeButtonClick({ command: message.key })
+        const result = await getUIState({ selector, tabId })
+        port.postMessage({ type: 'controls', data: { key: message.key, result } })
+    })
+
     port.onDisconnect.addListener(() => (popupPort = null))
 })
 
@@ -33,7 +83,7 @@ function updateBadgeState({ changes, changedKey }) {
     setBadgeInfo(ENABLED)
 }
 
-chrome.storage.onChanged.addListener(changes => {
+chrome.storage.onChanged.addListener(async changes => {
     const keys = Object.keys(changes)
     const changedKey = keys.find(key => (
         ['now-playing', 'enabled', 'auth_token', 'device_id'].includes(key)
@@ -44,7 +94,11 @@ chrome.storage.onChanged.addListener(changes => {
     updateBadgeState({ changes, changedKey })
 
     if (changedKey == 'now-playing' && ENABLED) {
-        return popupPort?.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
+        if (!popupPort) return
+
+        const { active, tabId } = await activeOpenTab()
+        active && popupPort.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
+        return await setMediaState({ active, tabId })
     }
 
     const messageValue = changedKey == 'enabled' ? changes[changedKey] : changes[changedKey].newValue
@@ -55,7 +109,6 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
     const rawBody = details?.requestBody?.raw?.at(0)?.bytes
     if (!rawBody) return
 
-    // Decoding the ArrayBuffer to a UTF-8 string
     const text = new TextDecoder('utf-8').decode(new Uint8Array(rawBody))
     const data = JSON.parse(text)
     chrome.storage.local.set({ device_id: data.device.device_id.toString() })
@@ -96,41 +149,27 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
     return true
 })
 
-chrome.commands.onCommand.addListener(async command => {
-    const tab = await getActiveTab()
-    if (!tab) return
-
-    const chorusMap = {
-        'settings': '#chorus-icon',
-        'block-track': '#chorus-skip',
-        'seek-rewind': '#seek-player-rw-button',
-        'seek-fastforward': '#seek-player-ff-button',
-    }
-
-    const mediaMap = {
-        'repeat': '[data-testid="control-button-repeat"]',
-        'shuffle': '[data-testid="control-button-shuffle"]',
-        'next': '[data-testid="control-button-skip-forward"]',
-        'previous': '[data-testid="control-button-skip-back"]',
-        'play/pause': '[data-testid="control-button-playpause"]',
-        'mute/unmute': '[data-testid="volume-bar-toggle-mute-button"]',
-        'save/unsave': '[data-testid="now-playing-widget"] > [data-testid="add-button"]',
-    }
+async function executeButtonClick({ command, isShortCutKey = false }) {
+    const { active, tabId } = await activeOpenTab()
+    if (!active) return
 
     if (command == 'on/off') {
         const enabled = await getState('enabled')        
-        chrome.storage.local.set({ enabled: !enabled })
-        return
+        return chrome.storage.local.set({ enabled: !enabled })
     } 
 
-    const selector = chorusMap[command] || mediaMap[command]
-    const isChorusCommand = Object.keys(chorusMap).includes(command)
+    const selector = chorusKeys[command] || mediaKeys[command]
+    const isChorusCommand = Object.keys(chorusKeys).includes(command)
 
-    if (!ENABLED && isChorusCommand) return
+    if (isShortCutKey && !ENABLED && isChorusCommand) return
 
     await chrome.scripting.executeScript({
         args: [selector],
-        target: { tabId: tab.id },
+        target: { tabId },
         func: selector => document.querySelector(selector)?.click(),
     })
-})
+
+    if (!isShortCutKey) return { selector, tabId }
+}
+
+chrome.commands.onCommand.addListener(async command => await executeButtonClick({ command, isShortCutKey: true }))

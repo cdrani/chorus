@@ -1,24 +1,34 @@
 import { extToggle } from './toggle.js'
+import { extControls } from './controls.js'
 import { createRootContainer } from './ui.js'
 
+import { activeOpenTab } from '../utils/messaging.js'
 import { setTrackInfo } from '../utils/track-info.js'
 import { parseNodeString } from '../utils/parser.js'
 import { getState, setState } from '../utils/state.js'
 import { getImageBackgroundAndTextColours } from '../utils/image-colours.js'
 
-// Create a connection to the background script
-const PORT = chrome.runtime.connect({ name: "popup" })
+const PORT = chrome.runtime.connect({ name: 'popup' })
+
+async function initializeUI({ active, enabled, callback }) {
+    await extToggle.initialize({ enabled, callback })
+    extControls.initialize(PORT)
+    extControls.updateControlsState(active)
+}
 
 PORT.onMessage.addListener(async ({ type, data }) => {
-    if (!['enabled', 'now-playing'].includes(type)) return
-
-    if (type == 'enabled')  {
-        const enabled = data == {} ? false : data
-        await extToggle.initialize(enabled, loadExtOffState)
-    }
+    if (!['enabled', 'now-playing', 'controls', 'state', 'ui-state'].includes(type)) return
 
     if (type == 'now-playing' && (!data || data == {})) return
     await setCoverImage(data)
+
+    if (type == 'controls') extControls.updateIcons({ type, ...data } )
+    if (type == 'state') extControls.updateUIState({ type, data })
+    if (type == 'ui-state') {
+        const enabled = await getState('enabled')
+        await initializeUI({ active: data.active, enabled, callback: loadExtOffState })
+    }
+    
 })
 
 async function updatePopupUIState(popupState) {
@@ -29,11 +39,17 @@ async function updatePopupUI({ src, title, artists, textColour, backgroundColour
     const { cover, chorusPopup } = getElements()
 
     chorusPopup.style.backgroundColor = backgroundColour
+    extControls.setFill({ textColour, backgroundColour })
 
     cover.src = src
 
     setTrackInfo({ title, artists, textColour })
     await updatePopupUIState({ title, artists, textColour, src, backgroundColour })
+}
+
+function setExtFillColours({ textColour, backgroundColour }) {
+    extToggle.setFill(textColour)
+    extControls.setFill({ textColour, backgroundColour })
 }
 
 async function setCoverImage({ cover, title, artists }) {
@@ -44,7 +60,7 @@ async function setCoverImage({ cover, title, artists }) {
     if (double.complete) { 
         const { textColour, backgroundColour } = getImageBackgroundAndTextColours(double)
         await updatePopupUI({ src: cover, title, artists, textColour, backgroundColour })
-        extToggle.setFill(textColour)
+        setExtFillColours({ textColour, backgroundColour })
     }
 }
 
@@ -71,6 +87,7 @@ function loadImageData({ src, title, artists, backgroundColour, textColour }) {
 
     cover.src = src
     chorusPopup.style.backgroundColor = backgroundColour
+    setExtFillColours({ textColour, backgroundColour })
     setTrackInfo({ title, artists, textColour })
 }
 
@@ -82,33 +99,40 @@ async function setupFromStorage() {
     return { loaded: true, data }
 }
 
-function loadDefaultUI(enabled) {
+function loadDefaultUI({ enabled, active }) {
     const { chorusPopup, cover } = getElements()
 
     cover.src = '../icons/logo.png'
     cover.style.transform = 'scale(1.15)'
 
-    const title = enabled 
-        ? 'No Active Spotify Tab Open Or Media Playing'
-        : 'Chorus Toggled Off. Turn On To Enhance Spotify.'
+    const title = enabled && !active ? 'No Active Spotify Tab Open' 
+        : !enabled  ? 'Chorus Toggled Off. Turn On To Enhance Spotify.' : ''
+         
+    const artists = enabled && !active ? 'Open Spotify Tab' :  !enabled ? 'Chorus - Spotify Enhancer' : '' 
 
-    setTrackInfo({ title, artists: 'Chorus - Spotify Enhancer' })
+    if (artists && title) setTrackInfo({ title, artists })
 
     chorusPopup.style.backgroundColor = '#1ED760'
-    extToggle.setFill('#000')
+
+    setExtFillColours({ textColour: '#000', backgroundColour: '#1ED760' })
+    extControls.updateControlsState(active && enabled)
 }
 
+
 async function loadExtOffState(enabled) {
-    if (!enabled) return loadDefaultUI(enabled)
+    const { active } = await activeOpenTab()
+    const displayMediaUI = active && enabled
+    if (!active || !enabled || !displayMediaUI) return loadDefaultUI({ active, enabled })
 
     const { cover } = getElements()
     const { data, loaded } = await setupFromStorage()
     const currentData = await getState('now-playing')
 
-    if (!data && !currentData) return loadDefaultUI(enabled)
+    if (!data && !currentData) return loadDefaultUI({ active, enabled })
 
     cover.style.transform = 'unset'
-    if (loaded & data?.title == currentData?.title) return extToggle.setFill(data.textColour)
+    extControls.updateControlsState(active && currentData)
+    if (loaded & data?.title == currentData?.title) return setExtFillColours(data)
 
     if (!currentData?.isSkipped) await setCoverImage(currentData)
 }
@@ -121,18 +145,19 @@ function placeIcons() {
 }
 
 async function loadInitialData() {
+    const { active } = await activeOpenTab()
     const enabled = await getState('enabled')
     const { data, loaded } = await setupFromStorage()
     const currentData = await getState('now-playing')
 
-    await extToggle.initialize(enabled, loadExtOffState)
-    if (!data && !currentData) return loadDefaultUI()
+    const mediaUIDisplay = active && enabled
 
-    if (enabled && loaded & data?.title == currentData?.title) {
-        return extToggle.setFill(data.textColour)
-    }
+    await initializeUI({ enabled, active, callback: loadExtOffState })
 
-    if (enabled && !currentData?.isSkipped) await setCoverImage(currentData)
+    if (!data && !currentData) return loadDefaultUI({ active, enabled })
+    if (mediaUIDisplay && loaded & data?.title == currentData?.title) return setExtFillColours(data)
+
+    if (mediaUIDisplay && !currentData?.isSkipped) await setCoverImage(currentData)
 }
 
 placeIcons()

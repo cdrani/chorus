@@ -62,7 +62,7 @@ export default class NowPlayingIcons {
         const settingsIcon = document.getElementById('chorus-icon')
         settingsIcon?.addEventListener('click', () => { 
             this.chorus.toggle()
-            if (this.chorus.isShowing) this.snip.init()
+            if (this.chorus.isShowing) { this.snip.init(); this.snip.updateView() }
         })
 
         const skipIcon = document.getElementById('chorus-skip') 

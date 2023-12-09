@@ -35,10 +35,10 @@ export default class Snip {
 
     async _updateView(initData = null) {
         const response = initData ?? await this.read()
-        const { isSnip, isSkip } = response
+        const { isSnip, isSkipped } = response
 
         this.#setUpdateControls(response)
-        this.#toggleRemoveButton(isSnip || isSkip)
+        this.#toggleRemoveButton(isSnip || isSkipped)
     }
 
     get tempShareTimes() {

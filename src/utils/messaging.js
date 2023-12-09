@@ -1,6 +1,11 @@
 async function getActiveTab() {
-    const result = await chrome.tabs.query({ active: true, url: ['*://open.spotify.com/*'] })
+    const result = await chrome.tabs.query({ url: ['*://open.spotify.com/*'] })
     return result?.at(0)
+}
+
+async function activeOpenTab() {
+    const tab = await getActiveTab()
+    return { active: !!tab?.id, tabId: tab?.id }
 }
 
 function messenger({ tabId, message }) {
@@ -23,4 +28,4 @@ function sendBackgroundMessage(message){
     })
 }
 
-export { sendMessage, sendBackgroundMessage, getActiveTab }
+export { sendMessage, sendBackgroundMessage, getActiveTab, activeOpenTab }
