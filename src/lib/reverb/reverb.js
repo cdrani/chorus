@@ -1,127 +1,119 @@
-class UXFDReverb extends AudioWorkletProcessor {
-    static get parameterDescriptors() {
-        return [{
-            name: 'preDelay',
-            defaultValue: 0,
-            minValue: 0,
-            maxValue: sampleRate/4-1,
-            automationRate: "k-rate"
-        },{
-            name: 'bandwidth',
-            defaultValue: 0.9999,
-            minValue: 0,
-            maxValue: 1,
-            automationRate: "k-rate"
-        },{
-            name: 'diffuse',
-            defaultValue: 1,
-            minValue: 0,
-            maxValue: 1,
-            automationRate: "k-rate"
-        },{
-            name: 'decay',
-            defaultValue: 0.5,
-            minValue: 0,
-            maxValue: 1,
-            automationRate: "k-rate"
-        },{
-            name: 'damping',
-            defaultValue: 0.005,
-            minValue: 0,
-            maxValue: 1,
-            automationRate: "k-rate"
-        },{
-            name: 'excursion',
-            defaultValue: 16,
-            minValue: 0,
-            maxValue: 32,
-            automationRate: "k-rate"
-        },{
-            name: 'wet',
-            defaultValue: 0.3,
-            minValue: 0,
-            maxValue: 1,
-            automationRate: "k-rate"
-        },{
-            name: 'dry',
-            defaultValue: 0.6,
-            minValue: 0,
-            maxValue: 1,
-            automationRate: "k-rate"
-        }]
-    }
+// credit: https://github.com/khoin/DattorroReverbNode
+class DattorroReverb extends AudioWorkletProcessor {
+	static get parameterDescriptors() {
+		return [
+			["preDelay", 0, 0, sampleRate - 1, "k-rate"],
+			["bandwidth", 0.9999, 0, 1, "k-rate"],
+			["inputDiffusion1", 0.75, 0, 1, "k-rate"],
+			["inputDiffusion2", 0.625, 0, 1, "k-rate"],
+			["decay", 0.5, 0, 1, "k-rate"],
+			["decayDiffusion1", 0.7, 0, 0.999999, "k-rate"],
+			["decayDiffusion2", 0.5, 0, 0.999999, "k-rate"],
+			["damping", 0.005, 0, 1, "k-rate"],
+			["excursionRate", 0.5, 0, 2, "k-rate"],
+			["excursionDepth", 0.7, 0, 2, "k-rate"],
+			["wet", 0.3, 0, 1, "k-rate"],
+			["dry", 0.6, 0, 1, "k-rate"],
+		].map(
+			(x) =>
+				new Object({
+					name: x[0],
+					defaultValue: x[1],
+					minValue: x[2],
+					maxValue: x[3],
+					automationRate: x[4],
+				})
+		);
+	}
 
-    constructor(options) {
-        super(options); 
+	constructor(options) {
+		super(options);
 
-        this._Delays    = [];
-        this._pDLength  = sampleRate + (128 - sampleRate%128)
-        this._preDelay  = new Float32Array(this._pDLength);
-        this._pDWrite   = 0;
-        this._lp1       = 0.0;
-        this._lp2       = 0.0;
-        this._lp3       = 0.0;
+		this._Delays = [];
+		this._pDLength = sampleRate + (128 - (sampleRate % 128)); // Pre-delay is always one-second long, rounded to the nearest 128-chunk
+		this._preDelay = new Float32Array(this._pDLength);
+		this._pDWrite = 0;
+		this._lp1 = 0.0;
+		this._lp2 = 0.0;
+		this._lp3 = 0.0;
+		this._excPhase = 0.0;
 
-        [
-            0.004771345, 0.003595309, 0.012734787, 0.009307483, 
-            0.022579886, 0.149625349, 0.060481839, 0.1249958  , 
-            0.030509727, 0.141695508, 0.089244313, 0.106280031
-        ].forEach(x => this.makeDelay(x));
+		[
+			0.004771345, 0.003595309, 0.012734787, 0.009307483, 0.022579886,
+			0.149625349, 0.060481839, 0.1249958, 0.030509727, 0.141695508,
+			0.089244313, 0.106280031,
+		].forEach((x) => this.makeDelay(x));
 
-        this._taps = Int16Array.from([
-            0.008937872, 0.099929438, 0.064278754, 0.067067639, 0.066866033, 0.006283391, 0.035818689, 
-            0.011861161, 0.121870905, 0.041262054, 0.08981553 , 0.070931756, 0.011256342, 0.004065724
-        ], x => Math.round(x * sampleRate));
-    }
+		this._taps = Int16Array.from(
+			[
+				0.008937872, 0.099929438, 0.064278754, 0.067067639, 0.066866033,
+				0.006283391, 0.035818689, 0.011861161, 0.121870905, 0.041262054,
+				0.08981553, 0.070931756, 0.011256342, 0.004065724,
+			],
+			(x) => Math.round(x * sampleRate)
+		);
+	}
 
-    makeDelay(length) { 
-        // len, array, write, read
-        let len = Math.round(length * sampleRate);
-        this._Delays.push([ len, new Float32Array(len), len - 1, 0 ]);
-    }
+	makeDelay(length) {
+		// len, array, write, read, mask
+		let len = Math.round(length * sampleRate);
+		let nextPow2 = 2 ** Math.ceil(Math.log2(len));
+		this._Delays.push([
+			new Float32Array(nextPow2),
+			len - 1,
+			0 | 0,
+			nextPow2 - 1,
+		]);
+	}
 
-    writeDelay(index, data) {
-        this._Delays[index][1][this._Delays[index][2]] = data;
-    }
+	writeDelay(index, data) {
+		return (this._Delays[index][0][this._Delays[index][1]] = data);
+	}
 
-    readDelay(index) {
-        return this._Delays[index][1][this._Delays[index][3]];
-    }
+	readDelay(index) {
+		return this._Delays[index][0][this._Delays[index][2]];
+	}
 
-    readDelayAt(index, i) {
-        return this._Delays[index][1][(this._Delays[index][3] + i)%this._Delays[index][0]];
-    }
+	readDelayAt(index, i) {
+		let d = this._Delays[index];
+		return d[0][(d[2] + i) & d[3]];
+	}
 
-    // readDelayAt Linear Interpolated
-    readDelayLAt(index, i) {
-        let d = this._Delays[index];
-        let curr = d[1][(d[3] + ~~i)%d[0]];
-        return curr + (i-~~i++) * (d[1][(d[3] + ~~i)%d[0]] - curr);
-    }
+	// cubic interpolation
+	// O. Niemitalo: https://www.musicdsp.org/en/latest/Other/49-cubic-interpollation.html
+	readDelayCAt(index, i) {
+		let d = this._Delays[index],
+			frac = i - ~~i,
+			int = ~~i + d[2] - 1,
+			mask = d[3];
 
-    readPreDelay(index) {
-        return this._Delays[index][1][this._Delays[index][2]];
-    }
+		let x0 = d[0][int++ & mask],
+			x1 = d[0][int++ & mask],
+			x2 = d[0][int++ & mask],
+			x3 = d[0][int & mask];
 
-    // Only accepts one input, two channels.
-    // Spits one output, two channels.
-    process(inputs, outputs, parameters) {
-        let pd = ~~parameters.preDelay[0]                ,
-            bw = parameters.bandwidth[0]                 ,
-            fi = parameters.diffuse[0] * 0.75            , 
-            si = parameters.diffuse[0] * 0.625           ,
-            dc = parameters.decay[0]                     ,
-            ft = parameters.diffuse[0] * 0.76            ,
-            st = Math.min(Math.max(dc + 0.15, 0.25), 0.5),
-            dp = parameters.damping[0]                   ,
-            ex = parameters.excursion[0]                 ,
-            we = parameters.wet[0]            * 0.6      , // lo and ro are both multiplied by 0.6 anyways
-            dr = parameters.dry[0]                       ;
+		let a = (3 * (x1 - x2) - x0 + x3) / 2,
+			b = 2 * x2 + x0 - (5 * x1 + x3) / 2,
+			c = (x2 - x0) / 2;
 
-        let lIn		= inputs[0][0],
-            rIn		= inputs[0][1],
-            lOut	= outputs[0][0],
-            rOut	= outputs[0][1];
+		return ((a * frac + b) * frac + c) * frac + x1;
+	}
+
+	// First input will be downmixed to mono if number of channels is not 2
+	// Outputs Stereo.
+	process(inputs, outputs, parameters) {
+		const pd = ~~parameters.preDelay[0],
+			bw = parameters.bandwidth[0],
+			fi = parameters.inputDiffusion1[0],
+			si = parameters.inputDiffusion2[0],
+			dc = parameters.decay[0],
+			ft = parameters.decayDiffusion1[0],
+			st = parameters.decayDiffusion2[0],
+			dp = 1 - parameters.damping[0],
+			ex = parameters.excursionRate[0] / sampleRate,
+			ed = (parameters.excursionDepth[0] * sampleRate) / 1000,
+			we = parameters.wet[0] * 0.6, // lo & ro both mult. by 0.6 anyways
+			dr = parameters.dry[0];
 
 		// write to predelay and dry output
 		if (inputs[0].length == 2) {
@@ -140,91 +132,102 @@ class UXFDReverb extends AudioWorkletProcessor {
 			this._preDelay.set(new Float32Array(128), this._pDWrite);
 		}
 
+		let i = 0 | 0;
+		while (i < 128) {
+			let lo = 0.0,
+				ro = 0.0;
 
-        // write to predelay
-        if (inputs[0].length != 0) {
-            this._preDelay.set(inputs[0][0], this._pDWrite);
-		} else {
-			this._preDelay.fill(0, this._pDWrite, this._pDWrite + 128);
+			this._lp1 +=
+				bw *
+				(this._preDelay[
+					(this._pDLength + this._pDWrite - pd + i) % this._pDLength
+				] -
+					this._lp1);
+
+			// pre-tank
+			let pre = this.writeDelay(0, this._lp1 - fi * this.readDelay(0));
+			pre = this.writeDelay(
+				1,
+				fi * (pre - this.readDelay(1)) + this.readDelay(0)
+			);
+			pre = this.writeDelay(
+				2,
+				fi * pre + this.readDelay(1) - si * this.readDelay(2)
+			);
+			pre = this.writeDelay(
+				3,
+				si * (pre - this.readDelay(3)) + this.readDelay(2)
+			);
+
+			let split = si * pre + this.readDelay(3);
+
+			// excursions
+			// could be optimized?
+			let exc = ed * (1 + Math.cos(this._excPhase * 6.28));
+			let exc2 = ed * (1 + Math.sin(this._excPhase * 6.2847));
+
+			// left loop
+			let temp = this.writeDelay(
+				4,
+				split + dc * this.readDelay(11) + ft * this.readDelayCAt(4, exc)
+			); // tank diffuse 1
+			this.writeDelay(5, this.readDelayCAt(4, exc) - ft * temp); // long delay 1
+			this._lp2 += dp * (this.readDelay(5) - this._lp2); // damp 1
+			temp = this.writeDelay(6, dc * this._lp2 - st * this.readDelay(6)); // tank diffuse 2
+			this.writeDelay(7, this.readDelay(6) + st * temp); // long delay 2
+			// right loop
+			temp = this.writeDelay(
+				8,
+				split + dc * this.readDelay(7) + ft * this.readDelayCAt(8, exc2)
+			); // tank diffuse 3
+			this.writeDelay(9, this.readDelayCAt(8, exc2) - ft * temp); // long delay 3
+			this._lp3 += dp * (this.readDelay(9) - this._lp3); // damp 2
+			temp = this.writeDelay(
+				10,
+				dc * this._lp3 - st * this.readDelay(10)
+			); // tank diffuse 4
+			this.writeDelay(11, this.readDelay(10) + st * temp); // long delay 4
+
+			lo =
+				this.readDelayAt(9, this._taps[0]) +
+				this.readDelayAt(9, this._taps[1]) -
+				this.readDelayAt(10, this._taps[2]) +
+				this.readDelayAt(11, this._taps[3]) -
+				this.readDelayAt(5, this._taps[4]) -
+				this.readDelayAt(6, this._taps[5]) -
+				this.readDelayAt(7, this._taps[6]);
+
+			ro =
+				this.readDelayAt(5, this._taps[7]) +
+				this.readDelayAt(5, this._taps[8]) -
+				this.readDelayAt(6, this._taps[9]) +
+				this.readDelayAt(7, this._taps[10]) -
+				this.readDelayAt(9, this._taps[11]) -
+				this.readDelayAt(10, this._taps[12]) -
+				this.readDelayAt(11, this._taps[13]);
+
+			outputs[0][0][i] += lo * we;
+			outputs[0][1][i] += ro * we;
+
+			this._excPhase += ex;
+
+			i++;
+
+			for (
+				let j = 0, d = this._Delays[0];
+				j < this._Delays.length;
+				d = this._Delays[++j]
+			) {
+				d[1] = (d[1] + 1) & d[3];
+				d[2] = (d[2] + 1) & d[3];
+			}
 		}
-        // this._preDelay.set(Float32Array.from(inputs[0][0], (n, i) => (n + inputs[0][1][i]) * 0.5), this._pDWrite);
 
-        let i = 0;
-        while (i < 128) {
-            let lo = 0.0,
-                ro = 0.0;
+		// Update preDelay index
+		this._pDWrite = (this._pDWrite + 128) % this._pDLength;
 
-            this._lp1 = this._preDelay[(this._pDLength + this._pDWrite - pd + i)%this._pDLength] * bw + (1 - bw) * this._lp1;
-
-            // Please note: The groupings and formatting below does not bear any useful information about 
-            //              the topology of the network. I just want orderly looking text.
-
-            // pre
-            this.writeDelay(0,                              this._lp1          - fi * this.readDelay(0) );
-            this.writeDelay(1, fi * (this.readPreDelay(0) - this.readDelay(1)) +      this.readDelay(0) );
-            this.writeDelay(2, fi *  this.readPreDelay(1) + this.readDelay(1)  - si * this.readDelay(2) );
-            this.writeDelay(3, si * (this.readPreDelay(2) - this.readDelay(3)) +      this.readDelay(2) );
-
-            let split       =  si *  this.readPreDelay(3) + this.readDelay(3);
-
-            // 1Hz (footnote 14, pp. 665)
-            let excursion   =  ex * (1 + Math.cos(currentTime*6.28)); 
-            
-            // left
-            this.writeDelay( 4, split +       dc * this.readDelay(11)             + ft * this.readDelayLAt(4, excursion) ); // tank diffuse 1
-            this.writeDelay( 5,                    this.readDelayLAt(4, excursion)- ft * this.readPreDelay(4)            ); // long delay 1
-            this._lp2        =          (1 - dp) * this.readDelay(5)              + dp * this._lp2                        ; // damp 1
-            this.writeDelay( 6,               dc * this._lp2                      - st * this.readDelay(6)               ); // tank diffuse 2
-            this.writeDelay( 7,                    this.readDelay(6)              + st * this.readPreDelay(6)            ); // long delay 2
-
-            // right
-            this.writeDelay( 8, split +       dc * this.readDelay(7)              + ft * this.readDelayLAt(8, excursion) ); // tank diffuse 3
-            this.writeDelay( 9,                    this.readDelayLAt(8, excursion)- ft * this.readPreDelay(8)            ); // long delay 3
-            this._lp3        =          (1 - dp) * this.readDelay(9)              + dp * this._lp3                        ; // damper 2
-            this.writeDelay(10,               dc * this._lp3                      - st * this.readDelay(10)              ); // tank diffuse 4
-            this.writeDelay(11,                    this.readDelay(10)             + st * this.readPreDelay(10)           ); // long delay 4
-
-            lo =  this.readDelayAt( 9, this._taps[0])
-                + this.readDelayAt( 9, this._taps[1])
-                - this.readDelayAt(10, this._taps[2])
-                + this.readDelayAt(11, this._taps[3])
-                - this.readDelayAt( 5, this._taps[4])
-                - this.readDelayAt( 6, this._taps[5])
-                - this.readDelayAt( 7, this._taps[6]);
-
-            ro =  this.readDelayAt( 5, this._taps[7])
-                + this.readDelayAt( 5, this._taps[8])
-                - this.readDelayAt( 6, this._taps[9])
-                + this.readDelayAt( 7, this._taps[10])
-                - this.readDelayAt( 9, this._taps[11])
-                - this.readDelayAt(10, this._taps[12])
-                - this.readDelayAt(11, this._taps[13]);
-
-            // write
-            lOut[i] = lo * we;
-            rOut[i] = ro * we;
-
-            if (lIn) {
-                lOut[i] += lIn[i] * dr;
-                rOut[i] += lIn[i] * dr;
-            }
-            // lOut[i] = lIn[i] * dr + lo * we;
-            // rOut[i] = rIn[i] * dr + ro * we;
-
-            i++;
-
-            for (let j = 0; j < this._Delays.length; j++) {
-                let d = this._Delays[j];
-                d[2] = (d[2] + 1) % d[0];
-                d[3] = (d[3] + 1) % d[0]; 
-            }
-        }
-
-        // Update preDelay index
-        this._pDWrite = (this._pDWrite + 128) % this._pDLength;
-
-        return true;
-    }
+		return true;
+	}
 }
 
-registerProcessor('UXFDReverb', UXFDReverb);
+registerProcessor("DattorroReverb", DattorroReverb);
