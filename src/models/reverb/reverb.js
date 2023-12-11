@@ -9,9 +9,12 @@ export default class Reverb {
         return drinkPresets.includes(effect)
     }
 
+    // TODO: remove after all users have upgraded past/to v1.20.0
+    #disconnectEffect(effect) { return effect == 'none' || !drinkPresets.includes(effect) }
+
     async setReverbEffect(effect) {
         this.#setup()
-        if (effect == 'none') return this.#disconnect()
+        if (this.#disconnectEffect(effect)) return this.#disconnect()
 
         const isDigital = this.#isDigital(effect)
         await (isDigital ? this.#createDigitalReverb(effect) : this.#createImpulseReverb(effect))
@@ -37,7 +40,7 @@ export default class Reverb {
         const modulePath = sessionStorage.getItem('reverbPath')
         await this._audioContext.audioWorklet.addModule(modulePath)
         this._reverb = this._reverb ?? new AudioWorkletNode(
-            this._audioContext, 'UXFDReverb', { channelCountMode: 'explicit', channelCount: 1, outputChannelCount: [2] }
+            this._audioContext, 'DattorroReverb', { channelCountMode: 'explicit', channelCount: 1, outputChannelCount: [2] }
         )
     }
 
@@ -63,7 +66,7 @@ export default class Reverb {
         if (effect == 'none') return this.#disconnect()
 
         try { this.#applyReverbEffectParams(effect) }
-        catch (error) { console.error({ ERROR:  error })}
+        catch (error) { console.error({ error })}
     }
 
     #applyReverbEffectParams(effect) {
