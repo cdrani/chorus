@@ -1,9 +1,9 @@
-const style = "min-width:24px;font-size:0.85rem;text-align:end;margin-left:4px"
+const style = 'width:90px;font-size:0.85rem;margin-left:8px;text-align:center;background:green;color:#fff;'
 
 const createLabel = text => `
     <div>
-        <label class="chorus-common" style="width:100%;align-items: end">
-            ${text}: <span style="${style}" id="chorus-${text}"></span>
+        <label class="chorus-common" style="width:100%;align-items:end">
+            ${text}: <input style="${style}" id="chorus-${text}"/>
         </label>
     </div>
 `

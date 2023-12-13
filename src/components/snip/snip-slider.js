@@ -1,7 +1,7 @@
 import { secondsToTime } from '../../utils/time.js'
 
 const createInput = ({ type, max, value }) =>  `
-    <input min="0" max="${max}" type="range" class="input" value="${value}" id="input-${type}">
+    <input min="0" max="${max}" step="0.01" type="range" class="input" value="${value}" id="input-${type}">
 `
 
 const createTime = ({ id, time }) => `
