@@ -1,36 +1,25 @@
 import Slider from './slider.js'
-
 import { playback } from '../../utils/playback.js'
-import { secondsToTime } from '../../utils/time.js'
+import { formatTimeInSeconds } from '../../utils/time.js'
 
 export default class SliderControls {
-    constructor() {
-        this._slider = new Slider()
-    }
+    constructor() { this._slider = new Slider() }
 
-    init() {
-        this._slider.init()
-    }
+    init() { this._slider.init() }
 
     setInitialValues(track) {
         this._slider.setInitialValues(track)
         this.#setInitialStartAndEndValues(track)
     }
 
-    get #labelElements() {
-        return {
-            labelEnd: document.getElementById('chorus-end'),
-            labelStart: document.getElementById('chorus-start'),
-        }
+    get #inputElements() {
+        return { inputStart: document.getElementById('chorus-start'), inputEnd: document.getElementById('chorus-end') }
     }
 
     #setInitialStartAndEndValues(track) {
-        const { labelStart, labelEnd } = this.#labelElements
-
-        const { startTime, endTime } = track
-
-        labelStart.textContent = secondsToTime(startTime ?? 0)
-        labelEnd.textContent = secondsToTime(endTime ?? playback.duration())
+        const { inputStart, inputEnd } = this.#inputElements
+        inputStart.value = formatTimeInSeconds(track.startTime ?? 0)
+        inputEnd.value = formatTimeInSeconds(track.endTime ?? playback.duration())
     }
 
     get #isControlsOpen() {
@@ -43,12 +32,9 @@ export default class SliderControls {
     updateControls(track) {
         if (!this.#isControlsOpen) return
 
-        const { startTime, endTime } = track
-
-        const current = playback.current()
-        const duration = playback.duration()
-
-        this._slider.updateSliderLeftHalf(startTime ?? current)
-        this._slider.updateSliderRightHalf(endTime ?? duration)
+        const startValue =  track.startTime ?? playback.current()
+        const endValue = track.endTime ?? playback.duration()
+        this._slider.updateSliderLeftHalf(startValue)
+        this._slider.updateSliderRightHalf(endValue)
     }
 }

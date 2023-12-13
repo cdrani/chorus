@@ -1,11 +1,12 @@
 import { spotifyVideo } from '../../actions/overload.js'
 
 import { playback } from '../../utils/playback.js'
-import { secondsToTime } from '../../utils/time.js'
 import { currentSongInfo } from '../../utils/song.js'
+import { formatTimeInSeconds, secondsToTime, timeToMilliseconds, timeToSeconds } from '../../utils/time.js'
 
 export default class Slider {
     constructor() {
+        this._delay = 250
         this._leftDebouncer = null
         this._rightDebouncer = null
         this._isCurrentlyPlaying = true
@@ -18,10 +19,13 @@ export default class Slider {
     }
 
     #setUpEvents() {
-        const { inputLeft, inputRight, thumbLeft, thumbRight } = this.#elements
+        const { inputLeft, inputRight, thumbLeft, thumbRight, outputLeft, outputRight } = this.#elements
 
-        inputLeft.oninput = () => this.#setLeftValue()
-        inputRight.oninput = () => this.#setRightValue()
+        inputLeft.oninput = () => { this.#setLeftValue(); this.#toggleOutputOutline(true) }
+        inputRight.oninput = () => { this.#setRightValue(); this.#toggleOutputOutline(false) }
+    
+        outputLeft.onchange = (e) => this.#handleInput(e)
+        outputRight.onchange = (e) => this.#handleInput(e)
 
         inputLeft.addEventListener('mouseover', () => thumbLeft.classList.add('hover'))
         inputLeft.addEventListener('mouseout', () => thumbLeft.classList.remove('hover'))
@@ -34,18 +38,28 @@ export default class Slider {
         inputRight.addEventListener('mouseup', () => thumbRight.classList.remove('active'))
     }
 
+    #toggleOutputOutline(outlineLeft) {
+        this.#elements.outputLeft.style.outline = outlineLeft  ? 'solid 1px #fff' : ''
+        this.#elements.outputRight.style.outline = outlineLeft  ? '' : 'solid 1px #fff'
+    }
+
     setInitialValues(track) {
         this._isCurrentlyPlaying = !track?.id ? true : track.id == currentSongInfo().id
 
         const { endTime, startTime } = track
-        const { endDisplay } = this.#elements
+        const { endDisplay, outputLeft, outputRight } = this.#elements
         const duration = track?.duration ?? playback.duration()
 
         endDisplay.textContent = secondsToTime(duration)
         this.#setMaxMin(duration)
 
-        this.updateSliderLeftHalf(startTime ?? 0)
-        this.updateSliderRightHalf(endTime ?? duration)
+        const startValue = startTime ?? 0
+        this.updateSliderLeftHalf(startValue)
+        outputLeft.value = formatTimeInSeconds(startTime)
+
+        const endValue = endTime ?? duration
+        this.updateSliderRightHalf(endValue)
+        outputRight.value = formatTimeInSeconds(endTime)
     }
 
     #setMaxMin(duration) {
@@ -70,61 +84,78 @@ export default class Slider {
     #setLeftValue() {
         if (this._leftDebouncer) clearTimeout(this._leftDebouncer)
 
+        const { inputLeft } = this.#elements
+        const currentValue = parseFloat(inputLeft.value)
+        this.updateSliderLeftHalf(currentValue)
+        this._video.element.setAttribute('lastSetThumb', 'start')
+
         this._leftDebouncer = setTimeout(() => {
-            const { inputLeft } = this.#elements
-            const currentValue = parseInt(inputLeft.value)
-
-            this.updateSliderLeftHalf(currentValue)
-
-            if (this._isCurrentlyPlaying) this._video.currentTime = inputLeft.value
-
-            this._video.element.setAttribute('lastSetThumb', 'start')
-        }, 50)
+            this._isCurrentlyPlaying && (this._video.currentTime = inputLeft.value)
+        }, this._delay)
     }
 
     #setRightValue() {
         if (this._rightDebouncer) clearTimeout(this._rightDebouncer)
 
+        const { inputRight } = this.#elements
+        const currentValue = parseFloat(inputRight.value)
+        this.updateSliderRightHalf(currentValue)
+        this._video.element.setAttribute('lastSetThumb', 'end')
+
         this._rightDebouncer = setTimeout(() => {
-            const { inputRight } = this.#elements
-            const currentValue = parseInt(inputRight.value)
+            this._isCurrentlyPlaying && (this._video.currentTime = inputRight.value)
+        }, this._delay)
+    }
 
-            this.updateSliderRightHalf(currentValue)
+    #validateInput(timeString, maxValue) {
+        const regex = /^(\d{2}):(\d{2}):(\d{2}):(\d{2})$/
+        const match = timeString.match(regex)
 
-            if (this._isCurrentlyPlaying) this._video.currentTime = inputRight.value
+        if (!match) return false
 
-            this._video.element.setAttribute('lastSetThumb', 'end')
-        }, 50)
+        const [, hours, mins, secs, ms ] = match
+        const [ maxH, maxM, maxS, maxMS ] = maxValue.split(":").map(Number)
+
+        const totalMilliseconds = timeToMilliseconds({ hours, mins, secs, ms })
+        const maxTotalMilliseconds = timeToMilliseconds({ hours: maxH, mins: maxM, secs: maxS, ms: maxMS  })
+
+        if (totalMilliseconds < 0 || totalMilliseconds > maxTotalMilliseconds) return false
+
+        return true
+    }
+
+    #handleInput({ target: { id, value }}) {
+        const updateLeft = this.#elements.inputLeft.id.includes(id?.split('-')?.at(-1)) 
+        const lastSetThumb = id.includes('start')  ? 'start' : 'end'
+
+        const isValid = this.#validateInput(value, formatTimeInSeconds(playback.duration()))
+        const inputElement = updateLeft ? this.#elements.inputLeft : this.#elements.inputRight
+        const valueInSeconds = isValid ? timeToSeconds(value) : inputElement.value
+
+        this._video.element.setAttribute('lastSetThumb', lastSetThumb)
+        updateLeft ? this.updateSliderLeftHalf(valueInSeconds) : this.updateSliderRightHalf(valueInSeconds)
+
+        this.#toggleOutputOutline(updateLeft)
+        if (this._isCurrentlyPlaying) this._video.currentTime = valueInSeconds
     }
 
     updateSliderLeftHalf(currentValue) {
         const { inputLeft, inputRight, range, thumbLeft, outputLeft } = this.#elements
-
-        inputLeft.value = Math.min(
-            parseInt(currentValue ?? inputLeft.value),
-            parseInt(inputRight.value) - 1
-        )
+        inputLeft.value = Math.min(parseFloat(currentValue ?? inputLeft.value), parseFloat(inputRight.value) - 1)
 
         const percent = ((inputLeft.value - inputLeft.min) / (inputLeft.max - inputLeft.min)) * 100
-
         thumbLeft.style.left = `${percent}%`
         range.style.left = `${percent}%`
-        outputLeft.textContent = secondsToTime(inputLeft.value)
+        outputLeft.value = formatTimeInSeconds(inputLeft.value)
     }
 
     updateSliderRightHalf(currentValue) {
         const { inputLeft, inputRight, thumbRight, range, outputRight } = this.#elements
+        inputRight.value = Math.max(parseFloat(currentValue ?? inputRight.value), parseFloat(inputLeft.value))
 
-        inputRight.value = Math.max(
-            parseInt(currentValue ?? inputRight.value),
-            parseInt(inputLeft.value)
-        )
-
-        const percent =
-            ((inputRight.value - inputRight.min) / (inputRight.max - inputRight.min)) * 100
-
+        const percent = ((inputRight.value - inputRight.min) / (inputRight.max - inputRight.min)) * 100
         thumbRight.style.right = `${100 - percent}%`
         range.style.right = `${100 - percent}%`
-        outputRight.textContent = secondsToTime(inputRight.value)
+        outputRight.value = formatTimeInSeconds(inputRight.value)
     }
 }
