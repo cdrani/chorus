@@ -56,7 +56,7 @@ export default class Snip {
         const pitch = preservesPitch ? 1 : 0
         const rate = parseFloat(playbackRate) * 1000
 
-        const { tempEndTime = startTime, tempStartTime = endTime } = this.tempShareTimes
+        const { tempEndTime = endTime, tempStartTime = startTime } = this.tempShareTimes
         
         const shareURL = `${this.trackURL}?ch=${tempStartTime}-${tempEndTime}-${rate}-${pitch}`
         copyToClipBoard(shareURL)
