@@ -6,7 +6,7 @@ export const createTextButton = ({ id, text, style }) => {
         <button
             id="chorus-${id}-button"
             class="chorus-text-button ${btnTypeClass ?? ''}"
-            style="padding:0 10px;height:100%;font-size:1rem;${style || ''}"
+            style="display:flex;justify-content:center;align-items:center;padding:0 10px;height:100%;font-size:1rem;${style || ''}"
         >
             <span>${text}</span>
         </button>
