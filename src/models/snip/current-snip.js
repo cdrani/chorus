@@ -28,27 +28,16 @@ export default class CurrentSnip extends Snip {
         super._setTrackInfo({ title, artists })
     }
 
-    get _defaultTrack() {
-        return currentData.readTrack()
-    }
+    get _defaultTrack() { return currentData.readTrack() }
 
-    updateView() {
-        super._updateView()
-    }
+    updateView() { super._updateView() }
 
-    get trackURL() {
-        const { url } = currentSongInfo()
-        return url
-    }
+    get trackURL() { return currentSongInfo().url }
 
-    share() {
-        super._share()
-    }
+    share() { super._share() }
 
     skipTrackOnSave({ isSkipped }) {
-        if (isSkipped) {
-            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
-        }
+        isSkipped && document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
     }
 
     setCurrentTime({ prevEndTime, endTime }) {

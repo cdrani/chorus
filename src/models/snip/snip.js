@@ -15,18 +15,14 @@ export default class Snip {
         this._controls = new SliderControls()
     }
 
-    init() {
-        this._controls.init()
-    }
+    init() { this._controls.init() }
 
     async read() {
         const track = await currentData.readTrack()
         return track
     }
 
-    reset() {
-        this._controls.setInitialValues()
-    }
+    reset() { this._controls.setInitialValues() }
 
     async _delete() {
         await this._store.deleteTrack(this._defaultTrack)
@@ -45,10 +41,7 @@ export default class Snip {
         const tempEndTime = document.getElementById('chorus-end')?.textContent
         const tempStartTime = document.getElementById('chorus-start')?.textContent
 
-        return {
-            tempEndTime: timeToSeconds(tempEndTime),
-            tempStartTime: timeToSeconds(tempStartTime),
-        }
+        return { tempEndTime: timeToSeconds(tempEndTime), tempStartTime: timeToSeconds(tempStartTime) }
     }
 
     async _share() {
@@ -66,14 +59,12 @@ export default class Snip {
 
     #toggleRemoveButton(showRemove) {
         const removeButton = document.getElementById('chorus-snip-remove-button')
-
         if (!removeButton) return
+
         removeButton.style.display = showRemove ? 'block' : 'none'
     }
 
-    #setUpdateControls(response) {
-        this._controls.updateControls(response)
-    }
+    #setUpdateControls(response) { this._controls.updateControls(response) }
 
     get _elements() {
         return {
@@ -84,11 +75,7 @@ export default class Snip {
         }
     }
 
-    displayAlert() {
-        this._alert.displayAlert()
-    }
+    displayAlert() { this._alert.displayAlert() }
 
-    _setTrackInfo({ title, artists }) {
-        setTrackInfo({ title, artists, chorusView: true })
-    }
+    _setTrackInfo({ title, artists }) { setTrackInfo({ title, artists, chorusView: true }) }
 }
