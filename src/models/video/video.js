@@ -4,7 +4,6 @@ export default class VideoElement {
     constructor({ video, reverb }) {
         this._video = video
         this._reverb = reverb
-        this._isEditing = false
         this._video.crossOrigin = 'anonymous'
         this._videoOverride = new VideoOverride(this)
     }
@@ -19,14 +18,17 @@ export default class VideoElement {
 
     get active() { return this._active }
 
-    get isEditing() { return this._isEditing }
-
-    set isEditing(editing) { this._isEditing = editing }
-
     reset() {
         this.clearCurrentSpeed()
+        this.resetTempTimes()
         this.playbackRate = 1
         this.preservesPitch = true
+    }
+
+    resetTempTimes() {
+        this._video.removeAttribute('endTime')
+        this._video.removeAttribute('startTime')
+        this._video.removeAttribute('lastSetThumb')
     }
 
     get element() { return this._video }

@@ -16,6 +16,6 @@ export default class Listeners {
     _hide() {
         const mainElement = document.getElementById('chorus-main')
         mainElement.style.display = 'none'
-        this._video.isEditing = false
+        this._video.resetTempTimes()
     }
 }

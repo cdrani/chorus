@@ -13,10 +13,7 @@ export default class Slider {
         this._video = spotifyVideo.element
     }
 
-    init() {
-        this.#setUpEvents()
-        this._video.element.setAttribute('lastSetThumb', '')
-    }
+    init() { this.#setUpEvents() }
 
     #setUpEvents() {
         const { inputLeft, inputRight, thumbLeft, thumbRight, outputLeft, outputRight } = this.#elements
@@ -84,26 +81,29 @@ export default class Slider {
     #setLeftValue() {
         if (this._leftDebouncer) clearTimeout(this._leftDebouncer)
 
-        const { inputLeft } = this.#elements
-        const currentValue = parseFloat(inputLeft.value)
+        const currentValue = parseFloat(this.#elements.inputLeft.value)
         this.updateSliderLeftHalf(currentValue)
-        this._video.element.setAttribute('lastSetThumb', 'start')
 
-        this._leftDebouncer = setTimeout(() => {
-            this._isCurrentlyPlaying && (this._video.currentTime = inputLeft.value)
+        this._leftDebouncer = setTimeout(() => { 
+              this.#setCurrentTimePosition({ attribute: 'startTime', position: currentValue })
         }, this._delay)
+    }
+
+    #setCurrentTimePosition({ attribute, position }) {
+        this._isCurrentlyPlaying && (this._video.currentTime = position)
+
+        this._video.element.setAttribute(attribute, position)
+        this._video.element.setAttribute('lastSetThumb', attribute.startsWith('start') ? 'start' : 'end')
     }
 
     #setRightValue() {
         if (this._rightDebouncer) clearTimeout(this._rightDebouncer)
 
-        const { inputRight } = this.#elements
-        const currentValue = parseFloat(inputRight.value)
+        const currentValue = parseFloat(this.#elements.inputRight.value)
         this.updateSliderRightHalf(currentValue)
-        this._video.element.setAttribute('lastSetThumb', 'end')
 
         this._rightDebouncer = setTimeout(() => {
-            this._isCurrentlyPlaying && (this._video.currentTime = inputRight.value)
+            this.#setCurrentTimePosition({ attribute: 'endTime', position: currentValue })
         }, this._delay)
     }
 
@@ -136,7 +136,9 @@ export default class Slider {
         updateLeft ? this.updateSliderLeftHalf(valueInSeconds) : this.updateSliderRightHalf(valueInSeconds)
 
         this.#toggleOutputOutline(updateLeft)
-        if (this._isCurrentlyPlaying) this._video.currentTime = valueInSeconds
+
+        const attribute = updateLeft ? 'startTime' : 'endTime'
+        this.#setCurrentTimePosition({ attribute, position: valueInSeconds })
     }
 
     updateSliderLeftHalf(currentValue) {
