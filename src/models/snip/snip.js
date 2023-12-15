@@ -38,8 +38,8 @@ export default class Snip {
     }
 
     get tempShareTimes() {
-        const tempEndTime = document.getElementById('chorus-end')?.textContent
-        const tempStartTime = document.getElementById('chorus-start')?.textContent
+        const tempEndTime = document.getElementById('chorus-end')?.value
+        const tempStartTime = document.getElementById('chorus-start')?.value
 
         return { tempEndTime: timeToSeconds(tempEndTime), tempStartTime: timeToSeconds(tempStartTime) }
     }
@@ -50,7 +50,6 @@ export default class Snip {
         const rate = parseFloat(playbackRate) * 1000
 
         const { tempEndTime = endTime, tempStartTime = startTime } = this.tempShareTimes
-        
         const shareURL = `${this.trackURL}?ch=${tempStartTime}-${tempEndTime}-${rate}-${pitch}`
         copyToClipBoard(shareURL)
 
