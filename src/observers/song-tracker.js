@@ -123,9 +123,9 @@ export default class SongTracker {
         if (isSkipped) {
             return this.#nextButton.click()
         } else if (isSnip) {
-            const parsedStartTime = parseInt(startTime, 10) * 1000
+            const parsedStartTime = parseFloat(startTime) * 1000
             const currentPosition = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
-            const currentPositionTime = parseInt(currentPosition, 10) * 1000
+            const currentPositionTime = parseFloat(currentPosition, 10) * 1000
 
             if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
                 await this.#dispatchSeekToPosition(parsedStartTime)
@@ -140,24 +140,48 @@ export default class SongTracker {
 
     get #playbackPosition() { return document.querySelector('[data-testid="playback-position"]') }
 
+    #handleEditingSnipMode(startTime) {
+        const { tempStartTime } = this.#tempVideoAttributes
+        this._video.currentTime = parseFloat(tempStartTime ?? startTime)
+    }
+
+    get #tempVideoAttributes() {
+        return {
+            tempEndTime: this._video.element.getAttribute('endTime'),
+            tempStartTime: this._video.element.getAttribute('startTime'),
+            lastSetThumb: this._video.element.getAttribute('lastSetThumb'),
+        }
+    }
+
+    #atTempSongEnd(currentTimeMS) {
+        const { tempEndTime, lastSetThumb } = this.#tempVideoAttributes
+        if (!tempEndTime) return false
+
+        const tempEndTimeMS = parseFloat(tempEndTime) * 1000
+        const loopEndTime = lastSetThumb == 'start' ? tempEndTimeMS : tempEndTimeMS
+
+        return !Number.isNaN(tempEndTimeMS) && currentTimeMS > Math.min(loopEndTime, playback.duration() * 1000)
+    }
+
+    #atSnipSongEnd(endTime) {
+        const isSongEnd = endTime == playback.duration()
+        const endTimeMS = parseFloat(endTime, 10) * 1000 - (isSongEnd ? 100 : 0)
+        return currentTimeMS >= endTimeMS
+    }
+
     #handleTimeUpdate = async () => {
         if (this.#isPlaying && this.#isFirefox && !this._reverbSet) await this.#setReverb()
 
-        if (this._video.isEditing) return
         if (!this._currentSongState) return
 
-        setTimeout(async () => {
+        setTimeout(() => {
             const { isShared, startTime, endTime } = this._currentSongState
-            const currentTimeMS = parseInt(this._video.currentTime * 1000, 10)
+            const currentTimeMS = parseFloat(this._video.currentTime * 1000, 10)
 
-            const isSongEnd = endTime == playback.duration()
-            const endTimeMS = parseInt(endTime, 10) * 1000 - (isSongEnd ? 100 : 0)
-            const atSongEnd = currentTimeMS >= endTimeMS
-            if (!atSongEnd) return
+            if (this.#atTempSongEnd(currentTimeMS)) return this.#handleEditingSnipMode(startTime)
+            if (!this.#atSnipSongEnd({ currentTimeMS, endTime })) return
 
-            if (this.#isLooping || isShared) {
-                return (this._video.currentTime = startTime)
-            }
+            if (isShared) return (this._video.currentTime = startTime)
 
             if (isShared && location?.search) history.pushState(null, '', location.pathname)
             this.#nextButton.click()
