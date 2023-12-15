@@ -40,13 +40,6 @@ export default class CurrentSnip extends Snip {
         isSkipped && document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
     }
 
-    setCurrentTime({ prevEndTime, endTime }) {
-        const lastSetThumb = this._video.element.getAttribute('lastSetThumb')
-
-        if (lastSetThumb !== 'end') return
-        this._video.currentTime = Math.max(Math.min(prevEndTime, endTime) - 5, 1)
-    }
-
     async delete() {
         const track = await this.read()
         const updatedValues = await this._store.saveTrack({ 
@@ -59,7 +52,7 @@ export default class CurrentSnip extends Snip {
     async save() {
         const track = await this.read()
         const { inputLeft, inputRight, title, artists } = this._elements
-        const { id, isSkipped, endTime: prevEndTime } = track
+        const { id, isSkipped } = track
 
         const trackId = id ?? `${title.textContent} by ${artists.textContent}`
         const result = await this._store.saveTrack({
@@ -74,9 +67,9 @@ export default class CurrentSnip extends Snip {
             },
         })
 
+        this._video.resetTempTimes()
         this.updateView()
         this.skipTrackOnSave(result)
-        this.setCurrentTime({ prevEndTime, endTime: result.endTime })
 
         await this._songTracker.updateCurrentSongData(result)
     }
