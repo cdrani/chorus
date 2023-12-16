@@ -15,27 +15,20 @@ class DataStore {
     }
 
     async populate() {
-        const response = await this.#dispatcher.sendEvent({
-            eventType: 'storage.populate',
-            detail: {},
-        })
+        const response = await this.#dispatcher.sendEvent({ eventType: 'storage.populate', detail: {} })
 
         Object.keys(response).forEach(key => {
             const value = response[key]
 
             if (!DO_NOT_INCLUDE.includes(key) && !value.hasOwnProperty('isSkipped')) {
-                const endTime = value?.endTime
-                value.isSkipped = endTime == 0
+                value.isSkipped = value?.endTime == 0
             }
 
             this.#cache.update({ key, value: typeof value !== 'string' ? JSON.stringify(value) : value })
         })
     }
 
-    getTrack({ id, value = {}}) {
-        const cacheValue = this.#cache.getValue({ key: id, value })
-        return cacheValue
-    }
+    getTrack({ id, value = {}}) { return this.#cache.getValue({ key: id, value }) }
 
     async setNowPlaying(track) {
         const { id, cover } = currentSongInfo() 
@@ -57,17 +50,10 @@ class DataStore {
         return true
     }
 
-    getReverb() {
-        const cacheValue = this.#cache.getValue({ key: 'reverb', value: 'none' })
-        return cacheValue
-    }
+    getReverb() { return this.#cache.getValue({ key: 'reverb', value: 'none' }) }
 
     async saveReverb(effect) {
-        await this.#dispatcher.sendEvent({
-            eventType: 'storage.set',
-            detail: { key: 'reverb', values: effect },
-        })
-
+        await this.#dispatcher.sendEvent({ eventType: 'storage.set', detail: { key: 'reverb', values: effect } })
         this.#cache.update({ key: 'reverb', value: effect })
         return this.#cache.getKey(id)
     }
@@ -79,10 +65,7 @@ class DataStore {
         if (isTrack && this.#shouldDeleteTrack(value)) {
             await this.deleteTrack(id)
         } else {
-            response = await this.#dispatcher.sendEvent({
-                eventType: 'storage.set',
-                detail: { key: id, values: value },
-            })
+            response = await this.#dispatcher.sendEvent({ eventType: 'storage.set', detail: { key: id, values: value } })
         }
 
         this.#cache.update({ key: id, value: response ?? value })
@@ -90,10 +73,8 @@ class DataStore {
     }
 
     async deleteTrack(id) {
-        await this.#dispatcher.sendEvent({
-            eventType: 'storage.delete',
-            detail: { key: id },
-        })
+        await this.#dispatcher.sendEvent({ eventType: 'storage.delete', detail: { key: id } })
+        this.#cache.removeKey(id)
     }
 }
 
