@@ -28,6 +28,7 @@ class CurrentData {
             ...currentSongInfo(),
             startTime: 0,
             isSnip: false,
+            autoLoop: false,
             isSkipped: false,
             endTime: playback.duration()
         }
