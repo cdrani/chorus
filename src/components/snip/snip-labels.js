@@ -9,7 +9,7 @@ const createLabel = text => `
 `
 
 export const createRangeLabels = () => `
-    <div style="display:flex;justify-content:space-between;height:3rem;align-items:center;">
+    <div style="display:flex;flex-direction:column;justify-content:space-between;">
         ${createLabel('start')}
         ${createLabel('end')}
     </div>
