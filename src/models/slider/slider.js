@@ -16,11 +16,13 @@ export default class Slider {
     init() { this.#setUpEvents() }
 
     #setUpEvents() {
-        const { inputLeft, inputRight, thumbLeft, thumbRight, outputLeft, outputRight } = this.#elements
+        const { inputLeft, inputRight, loopToggleButton, thumbLeft, thumbRight, outputLeft, outputRight } = this.#elements
 
         inputLeft.oninput = () => { this.#setLeftValue(); this.#toggleOutputOutline(true) }
         inputRight.oninput = () => { this.#setRightValue(); this.#toggleOutputOutline(false) }
-    
+
+        loopToggleButton.onclick = () => this.#toggleLoopCheckbox()
+
         outputLeft.onchange = (e) => this.#handleInput(e)
         outputRight.onchange = (e) => this.#handleInput(e)
 
@@ -35,16 +37,34 @@ export default class Slider {
         inputRight.addEventListener('mouseup', () => thumbRight.classList.remove('active'))
     }
 
+    #toggleLoopCheckbox() {
+        const loopCheckBox = this.#elements.loopCheckBox
+        loopCheckBox.checked = !loopCheckBox.checked
+        this.#setCheckedUI(loopCheckBox.checked)
+    }
+
+    #setCheckedUI(loop) {
+        const { loopToggleOn, loopToggleOff } = this.#elements
+
+        loopToggleOn.style.display = loop ? 'block' : 'none'
+        loopToggleOff.style.display = loop ? 'none' : 'block'
+    }
+
     #toggleOutputOutline(outlineLeft) {
-        this.#elements.outputLeft.style.outline = outlineLeft  ? 'solid 1px #fff' : ''
-        this.#elements.outputRight.style.outline = outlineLeft  ? '' : 'solid 1px #fff'
+        const { outputLeft, outputRight } = this.#elements
+
+        outputLeft.style.outline = outlineLeft  ? 'solid 1px #fff' : ''
+        outputRight.style.outline = outlineLeft  ? '' : 'solid 1px #fff'
+
+        if (outlineLeft) { outputLeft.focus(); outputRight.blur() }
+        if (!outlineLeft) { outputLeft.blur(); outputRight.focus() }
     }
 
     setInitialValues(track) {
         this._isCurrentlyPlaying = !track?.id ? true : track.id == currentSongInfo().id
 
-        const { endTime, startTime } = track
-        const { endDisplay, outputLeft, outputRight } = this.#elements
+        const { endTime, startTime, autoLoop = false } = track
+        const { endDisplay, outputLeft, outputRight, loopCheckBox } = this.#elements
         const duration = track?.duration ?? playback.duration()
 
         endDisplay.textContent = secondsToTime(duration)
@@ -57,6 +77,9 @@ export default class Slider {
         const endValue = endTime ?? duration
         this.updateSliderRightHalf(endValue)
         outputRight.value = formatTimeInSeconds(endTime)
+
+        loopCheckBox.checked = autoLoop
+        this.#setCheckedUI(autoLoop)
     }
 
     #setMaxMin(duration) {
@@ -70,11 +93,17 @@ export default class Slider {
             endDisplay: document.getElementById('end'),
             outputRight: document.getElementById('chorus-end'),
             outputLeft: document.getElementById('chorus-start'),
+
             inputLeft: document.getElementById('input-start'),
             inputRight: document.getElementById('input-end'),
             range: document.querySelector('.slider > .range'),
             thumbLeft: document.querySelector('.slider > .thumb.left'),
             thumbRight: document.querySelector('.slider > .thumb.right'),
+
+            loopCheckBox: document.getElementById('loop-checkbox'),
+            loopToggleOn: document.getElementById('loop-toggle-on'),
+            loopToggleOff: document.getElementById('loop-toggle-off'),
+            loopToggleButton: document.getElementById('loop-toggle-button')
         }
     }
 
