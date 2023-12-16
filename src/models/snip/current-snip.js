@@ -51,7 +51,7 @@ export default class CurrentSnip extends Snip {
 
     async save() {
         const track = await this.read()
-        const { inputLeft, inputRight, title, artists } = this._elements
+        const { loopCheckBox, inputLeft, inputRight, title, artists } = this._elements
         const { id, isSkipped } = track
 
         const trackId = id ?? `${title.textContent} by ${artists.textContent}`
@@ -63,6 +63,7 @@ export default class CurrentSnip extends Snip {
                 isSnip: true,
                 startTime: inputLeft.value,
                 endTime: inputRight.value,
+                autoLoop: loopCheckBox.checked,
                 isSkipped: inputRight.value == 0 || isSkipped,
             },
         })

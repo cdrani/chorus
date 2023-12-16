@@ -71,6 +71,7 @@ export default class Snip {
             artists: document.getElementById('track-artists'),
             inputRight: document.getElementById('input-end'),
             inputLeft: document.getElementById('input-start'),
+            loopCheckBox: document.getElementById('loop-checkbox'),
         }
     }
 
