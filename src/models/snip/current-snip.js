@@ -4,6 +4,7 @@ import { spotifyVideo } from '../../actions/overload.js'
 
 import { playback } from '../../utils/playback.js'
 import { currentSongInfo } from '../../utils/song.js'
+import { highlightLoopIcon } from '../../utils/higlight.js'
 
 export default class CurrentSnip extends Snip {
     constructor(songTracker) {
@@ -70,6 +71,7 @@ export default class CurrentSnip extends Snip {
 
         this._video.resetTempTimes()
         this.updateView()
+        highlightLoopIcon(result?.autoLoop ?? false)
         this.skipTrackOnSave(result)
 
         await this._songTracker.updateCurrentSongData(result)
