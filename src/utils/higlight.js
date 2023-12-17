@@ -24,3 +24,11 @@ export const highlightElement = ({
         element.style[property] = fillColor
     }, 250)
 }
+
+export const highlightLoopIcon = highlight => {
+    const group = document.getElementById('loop-group')
+    if (!group) return
+
+    group.style.stroke = highlight ? '#1ed760' : 'currentColor'
+}
+
