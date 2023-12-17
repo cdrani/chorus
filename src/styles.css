@@ -56,15 +56,15 @@
     width: 320px;
 }
 
+button {
+    cursor: pointer !important;
+}
+
 #chorus {
     button, input {
         border-width: 0 !important;
         border-style: solid !important;
         border-color: #e5e7eb;
-    }
-
-    button {
-        cursor: pointer !important;
     }
 }
 
