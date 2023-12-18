@@ -34,7 +34,7 @@
 .chorus-header {
     color: #f0f0f0;
     font-weight: 600;
-    line-height: 1;
+    font-size: 20px;
 }
 
 #chorus-main {
@@ -54,6 +54,7 @@
     bottom: 80px;
     background-color: #171717;
     width: 320px;
+    height: 246px;
 }
 
 button {
@@ -61,11 +62,13 @@ button {
 }
 
 #chorus {
-    button, input {
+    button {
         border-width: 0 !important;
         border-style: solid !important;
         border-color: #e5e7eb;
     }
+
+    input { border: none }
 }
 
 .success {
@@ -125,7 +128,7 @@ button {
 .chorus-text {
     color: #fff;
     font-weight: 600;
-    font-size: .75rem;
+    font-size: .85rem;
 }
 
 .chorus-pill {
@@ -293,7 +296,7 @@ input[type=number]::-webkit-outer-spin-button {
 .snippy {
     display: flex;
     height: 1.5rem;
-    margin: 12px 0;
+    margin: 8px 0;
     justify-content: space-between;
     align-items: center;
 }
@@ -382,7 +385,8 @@ hr {
 }
 
 .track-text {
-    font-size: 16px;
+    padding: 0;
+    font-size: 14px;
     font-weight: 500;
 }
 

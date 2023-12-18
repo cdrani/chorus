@@ -11,7 +11,10 @@ export const createSnipControls = () => {
 
     return `
         <div id="chorus-snip-controls" style="display: block">
-            ${createSlider({ current, duration })}
+            ${createSlider({ current, duration, style: "margin:6px 0" })}
+            <p style="font-size:.75rem;color:#fff;padding:0;margin-top:-8px;padding-bottom:.5rem">
+                *while editing 'end', track plays 3 secs past set 'end'
+            </p>
             <div style="display:flex;justify-content:space-between;height:3rem;">
                 ${createRangeLabels()}
                 ${createSnipToggler()}

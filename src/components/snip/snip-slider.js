@@ -8,8 +8,8 @@ const createTime = ({ id, time }) => `
     <p class="time${id == 'end' ? ' end' : ''}"><span id="${id}">${time}</span></p>
 `
 
-export const createSlider = ({ current, duration }) => `
-    <div id="snippy" class="snippy">
+export const createSlider = ({ current, duration, style = '' }) => `
+    <div id="snippy" class="snippy" style="${style}">
         ${createTime({ id: 'start', time: '0:00' })}
         <div class="slider-container">
             ${createInput({ type: 'start', max: duration, value: current })}
