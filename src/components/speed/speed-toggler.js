@@ -3,7 +3,7 @@ import { createToggleButton } from '../toggle-button.js'
 const createTag = ({ tag, id, style = '' }) => `
     <div style="display:flex;align-items:center;height:22px;${style};">
         <span class="chorus-text chorus-pill" style="line-height:22px;height:100%;font-size:14px;text-align:center;width:56px;padding:0 4px">${tag}</span>
-        <input id="${id}" class="chorus-text" style="border:none;color:#fff;width:48px;height:100%;padding:0 4px">
+        <input id="${id}" class="chorus-text" style="letter-spacing:0.5px;border:none;color:#fff;width:48px;height:100%;padding:0 4px">
     </div>
 `
 
