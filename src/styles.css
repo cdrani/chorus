@@ -311,6 +311,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 [role=ff][aria-label],
 [role=rw][aria-label],
+[role=loop][aria-label],
 [role=skip][aria-label],
 [role=snip][aria-label], 
 [role=speed][aria-label],
@@ -322,6 +323,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 [role=ff][aria-label]:after,
 [role=rw][aria-label]:after,
+[role=loop][aria-label]:after,
 [role=skip][aria-label]:after,
 [role=snip][aria-label]:after, 
 [role=speed][aria-label]:after, 
@@ -352,6 +354,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 [role=ff][aria-label]:hover:after,
 [role=rw][aria-label]:hover:after,
+[role=loop][aria-label]:hover:after,
 [role=skip][aria-label]:hover:after,
 [role=snip][aria-label]:hover:after, 
 [role=speed][aria-label]:hover:after,

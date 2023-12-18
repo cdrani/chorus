@@ -13,7 +13,7 @@ export default class LoopIcon {
             <button
                 role="loop"
                 id="loop-button"
-                aria-label"Loop Snip"
+                aria-label="Loop Snip"
                 class="chorus-hover-white"
                 style="display:none;justify-content:center;align-items:center;border:none;background:none;"
             >
@@ -62,6 +62,7 @@ export default class LoopIcon {
     
     highlightIcon({ isSnip, autoLoop = false }) { 
         this.#loopButton.style.display = isSnip ? 'flex' : 'none'
+        this.#loopButton.setAttribute('aria-label', autoLoop ? 'Remove Loop' : 'Loop Snip' )
         if (isSnip || (!isSnip && this.#isHiglighted)) highlightLoopIcon(autoLoop) 
     }
 
