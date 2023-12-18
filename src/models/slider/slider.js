@@ -6,9 +6,6 @@ import { formatTimeInSeconds, secondsToTime, timeToMilliseconds, timeToSeconds }
 
 export default class Slider {
     constructor() {
-        this._delay = 250
-        this._leftDebouncer = null
-        this._rightDebouncer = null
         this._isCurrentlyPlaying = true
         this._video = spotifyVideo.element
     }
@@ -18,23 +15,34 @@ export default class Slider {
     #setUpEvents() {
         const { inputLeft, inputRight, loopToggleButton, thumbLeft, thumbRight, outputLeft, outputRight } = this.#elements
 
-        inputLeft.oninput = () => { this.#setLeftValue(); this.#toggleOutputOutline(true) }
-        inputRight.oninput = () => { this.#setRightValue(); this.#toggleOutputOutline(false) }
+        inputLeft.oninput = () => { this.updateSliderLeftHalf(); this.#toggleOutputOutline(true) }
+        inputRight.oninput = () => { this.updateSliderRightHalf(); this.#toggleOutputOutline(false) }
 
         loopToggleButton.onclick = () => this.#toggleLoopCheckbox()
 
         outputLeft.onchange = (e) => this.#handleInput(e)
         outputRight.onchange = (e) => this.#handleInput(e)
 
+        outputLeft.onclick = () => this.#toggleOutputOutline(true)
+        outputRight.onclick = () => this.#toggleOutputOutline(false)
+
         inputLeft.addEventListener('mouseover', () => thumbLeft.classList.add('hover'))
         inputLeft.addEventListener('mouseout', () => thumbLeft.classList.remove('hover'))
         inputLeft.addEventListener('mousedown', () => thumbLeft.classList.add('active'))
-        inputLeft.addEventListener('mouseup', () => thumbLeft.classList.remove('active'))
+        inputLeft.addEventListener('mouseup', e => {
+            thumbLeft.classList.remove('active')
+            const currentValue = e.target.value
+            this.#setCurrentTimePosition({ attribute: 'startTime', position: currentValue })
+        })
 
         inputRight.addEventListener('mouseover', () => thumbRight.classList.add('hover'))
         inputRight.addEventListener('mouseout', () => thumbRight.classList.remove('hover'))
         inputRight.addEventListener('mousedown', () => thumbRight.classList.add('active'))
-        inputRight.addEventListener('mouseup', () => thumbRight.classList.remove('active'))
+        inputRight.addEventListener('mouseup', e => { 
+            thumbRight.classList.remove('active')
+            const currentValue = e.target.value
+            this.#setCurrentTimePosition({ attribute: 'endTime', position: currentValue })
+        })
     }
 
     #toggleLoopCheckbox() {
@@ -51,10 +59,19 @@ export default class Slider {
     }
 
     #toggleOutputOutline(outlineLeft) {
-        const { outputLeft, outputRight } = this.#elements
+        if (outlineLeft) {
+            if (this._setLeft) return
+            this._setLeft = true
+            this._setRight = false
+        } else {
+            if (this._setRight) return
+            this._setRight = true
+            this._setLeft = false
+        }
 
-        outputLeft.style.outline = outlineLeft  ? 'solid 1px #fff' : ''
-        outputRight.style.outline = outlineLeft  ? '' : 'solid 1px #fff'
+        const { outputLeft, outputRight } = this.#elements
+        outputLeft.style.border = outlineLeft ? '1px solid #fff' : 'none'
+        outputRight.style.border = outlineLeft ? 'none' : '1px solid #fff'
 
         if (outlineLeft) { outputLeft.focus(); outputRight.blur() }
         if (!outlineLeft) { outputLeft.blur(); outputRight.focus() }
@@ -107,33 +124,11 @@ export default class Slider {
         }
     }
 
-    #setLeftValue() {
-        if (this._leftDebouncer) clearTimeout(this._leftDebouncer)
-
-        const currentValue = parseFloat(this.#elements.inputLeft.value)
-        this.updateSliderLeftHalf(currentValue)
-
-        this._leftDebouncer = setTimeout(() => { 
-              this.#setCurrentTimePosition({ attribute: 'startTime', position: currentValue })
-        }, this._delay)
-    }
-
     #setCurrentTimePosition({ attribute, position }) {
         this._isCurrentlyPlaying && (this._video.currentTime = position)
 
         this._video.element.setAttribute(attribute, position)
         this._video.element.setAttribute('lastSetThumb', attribute.startsWith('start') ? 'start' : 'end')
-    }
-
-    #setRightValue() {
-        if (this._rightDebouncer) clearTimeout(this._rightDebouncer)
-
-        const currentValue = parseFloat(this.#elements.inputRight.value)
-        this.updateSliderRightHalf(currentValue)
-
-        this._rightDebouncer = setTimeout(() => {
-            this.#setCurrentTimePosition({ attribute: 'endTime', position: currentValue })
-        }, this._delay)
     }
 
     #validateInput(timeString, maxValue) {
