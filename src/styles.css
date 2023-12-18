@@ -37,6 +37,10 @@
     font-size: 20px;
 }
 
+#header-buttons button:hover {
+    outline: solid 1px #fff;
+}
+
 #chorus-main {
     border: 1px solid #282828;
     border-right: 0;
