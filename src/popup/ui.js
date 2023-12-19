@@ -2,8 +2,8 @@ import { extToggle } from './toggle.js'
 
 const coverImage = () => `
     <canvas id="canvas" style="display:none"></canvas>
-    <img id="cover" loading="eager" style="height:64px;width:64px;" />
-    <img id="double" loading="eager" style="display:none;height:64px;width:64px" />
+    <img id="cover" loading="eager" height="64" width="64" />
+    <img id="double" loading="eager" style="display:none;" height="64" width="64" />
 `
 
 const trackText = id => `

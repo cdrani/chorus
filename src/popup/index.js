@@ -71,11 +71,12 @@ async function setCoverImage({ cover, title, artists }) {
 
 async function loadImage({ url, elem }) {
     return new Promise((resolve, reject) => {
-        elem.onload = () => resolve(elem)
-        elem.onerror = reject
+        elem.src = url
         elem.crossOrigin = 'Anonymous'
         elem.style.transform = 'unset'
-        elem.src = url
+
+        elem.onload = () => resolve(elem)
+        elem.onerror = reject
     })
 }
 
