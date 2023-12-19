@@ -26,8 +26,8 @@ export default class NowPlayingObserver {
         this._seekIcons.init()
         this._loopIcon.init()
         const track = await this.setNowPlayingData()
-        this._loopIcon.highlightIcon(track)
         await this._songTracker.init()
+        this._loopIcon.highlightIcon(track)
     }
 
     #isAnchor(mutation) {

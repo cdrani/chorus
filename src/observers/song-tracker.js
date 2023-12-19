@@ -120,7 +120,7 @@ export default class SongTracker {
         } else if (isSnip) {
             const parsedStartTime = parseFloat(startTime) * 1000
             const currentPosition = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
-            const currentPositionTime = parseFloat(currentPosition, 10) * 1000
+            const currentPositionTime = parseFloat(currentPosition) * 1000
 
             if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
                 await this.#dispatchSeekToPosition(parsedStartTime)
@@ -152,15 +152,16 @@ export default class SongTracker {
         const { tempStartTime, tempEndTime, lastSetThumb } = this.#tempVideoAttributes
         if (!tempStartTime && !tempEndTime) return false
 
-        const tempEndTimeMS = parseFloat(tempEndTime ?? endTime) * 1000
-        const loopEndTime = lastSetThumb == 'start' ? tempEndTimeMS : tempEndTimeMS + 3000
+        const tempEndTimeMS = (parseFloat(tempEndTime ?? endTime) * 1000) - 100
+        const thumbSet = !!lastSetThumb
+        const loopEndTime = (!thumbSet || lastSetThumb == 'start') ? tempEndTimeMS : tempEndTimeMS + 3000
 
         return !Number.isNaN(tempEndTimeMS) && currentTimeMS > Math.min(loopEndTime, endTime * 1000)
     }
 
     #atSnipSongEnd({ currentTimeMS, endTime }) {
         const isSongEnd = endTime == playback.duration()
-        const endTimeMS = parseFloat(endTime, 10) * 1000 - (isSongEnd ? 100 : 0)
+        const endTimeMS = parseFloat(endTime) * 1000 - (isSongEnd ? 100 : 0)
         return currentTimeMS >= endTimeMS
     }
 
@@ -171,7 +172,7 @@ export default class SongTracker {
 
         setTimeout(() => {
             const { isShared, isSnip, startTime, endTime, autoLoop = false } = this._currentSongState
-            const currentTimeMS = parseFloat(this._video.currentTime * 1000, 10)
+            const currentTimeMS = parseFloat(this._video.currentTime * 1000)
 
             if (this.#atTempSongEnd({ endTime, currentTimeMS })) return this.#handleEditingSnipMode(startTime)
             if (isSnip && !this.#atSnipSongEnd({ currentTimeMS, endTime })) return
