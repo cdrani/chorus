@@ -23,7 +23,12 @@ PORT.onMessage.addListener(async ({ type, data }) => {
     await setCoverImage(data)
 
     if (type == 'controls') extControls.updateIcons({ type, ...data } )
-    if (type == 'state') extControls.updateUIState({ type, data })
+    if (type == 'state') { 
+        extControls.updateUIState({ type, data })
+        const popupState = await getState('popup-ui')
+        await setState({ key: 'popup-ui', values: { ...popupState, controls: data }})
+    }
+
     if (type == 'ui-state') {
         const enabled = await getState('enabled')
         await initializeUI({ active: data.active, enabled, callback: loadExtOffState })
@@ -96,6 +101,7 @@ async function setupFromStorage() {
     if (!data) return { data: null, loaded: false }
 
     loadImageData(data) 
+    data?.controls && extControls.updateUIState({ type: 'state', data: data.controls })
     return { loaded: true, data }
 }
 
