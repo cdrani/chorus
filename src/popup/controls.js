@@ -42,7 +42,7 @@ class ExtControls {
         const { playBtn } = this.btns
         const { rwSpan, ffSpan } = this.spans
         const { 
-            playIcon, heartIcon, repeatIcon, shuffleIcon, blockIcon, nextIcon, previousIcon, rwIcon, ffIcon
+            loopIcon, playIcon, heartIcon, repeatIcon, shuffleIcon, blockIcon, nextIcon, previousIcon, rwIcon, ffIcon
         } = this.icons
 
         playBtn.style.backgroundColor = textColour
@@ -55,6 +55,10 @@ class ExtControls {
         blockIcon.style.stroke = textColour
         blockIcon.style.fill = textColour
         blockIcon.style.strokeWidth = 0.8
+
+        loopIcon.style.stroke = textColour
+        loopIcon.style.fill = textColour
+        loopIcon.style.strokeWidth = 0.2
 
         heartIcon.style.stroke = textColour
         heartIcon.style.strokeWidth = 2
@@ -126,6 +130,16 @@ class ExtControls {
         span.textContent = parseInt(seekValue, 10)
     }
 
+    #updateLoop({ key, svg, state }) {
+        const { textColour } = this._colours
+        svg.style.stroke = textColour
+        svg.style.fill = textColour
+
+        const span = document.getElementById(`${key}-dot`)
+        const enabled = state?.includes('remove')
+        this.#updateSpan({ span, enabled, textColour })
+    }
+
     updateIcons({ type, key, result }) {
         const btn = document.querySelector(`[role="${key}"]`)
         const svg = btn.lastElementChild
@@ -133,6 +147,7 @@ class ExtControls {
         if (key.startsWith('seek')) return this.#updateSeek({ key, state: result })
         if (key == 'save/unsave') return this.#updateHeart({ svg, state: result })
         if (key == 'shuffle') return this.#updateShuffle({ type, key, svg, state: result })
+        if (key == 'loop') return this.#updateLoop({ type, key, svg, state: result })
 
         if (['repeat', 'play/pause'].includes(key)) {
             const pathKey = this.#getPathKey({ type, key, result })
@@ -157,6 +172,7 @@ class ExtControls {
             rwBtn: document.getElementById('rw-btn'),
             nextBtn: document.getElementById('next-btn'),
             playBtn: document.getElementById('play-btn'),
+            loopBtn: document.getElementById('loop-btn'),
             heartBtn: document.getElementById('heart-btn'),
             blockBtn: document.getElementById('block-btn'),
             repeatBtn: document.getElementById('repeat-btn'),
@@ -171,6 +187,7 @@ class ExtControls {
             rwIcon: document.getElementById('rw-icon'),
             playIcon: document.getElementById('play-icon'),
             nextIcon: document.getElementById('next-icon'),
+            loopIcon: document.getElementById('loop-icon'),
             heartIcon: document.getElementById('heart-icon'),
             blockIcon: document.getElementById('block-icon'),
             repeatIcon: document.getElementById('repeat-icon'),

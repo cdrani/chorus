@@ -21,14 +21,16 @@ export const highlightElement = ({
         if (!element) return
 
         const fillColor = isHighlightable(songStateData) ? '#1ed760' : 'currentColor'
-        element.style[property] = fillColor
+        element.setAttribute(property, fillColor)
     }, 250)
 }
 
 export const highlightLoopIcon = highlight => {
-    const group = document.getElementById('loop-group')
-    if (!group) return
+    const svgIcon = document.getElementById('loop-icon')
+    if (!svgIcon) return
 
-    group.style.stroke = highlight ? '#1ed760' : 'currentColor'
+    const colour = highlight ? '#1ed760' : 'currentColor'
+    svgIcon.setAttribute('fill', colour)
+    svgIcon.setAttribute('stroke', colour)
 }
 
