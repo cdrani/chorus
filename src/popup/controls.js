@@ -26,7 +26,7 @@ class ExtControls {
     }
 
     updateControlsState(active) {
-        document.body.style.height = active ? '118px' : '88px'
+        document.body.style.height = active ? '124px' : '88px'
 
         const mediaContainer = document.getElementById('media-controls')
         mediaContainer.style.display = active ? 'flex' : 'none'

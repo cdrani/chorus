@@ -75,7 +75,7 @@ export const createRootContainer = () => `
             </div>
         </div>
 
-        <div id="media-controls" style="display:flex;width:100%;height:32px;align-items:center;justify-content:space-between">
+        <div id="media-controls" style="display:flex;width:100%;margin-top:8px;align-items:center;justify-content:space-between">
             <div id="left-controls" style="display:flex;justify-content:space-between;margin-right:10px;">
                 ${createIcon({ type: 'heart', role: 'save/unsave', lw: 22, viewBox: '-3 -5 24 24' })}
                 ${createIcon({ type: 'block', role: 'block-track', lw: 22, viewBox: '-1 -3 24 24' })}
