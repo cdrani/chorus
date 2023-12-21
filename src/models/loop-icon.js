@@ -66,7 +66,8 @@ export default class LoopIcon {
             this._video.element.setAttribute('startTime', 0)
             this._video.element.setAttribute('endTime', playback.duration())
         }
-        if (isSnip) { this._video.resetTempTimes() }
+
+        if (!isSnip && !autoLoop) { this._video.resetTempTimes() }
 
         this.#loopButton.setAttribute('aria-label', autoLoop ? 'Remove Loop' : `Loop ${isSnip ? 'Snip' : 'Track'}` )
         highlightLoopIcon(autoLoop) 
