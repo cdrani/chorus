@@ -1,6 +1,9 @@
 async function getActiveTab() {
-    const result = await chrome.tabs.query({ url: ['*://open.spotify.com/*'] })
-    return result?.at(0)
+    const currentWindow = await chrome.tabs.query({ active: true, currentWindow: true, url: ['*://open.spotify.com/*'] })
+    if (currentWindow.length) return currentWindow.at(0)
+
+    const anyWindow = await chrome.tabs.query({ url: ['*://open.spotify.com/*'] })
+    return anyWindow?.at(0)
 }
 
 async function activeOpenTab() {
