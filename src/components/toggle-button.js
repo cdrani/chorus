@@ -13,7 +13,7 @@ export const createToggleButton = ({
         style="z-index:100;padding:0;background-color:transparent;display:flex;align-items:center;user-select:none;"
     >
         ${labelId && labelText && `
-            <span id="${labelId}" style="font-size:1rem;color:#fff;margin-right:1rem">${labelText}</span>
+            <span id="${labelId}" style="font-weight:600;font-size:1rem;color:#fff;margin-right:1rem">${labelText}</span>
         `}
 
         <input 

@@ -65,11 +65,6 @@ export default class SongTracker {
         return playButton.getAttribute('aria-label') == 'Pause'
     }
 
-    get #isLooping() {
-        const repeatButton = document.querySelector('[data-testid="control-button-repeat"]')
-        return repeatButton?.getAttribute('aria-label') === 'Disable repeat'
-    }
-
     get #muteButton() { return document.querySelector('[data-testid="volume-bar-toggle-mute-button"]') }
 
     get #isMute() { return this.#muteButton?.getAttribute('aria-label') == 'Unmute' }
@@ -123,9 +118,9 @@ export default class SongTracker {
         if (isSkipped) {
             return this.#nextButton.click()
         } else if (isSnip) {
-            const parsedStartTime = parseInt(startTime, 10) * 1000
+            const parsedStartTime = parseFloat(startTime) * 1000
             const currentPosition = timeToSeconds(this.#playbackPosition?.textContent || '0:00')
-            const currentPositionTime = parseInt(currentPosition, 10) * 1000
+            const currentPositionTime = parseFloat(currentPosition) * 1000
 
             if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
                 await this.#dispatchSeekToPosition(parsedStartTime)
@@ -140,27 +135,52 @@ export default class SongTracker {
 
     get #playbackPosition() { return document.querySelector('[data-testid="playback-position"]') }
 
+    #handleEditingSnipMode(startTime) {
+        const { tempStartTime } = this.#tempVideoAttributes
+        this._video.currentTime = parseFloat(tempStartTime ?? startTime)
+    }
+
+    get #tempVideoAttributes() {
+        return {
+            tempEndTime: this._video.element.getAttribute('endTime'),
+            tempStartTime: this._video.element.getAttribute('startTime'),
+            lastSetThumb: this._video.element.getAttribute('lastSetThumb'),
+        }
+    }
+
+    #atTempSongEnd({ currentTimeMS, endTime }) {
+        const { tempStartTime, tempEndTime, lastSetThumb } = this.#tempVideoAttributes
+        if (!tempStartTime && !tempEndTime) return false
+
+        const tempEndTimeMS = (parseFloat(tempEndTime ?? endTime) * 1000) - 100
+        const thumbSet = !!lastSetThumb
+        const loopEndTime = (!thumbSet || lastSetThumb == 'start') ? tempEndTimeMS : tempEndTimeMS + 3000
+
+        return !Number.isNaN(tempEndTimeMS) && currentTimeMS > Math.min(loopEndTime, endTime * 1000)
+    }
+
+    #atSnipSongEnd({ currentTimeMS, endTime }) {
+        const isSongEnd = endTime == playback.duration()
+        const endTimeMS = parseFloat(endTime) * 1000 - (isSongEnd ? 100 : 0)
+        return currentTimeMS >= endTimeMS
+    }
+
     #handleTimeUpdate = async () => {
         if (this.#isPlaying && this.#isFirefox && !this._reverbSet) await this.#setReverb()
 
-        if (this._video.isEditing) return
         if (!this._currentSongState) return
 
-        setTimeout(async () => {
-            const { isShared, startTime, endTime } = this._currentSongState
-            const currentTimeMS = parseInt(this._video.currentTime * 1000, 10)
+        setTimeout(() => {
+            const { isShared, isSnip, startTime, endTime, autoLoop = false } = this._currentSongState
+            const currentTimeMS = parseFloat(this._video.currentTime * 1000)
 
-            const isSongEnd = endTime == playback.duration()
-            const endTimeMS = parseInt(endTime, 10) * 1000 - (isSongEnd ? 100 : 0)
-            const atSongEnd = currentTimeMS >= endTimeMS
-            if (!atSongEnd) return
+            if (this.#atTempSongEnd({ endTime, currentTimeMS })) return this.#handleEditingSnipMode(startTime)
+            if (isSnip && !this.#atSnipSongEnd({ currentTimeMS, endTime })) return
 
-            if (this.#isLooping || isShared) {
-                return (this._video.currentTime = startTime)
-            }
+            if (autoLoop || isShared) return (this._video.currentTime = startTime)
 
             if (isShared && location?.search) history.pushState(null, '', location.pathname)
-            this.#nextButton.click()
-        }, 1000)
+            if (isSnip) this.#nextButton.click()
+        }, 100)
     }
 }

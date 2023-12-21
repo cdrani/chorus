@@ -15,18 +15,14 @@ export default class Snip {
         this._controls = new SliderControls()
     }
 
-    init() {
-        this._controls.init()
-    }
+    init() { this._controls.init() }
 
     async read() {
         const track = await currentData.readTrack()
         return track
     }
 
-    reset() {
-        this._controls.setInitialValues()
-    }
+    reset() { this._controls.setInitialValues() }
 
     async _delete() {
         await this._store.deleteTrack(this._defaultTrack)
@@ -42,13 +38,10 @@ export default class Snip {
     }
 
     get tempShareTimes() {
-        const tempEndTime = document.getElementById('chorus-end')?.textContent
-        const tempStartTime = document.getElementById('chorus-start')?.textContent
+        const tempEndTime = document.getElementById('chorus-end')?.value
+        const tempStartTime = document.getElementById('chorus-start')?.value
 
-        return {
-            tempEndTime: timeToSeconds(tempEndTime),
-            tempStartTime: timeToSeconds(tempStartTime),
-        }
+        return { tempEndTime: timeToSeconds(tempEndTime), tempStartTime: timeToSeconds(tempStartTime) }
     }
 
     async _share() {
@@ -56,8 +49,7 @@ export default class Snip {
         const pitch = preservesPitch ? 1 : 0
         const rate = parseFloat(playbackRate) * 1000
 
-        const { tempEndTime = startTime, tempStartTime = endTime } = this.tempShareTimes
-        
+        const { tempEndTime = endTime, tempStartTime = startTime } = this.tempShareTimes
         const shareURL = `${this.trackURL}?ch=${tempStartTime}-${tempEndTime}-${rate}-${pitch}`
         copyToClipBoard(shareURL)
 
@@ -66,14 +58,12 @@ export default class Snip {
 
     #toggleRemoveButton(showRemove) {
         const removeButton = document.getElementById('chorus-snip-remove-button')
-
         if (!removeButton) return
+
         removeButton.style.display = showRemove ? 'block' : 'none'
     }
 
-    #setUpdateControls(response) {
-        this._controls.updateControls(response)
-    }
+    #setUpdateControls(response) { this._controls.updateControls(response) }
 
     get _elements() {
         return {
@@ -81,14 +71,11 @@ export default class Snip {
             artists: document.getElementById('track-artists'),
             inputRight: document.getElementById('input-end'),
             inputLeft: document.getElementById('input-start'),
+            loopCheckBox: document.getElementById('loop-checkbox'),
         }
     }
 
-    displayAlert() {
-        this._alert.displayAlert()
-    }
+    displayAlert() { this._alert.displayAlert() }
 
-    _setTrackInfo({ title, artists }) {
-        setTrackInfo({ title, artists, chorusView: true })
-    }
+    _setTrackInfo({ title, artists }) { setTrackInfo({ title, artists, chorusView: true }) }
 }

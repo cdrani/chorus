@@ -14,7 +14,7 @@ export const createHeader = () => `
     <div class="chorus-common">
         <span class="chorus-header">chorus</span>
         <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div style="display:flex;height:25px;align-items:center;justify-content:space-around;">
+            <div id="header-buttons" style="display:flex;height:25px;align-items:center;justify-content:space-around;">
                 ${createHeaderButton({ role: 'snip', ariaLabel: 'Snip Controls', additionalStyles: 'background-color:green;' })}
                 ${createHeaderButton({ role: 'speed', ariaLabel: 'Speed Controls', additionalStyles: 'margin-left:.5rem;' })}
                 ${createHeaderButton({ role: 'fx', ariaLabel: 'FX Controls', additionalStyles: 'margin-left:.5rem;' })}

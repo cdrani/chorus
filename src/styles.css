@@ -34,7 +34,11 @@
 .chorus-header {
     color: #f0f0f0;
     font-weight: 600;
-    line-height: 1;
+    font-size: 20px;
+}
+
+#header-buttons button:hover {
+    outline: solid 1px #fff;
 }
 
 #chorus-main {
@@ -54,13 +58,21 @@
     bottom: 80px;
     background-color: #171717;
     width: 320px;
+    height: 246px;
 }
 
-#chorus button,
-#chorus input {
-    border-width: 0 !important;
-    border-style: solid !important;
-    border-color: #e5e7eb;
+button {
+    cursor: pointer !important;
+}
+
+#chorus {
+    button {
+        border-width: 0 !important;
+        border-style: solid !important;
+        border-color: #e5e7eb;
+    }
+
+    input { border: none }
 }
 
 .success {
@@ -120,7 +132,7 @@
 .chorus-text {
     color: #fff;
     font-weight: 600;
-    font-size: .75rem;
+    font-size: .85rem;
 }
 
 .chorus-pill {
@@ -162,14 +174,14 @@ input[type=number]::-webkit-outer-spin-button {
 
 .slider-container {
     position: relative;
-    width: 100%;
-    margin: 0 8px;
+    flex-grow: 1;
+    margin: 0 10px;
 }
 
 .slider {
     position: relative;
     z-index: 1;
-    height: 6px;
+    height: 4px;
 }
 
 .slider>.track {
@@ -201,8 +213,8 @@ input[type=number]::-webkit-outer-spin-button {
 .slider>.thumb {
     position: absolute;
     z-index: 3;
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background-color: #fff;
     box-shadow: 0 0 0 0 rgba(98, 0, 238, .1);
@@ -211,13 +223,13 @@ input[type=number]::-webkit-outer-spin-button {
 
 .slider>.thumb.left {
     left: 25%;
-    transform: translate(-6px, -3px);
+    transform: translate(-4px, -2px);
     display: none;
 }
 
 .slider>.thumb.right {
     right: 25%;
-    transform: translate(6px, -3px);
+    transform: translate(4px, -2px);
     display: none;
 }
 
@@ -236,7 +248,7 @@ input[type=number]::-webkit-outer-spin-button {
     appearance: none;
     z-index: 2;
     margin: 0;
-    height: 6px;
+    height: 4px;
     width: 100%;
     opacity: 0;
 }
@@ -275,10 +287,9 @@ input[type=number]::-webkit-outer-spin-button {
     margin-block: 0px;
     font-size: 0.6875rem;
     width: fit-content;
-    min-width: 30px;
+    min-width: 25px;
     font-weight: 400;
     color: #b3b3b3;
-    padding-top: 2px;
 }
 
 .chorus-icon-active,
@@ -289,8 +300,8 @@ input[type=number]::-webkit-outer-spin-button {
 .snippy {
     display: flex;
     height: 1.5rem;
-    margin: 12px 0;
-    justify-content: space-evenly;
+    margin: 8px 0;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -300,6 +311,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 [role=ff][aria-label],
 [role=rw][aria-label],
+[role=loop][aria-label],
 [role=skip][aria-label],
 [role=snip][aria-label], 
 [role=speed][aria-label],
@@ -311,6 +323,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 [role=ff][aria-label]:after,
 [role=rw][aria-label]:after,
+[role=loop][aria-label]:after,
 [role=skip][aria-label]:after,
 [role=snip][aria-label]:after, 
 [role=speed][aria-label]:after, 
@@ -341,6 +354,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 [role=ff][aria-label]:hover:after,
 [role=rw][aria-label]:hover:after,
+[role=loop][aria-label]:hover:after,
 [role=skip][aria-label]:hover:after,
 [role=snip][aria-label]:hover:after, 
 [role=speed][aria-label]:hover:after,
@@ -378,8 +392,9 @@ hr {
 }
 
 .track-text {
+    padding: 0;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 @keyframes marquee {

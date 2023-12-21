@@ -1,15 +1,15 @@
 import { secondsToTime } from '../../utils/time.js'
 
 const createInput = ({ type, max, value }) =>  `
-    <input min="0" max="${max}" type="range" class="input" value="${value}" id="input-${type}">
+    <input min="0" max="${max}" step="0.01" type="range" class="input" value="${value}" id="input-${type}">
 `
 
 const createTime = ({ id, time }) => `
     <p class="time${id == 'end' ? ' end' : ''}"><span id="${id}">${time}</span></p>
 `
 
-export const createSlider = ({ current, duration }) => `
-    <div id="snippy" class="snippy">
+export const createSlider = ({ current, duration, style = '' }) => `
+    <div id="snippy" class="snippy" style="${style}">
         ${createTime({ id: 'start', time: '0:00' })}
         <div class="slider-container">
             ${createInput({ type: 'start', max: duration, value: current })}

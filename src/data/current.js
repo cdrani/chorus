@@ -28,6 +28,7 @@ class CurrentData {
             ...currentSongInfo(),
             startTime: 0,
             isSnip: false,
+            autoLoop: false,
             isSkipped: false,
             endTime: playback.duration()
         }
@@ -67,7 +68,7 @@ class CurrentData {
     }
 
     async readTrack() {
-        return await this._store.getTrack({ id: currentSongInfo().id, value: this.#trackDefaults })
+        return await this._store.getTrack({ id: currentSongInfo().id, value: { ...this.#trackDefaults, ...currentSongInfo() }})
     }
 
     async readGlobals() {

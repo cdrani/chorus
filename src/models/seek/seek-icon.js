@@ -33,18 +33,13 @@ export default class SeekIcons {
         return ['track', 'album'].includes(contextType) ? 'global' : 'shows'
     }
 
-    get rwIcon() {
-        return createSeekIcon('rw')
-    }
+    get rwIcon() { return createSeekIcon('rw') }
 
-    get ffIcon() {
-        return createSeekIcon('ff')
-    }
+    get ffIcon() { return createSeekIcon('ff') }
 
     get #spotifySeekIcons() {
         const spotifyRWIcon = document.querySelector('[data-testid="control-button-seek-back-15"]')
         const spotifyFFIcon = document.querySelector('[data-testid="control-button-seek-forward-15"]')
-
         return { spotifyFFIcon, spotifyRWIcon }
     }
 

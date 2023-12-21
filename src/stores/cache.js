@@ -1,8 +1,6 @@
 export default class CacheStore {
     #cache
-    constructor() {
-        this.#cache = sessionStorage
-    }
+    constructor() { this.#cache = sessionStorage }
 
     getKey(key) {
         const result = this.#cache.getItem(key)
@@ -25,9 +23,5 @@ export default class CacheStore {
         return this.getKey(key)
     }
 
-    removeKey(key) {
-        if (!this.getKey(key)) return
-
-        this.#cache.removeItem(key)
-    }
+    removeKey(key) { this.#cache.removeItem(key) }
 }

@@ -1,5 +1,11 @@
 import { timeToSeconds } from './time.js'
 
+const getImage = imageSrc => {
+    if (!imageSrc) return undefined
+
+    return imageSrc?.replace('4851', 'b273')
+}
+
 export const currentSongInfo = () => {
     const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.getAttribute('aria-label')
     const image = document.querySelector('[data-testid="CoverSlotCollapsed__container"] img')
@@ -8,15 +14,16 @@ export const currentSongInfo = () => {
 
     // Remove 'Now playing: ' prefix
     const id = songLabel?.split('Now playing: ')?.at(1)
+    const cover = getImage(image?.src)
 
-    if (!contextType) return { id, cover: image?.src }
+    if (!contextType) return { id, cover }
 
     const params = new URLSearchParams(anchor?.href)
     const trackId = params?.get('uri')?.split(`${contextType}:`).at(1)
 
     return  {
         id,
-        cover: image?.src,
+        cover,
         ...contextType && {
             type: contextType,
             trackId, 
@@ -40,8 +47,8 @@ export const trackSongInfo = row => {
     return {
         title,
         startTime: 0,
-        cover: image?.src,
         artists: getArtists(row),
+        cover: getImage(image?.src),
         id: `${title} by ${artists}`,
         endTime: timeToSeconds(songLength),
         ...trackInfo && {...trackInfo }
@@ -53,18 +60,13 @@ const getTrackId = row => {
     if (!trackIdUrl) return
 
     const url = trackIdUrl.split('.com').at(1)
-    return {
-        url,
-        trackId: url.split('/').at(2)
-    }
+    return { url, trackId: url.split('/').at(2) }
 }
 
 const getArtists = row => {
     const artistsList = row.querySelectorAll('span > div > a')
     // Here means we are at artist page and can get name from h1
-    if (!artistsList.length) {
-        return document.querySelector('span[data-testid="entityTitle"] > h1')?.textContent || ''
-    }
+    if (!artistsList.length) return document.querySelector('span[data-testid="entityTitle"] > h1')?.textContent || ''
 
     return Array.from(artistsList).filter(artist => artist.href.includes('artist')).map(artist => artist.textContent).join(', ')
 }

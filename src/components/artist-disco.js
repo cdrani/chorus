@@ -8,7 +8,7 @@ const dispatcher = new Dispatcher()
 const createArtistDiscoUI = () => `
     <div 
         id="artist-disco"
-        style="display:flex;width:3.5rem;height:3.5rem;align-items:center;justify-content:center"
+        style="display:flex;align-items:center;"
     >
         <button 
             role="artist-disco"

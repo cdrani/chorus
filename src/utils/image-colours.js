@@ -1,4 +1,4 @@
-function calculateColourPercentage(pixels, colour, tolerance = 10) {
+function calculateColourPercentage(pixels, colour, tolerance = 100) {
     // Each pixel has 4 components (R, G, B, A)
     const totalPixels = pixels.length / 4 
 
@@ -9,10 +9,7 @@ function calculateColourPercentage(pixels, colour, tolerance = 10) {
         const b = pixels[i + 2]
 
         // Euclidean distance between colours
-        const distance = Math.sqrt(
-            Math.pow(r - colour[0], 2) + Math.pow(g - colour[1], 2) + Math.pow(b - colour[2], 2)
-        )
-
+        const distance = Math.sqrt( Math.pow(r - colour[0], 2) + Math.pow(g - colour[1], 2) + Math.pow(b - colour[2], 2))
         if (distance <= tolerance) count++
     }
 
@@ -77,7 +74,7 @@ function getPalette(pixels) {
         colourCounts[colour] ? (colourCounts[colour]++) : (colourCounts[colour] = 1)
     }
 
-    const result = kmeans(pixelArray, { k: 10, tolerance: 10 })
+    const result = kmeans(pixelArray, { k: 100, tolerance: 100 })
 
     const palette = result.centroids.map((centroid) => {
         const colour = `rgb(${Math.round(centroid[0])}, ${Math.round(centroid[1])}, ${Math.round(centroid[2])})`
@@ -110,8 +107,7 @@ function calculateLuminance([ r, g, b ]) {
     const gLinear = g / 255
     const bLinear = b / 255
 
-    return 0.2126 * Math.pow(rLinear, gamma) + 
-        0.7152 * Math.pow(gLinear, gamma) + 0.0722 * Math.pow(bLinear, gamma)
+    return 0.2126 * Math.pow(rLinear, gamma) + 0.7152 * Math.pow(gLinear, gamma) + 0.0722 * Math.pow(bLinear, gamma)
 }
 
 function sortColoursByProximityAndLuminance(colours) {
@@ -134,39 +130,8 @@ function sortColoursByProximityAndLuminance(colours) {
     }
 
     const sortedColours = []
-    for (const baseColour in colourGroups) {
-        sortedColours.push(...colourGroups[baseColour])
-    }
+    for (const baseColour in colourGroups) { sortedColours.push(...colourGroups[baseColour]) }
 
-    return sortedColours
-}
-
-function calculateRelativeLuminance(colour) {
-    const gammaCorrectedRGB = colour.base.map(value => {
-        value /= 255
-        return value <= 0.03928
-          ? value / 12.92
-          : Math.pow((value + 0.055) / 1.055, 2.4)
-    })
-
-    return 0.2126 * gammaCorrectedRGB[0] + 0.7152 * gammaCorrectedRGB[1] + 0.0722 * gammaCorrectedRGB[2]
-}
-
-function calculateContrastRatio(luminance1, luminance2) {
-    const [L1, L2] = [luminance1, luminance2].sort((a, b) => a - b)
-    return (L2 + 0.05) / (L1 + 0.05)
-}
-
-function sortByContrast(background, colours) {
-    const backgroundLuminance = calculateRelativeLuminance(background)
-
-    const sortedColours = colours.map(colour => {
-        const colourLuminance = calculateRelativeLuminance(colour)
-        const contrastRatio = calculateContrastRatio(backgroundLuminance, colourLuminance)
-        return { ...colour, contrastRatio }
-    })
-
-    sortedColours.sort((a, b) => b.contrastRatio - a.contrastRatio)
     return sortedColours
 }
 
@@ -241,17 +206,38 @@ function getRelativeLuminance(colourRGB) {
     return 0.2126 * R + 0.7152 * G + 0.0722 * B
 }
 
+function calculateEuclideanDistance(rgb1, rgb2) {
+    return Math.sqrt(Math.pow(rgb2[0] - rgb1[0], 2) + Math.pow(rgb2[1] - rgb1[1], 2) + Math.pow(rgb2[2] - rgb1[2], 2))
+}
+
+function findElementWithMaxDistance(initialRgb, colours) {
+    let maxDistance = -1
+    let elementWithMaxDistance = null
+
+    for (let i = 0; i < colours.length; i++) {
+        const currentDistance = calculateEuclideanDistance(initialRgb, colours.at(i).base)
+
+        if (currentDistance > maxDistance) {
+            maxDistance = currentDistance
+            elementWithMaxDistance = colours.at(i)
+        }
+    }
+
+    return elementWithMaxDistance
+}
+
 function getImageBackgroundAndTextColours(imageElement) {
     const imageData = getImageData(imageElement)
     const palette = getPalette(imageData)
     const sortedPalette = sortColoursByProximityAndLuminance(palette.slice())
 
     const background = sortedPalette.at(0)
-    const nextPrimary = sortByContrast(background, sortedPalette.slice(1).filter(x => x.percentage > 0)).at(0)
-    
+    const filteredPalette = sortedPalette.slice(1).filter(({ color, percentage }) => percentage > 0 && color != 'rgb(0, 0, 0)')
+    const nextPrimary = findElementWithMaxDistance(background.base, filteredPalette.reverse())
+
     return { 
-        backgroundColour: background.colour,
-        textColour: getContrastColour(background.base, nextPrimary.base),
+        backgroundColour: background.colour ,
+        textColour: nextPrimary?.color ?? getContrastColour(background.base, nextPrimary?.base ?? [ 255, 255, 255 ]),
     }
 }
 

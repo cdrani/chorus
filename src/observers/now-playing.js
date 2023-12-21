@@ -1,6 +1,7 @@
 import { store } from '../stores/data.js'
 import { currentData } from '../data/current.js'
 
+import LoopIcon from '../models/loop-icon.js'
 import SeekIcons from '../models/seek/seek-icon.js'
 import { currentSongInfo } from '../utils/song.js'
 
@@ -13,6 +14,7 @@ export default class NowPlayingObserver {
 
         this._chorus = chorus
         this._seekIcons = new SeekIcons()
+        this._loopIcon = new LoopIcon(songTracker)
     }
 
     async observe() {
@@ -22,8 +24,10 @@ export default class NowPlayingObserver {
 
         this.#toggleSnipUI()
         this._seekIcons.init()
-        await this.setNowPlayingData()
+        this._loopIcon.init()
+        const track = await this.setNowPlayingData()
         await this._songTracker.init()
+        this._loopIcon.highlightIcon(track)
     }
 
     #isAnchor(mutation) {
@@ -37,6 +41,7 @@ export default class NowPlayingObserver {
     async setNowPlayingData() {
         const track = await currentData.readTrack()
         await store.setNowPlaying(track)
+        return track
     }
 
     get #songId() {
@@ -57,8 +62,12 @@ export default class NowPlayingObserver {
             this._currentSongId = this.#songId
             if (this._chorus.isShowing) this._snip.init()
 
-            await this.setNowPlayingData()
+            const track = await this.setNowPlayingData()
             await this._songTracker.songChange() 
+
+            this._loopIcon.updateIconPosition()
+            this._loopIcon.highlightIcon(track)
+
             this._snip.updateView()
             await this._seekIcons.setSeekLabels()
         }
@@ -78,6 +87,7 @@ export default class NowPlayingObserver {
     disconnect() {
         this._observer?.disconnect()
         this._currentSongId = null
+        this._loopIcon.removeIcon()
         this._seekIcons.removeIcons()
         this._songTracker.clearListeners()
         this._observer = null

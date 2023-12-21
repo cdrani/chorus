@@ -1,9 +1,7 @@
 export default class RangeSlider {
     constructor(video) {
-        this._delay = 50
         this._video = video
         this._data = null
-        this._delayTimeout = null
     }
 
     init(data) {
@@ -13,7 +11,7 @@ export default class RangeSlider {
         const { input, speedTrackValue, speedGlobalValue, speedCheckbox, pitchCheckbox } = this.elements
 
         input.value = preferredRate
-        this.#setSpeedValue({ playbackRate: preferredRate, preservesPitch: preferredPitch })
+        this.#setSpeedAndVideoValues({ playbackRate: preferredRate, preservesPitch: preferredPitch })
 
         const speedChecked = track?.playbackRate ? false : true
         const pitchChecked = track?.preservesPitch ?? preferredPitch
@@ -43,14 +41,17 @@ export default class RangeSlider {
             input, thumb, speedGlobalValue, speedTrackValue, pitchToggleButton, speedToggleButton
         } = this.elements
 
-        input.oninput = () => this.#handleSlider()
+        input.oninput = () => this.#setSpeedValue({})
         speedTrackValue.onchange = (e) => this.#handleInput(e.target.value)
         speedGlobalValue.onchange = (e) => this.#handleInput(e.target.value)
 
         input.addEventListener('mouseover', () => thumb.classList.add('hover'))
         input.addEventListener('mouseout', () => thumb.classList.remove('hover'))
-        input.addEventListener('mousedown', () => thumb.classList.add('active'))
-        input.addEventListener('mouseup', () => thumb.classList.remove('active'))
+        input.addEventListener('mousedown', () => { thumb.classList.add('active') })
+        input.addEventListener('mouseup', () => { 
+            thumb.classList.remove('active')
+            this.#setSpeedAndVideoValues()
+        })
 
         speedToggleButton.onclick = () => this.#toggleSpeedCheckbox()
         pitchToggleButton.onclick = () => this.#togglePitchCheckbox()
@@ -69,12 +70,7 @@ export default class RangeSlider {
         const playbackRate =  isValid ? this.#padValue(parsedValue) : this.#padValue(currentValue)
 
         this.elements.input.value = playbackRate
-        this.#setSpeedValue({ playbackRate })
-    }
-
-    #handleSlider() {
-        if (this._delayTimeout) clearTimeout(this._delayTimeout)
-        this._delayTimeout = setTimeout(() => this.#setSpeedValue({}), this._delay)
+        this.#setSpeedAndVideoValues({ playbackRate })
     }
 
     #setCheckedUI({ speedChecked, pitchChecked }) {
@@ -108,7 +104,7 @@ export default class RangeSlider {
         this._video.currentSpeed = input.value
 
         this.#hightlightSpeedValue(checked)
-        this.#setSpeedValue({ playbackRate: input.value })
+        this.#setSpeedAndVideoValues({ playbackRate: input.value })
     }
 
     #hightlightSpeedValue(speedChecked) {
@@ -118,18 +114,13 @@ export default class RangeSlider {
         speedTrackValue.disabled = speedChecked
 
         speedGlobalValue.style.backgroundColor = speedChecked ? 'green' : 'unset'
-        speedGlobalValue.style.outline = speedChecked ? 'solid 1px white' : ''
+        speedGlobalValue.style.border = speedChecked ? '1px solid #fff' : 'none'
 
         speedTrackValue.style.backgroundColor = !speedChecked ? 'green' : 'unset'
-        speedTrackValue.style.outline = !speedChecked ? 'solid 1px white' : ''
+        speedTrackValue.style.border = !speedChecked ? '1px solid #fff' : 'none'
 
-        if (speedChecked) {
-            speedGlobalValue.focus()
-            speedTrackValue.blur()
-        } else {
-            speedGlobalValue.blur()
-            speedTrackValue.focus()
-        }
+        if (speedChecked) { speedGlobalValue.focus(); speedTrackValue.blur() }
+        if (!speedChecked) { speedGlobalValue.blur(); speedTrackValue.focus() }
     }
 
     #togglePitchCheckbox() {
@@ -186,8 +177,17 @@ export default class RangeSlider {
         if (speedCheckbox?.checked) (speedGlobalValue.value = this.#padValue(value))
         if (!speedCheckbox?.checked) (speedTrackValue.value = this.#padValue(value))
 
-        this._video.playbackRate = value
-        this._video.currentSpeed = value 
+        return { speedValue: value, pitchPreserved }
+    }
+
+    #setVideoValues({ speedValue, pitchPreserved }) {
+        this._video.playbackRate = speedValue
+        this._video.currentSpeed = speedValue 
         this._video.preservesPitch = pitchPreserved
+    }
+
+    #setSpeedAndVideoValues({ playbackRate, preservesPitch } = {}) {
+        const { speedValue, pitchPreserved } = this.#setSpeedValue({ playbackRate, preservesPitch })
+        this.#setVideoValues({ speedValue, pitchPreserved })
     }
 }
