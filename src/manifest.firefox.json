@@ -49,6 +49,9 @@
     "on/off": {
       "description": "Toggle Extension On/Off"
     },
+    "loop": {
+      "description": "Loop/UnLoop Snip/Track"
+    },
     "next": {
       "description": "Next Track"
     },
