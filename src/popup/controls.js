@@ -147,7 +147,7 @@ class ExtControls {
         if (key.startsWith('seek')) return this.#updateSeek({ key, state: result })
         if (key == 'save/unsave') return this.#updateHeart({ svg, state: result })
         if (key == 'shuffle') return this.#updateShuffle({ type, key, svg, state: result })
-        if (key == 'loop') return this.#updateLoop({ type, key, svg, state: result })
+        if (key == 'loop') return this.#updateLoop({ key, svg, state: result })
 
         if (['repeat', 'play/pause'].includes(key)) {
             const pathKey = this.#getPathKey({ type, key, result })
