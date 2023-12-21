@@ -25,7 +25,7 @@ async function getMediaControlsState(tabId) {
 
     const promises = selectors.map(selector => (
         new Promise(resolve => {
-            if (!selector.includes('loop')) return resolve(getUIState({ selector, tabId }))
+            if (selector.search(/(loop)|(add-button)/g) < 0) return resolve(getUIState({ selector, tabId }))
             return setTimeout(() => resolve(getUIState({ selector, tabId })), 500)
         })
     ))
