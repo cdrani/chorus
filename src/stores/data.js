@@ -40,7 +40,7 @@ class DataStore {
             detail: { key: 'now-playing', values: { id, title, artists, cover, duration , ...track, } },
         })
 
-        this.#cache.update({ key: 'now-playing', value: { id, duration, title, artists, cover, ...track } })
+        this.#cache.update({ key: 'now-playing', value: { id, duration, title, artists, cover, autoLoop: false, ...track } })
         return this.#cache.getKey(id)    
     }
 
