@@ -232,12 +232,12 @@ function getImageBackgroundAndTextColours(imageElement) {
     const sortedPalette = sortColoursByProximityAndLuminance(palette.slice())
 
     const background = sortedPalette.at(0)
-    const filteredPalette = sortedPalette.slice(1).filter(({ color, percentage }) => percentage > 0 && color != 'rgb(0, 0, 0)')
-    const nextPrimary = findElementWithMaxDistance(background.base, filteredPalette.reverse())
+    const filteredPalette = sortedPalette.slice(1).filter(({ colour, percentage }) => percentage > 0 && colour != 'rgb(0, 0, 0)')
+    const nextPrimary = findElementWithMaxDistance(background.base, filteredPalette)
 
     return { 
         backgroundColour: background.colour ,
-        textColour: nextPrimary?.color ?? getContrastColour(background.base, nextPrimary?.base ?? [ 255, 255, 255 ]),
+        textColour: getContrastColour(background.base, nextPrimary?.base ?? [ 255, 255, 255 ]),
     }
 }
 
