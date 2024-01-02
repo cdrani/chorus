@@ -38,7 +38,7 @@ async function fetchTrackURIs(albumIds) {
         const url = generateURL({ pathType: 'albums', param: albumIdsGroup.join(',') })
         const options = await setOptions({})
         const albumInfo = await request({ url, options })
-        const albumGroupsTracks = albumInfo?.albums?.map(({ tracks }) => tracks)
+        const albumGroupsTracks = albumInfo?.albums?.map(album => album?.tracks ?? null).filter(Boolean)
 
         for (const album of albumGroupsTracks) {
             album.items.forEach(({ uri }) => trackURIs.push(uri))
@@ -82,10 +82,8 @@ async function createArtistDiscoPlaylist({ artist_name, artist_id }) {
             const playlist = await createPlaylist(artist_name)
             await addTracksToPlaylist({ playlist, trackURIs })
             resolve({ artist_name, playlist })
-        } catch (error) {
-            reject(error)
-        }
-    });
+        } catch (error) { console.error(error); reject(error) }
+    })
 }
 
 export { createArtistDiscoPlaylist }
