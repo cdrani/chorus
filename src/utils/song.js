@@ -64,7 +64,7 @@ const getTrackId = row => {
 }
 
 const getArtists = row => {
-    const artistsList = row.querySelectorAll('span > span > a')
+    const artistsList = row.querySelectorAll('span > div > a, span > span > a')
     // Here means we are at artist page and can get name from h1
     if (!artistsList.length) return document.querySelector('span[data-testid="entityTitle"] > h1')?.textContent || ''
 
