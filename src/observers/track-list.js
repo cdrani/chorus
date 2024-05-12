@@ -46,9 +46,7 @@ export default class TrackListObserver {
     #mutationHandler = (mutationsList) => {
         for (const mutation of mutationsList) {
             if (this.#isQueueView(mutation) || this.#isMainView(mutation) || this.#isMoreLoaded(mutation)) {
-                if (this.#isMainView(mutation)) {
-                    this._trackList.setTrackListClickEvent()
-                }
+                this._trackList.setTrackListClickEvent()
                 this._isHidden ? this._trackList.removeBlocking() : this._trackList.setUpBlocking()         
             }
         }
