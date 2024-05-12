@@ -68,7 +68,11 @@ class CurrentData {
     }
 
     async readTrack() {
-        return await this._store.getTrack({ id: currentSongInfo().id, value: { ...this.#trackDefaults, ...currentSongInfo() }})
+        const currentInfo = currentSongInfo()
+        const trackParams = { id: currentInfo.id, value: { ...this.#trackDefaults, ...currentInfo } }
+        const track = await this._store.getTrack(trackParams)
+
+        return track?.id ? track : { ...this.#trackDefaults, ...currentSongInfo }
     }
 
     async readGlobals() {
