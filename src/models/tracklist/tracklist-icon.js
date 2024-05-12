@@ -17,7 +17,7 @@ export default class TrackListIcon {
         if (!row) return
 
         if (!this.#getIcon(row)) {
-            const heartIcon = row.querySelector('button[data-testid="add-button"]')
+            const heartIcon = row.querySelector('button[data-encore-id="buttonTertiary"]')
             const iconEl = parseNodeString(this._iconUI)
             heartIcon?.parentNode?.insertBefore(iconEl, heartIcon) 
         }

@@ -36,7 +36,7 @@ export const currentSongInfo = () => {
 export const trackSongInfo = row => {
     const title = row?.querySelector('a > div')?.textContent || 
         row?.querySelector('div[data-encore-id="type"]')?.textContent
-    const songLength = row?.querySelector('button[data-testid="add-button"] + div')?.textContent
+    const songLength = row?.querySelector('button[data-encore-id="buttonTertiary"] + div')?.textContent
     const image = row?.querySelector('img')
 
     if (!songLength) return
