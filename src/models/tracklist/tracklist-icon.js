@@ -39,7 +39,7 @@ export default class TrackListIcon {
     async #initializeTrack(row) {
         const song = trackSongInfo(row)
 
-        if (!song) return
+        if (!song?.id) return
         if (this._seen.has(song.id)) return
 
         this._seen.add(song.id)
