@@ -116,6 +116,7 @@ export default class SongTracker {
         const { isSnip, isSkipped, startTime } = songStateData
 
         if (isSkipped) {
+            this.#mute()
             return this.#nextButton.click()
         } else if (isSnip) {
             const parsedStartTime = parseFloat(startTime) * 1000
@@ -171,7 +172,7 @@ export default class SongTracker {
         if (!this._currentSongState) return
 
         setTimeout(() => {
-            const { isShared, isSnip, startTime, endTime, autoLoop = false } = this._currentSongState
+            const { isShared, isSnip, isSkipped, startTime, endTime, autoLoop = false } = this._currentSongState
             const currentTimeMS = parseFloat(this._video.currentTime * 1000)
 
             if (this.#atTempSongEnd({ endTime, currentTimeMS })) return this.#handleEditingSnipMode(startTime)
@@ -180,7 +181,7 @@ export default class SongTracker {
             if (autoLoop || isShared) return (this._video.currentTime = startTime)
 
             if (isShared && location?.search) history.pushState(null, '', location.pathname)
-            if (isSnip) this.#nextButton.click()
+            if (isSnip || isSkipped) this.#nextButton.click()
         }, 100)
     }
 }
