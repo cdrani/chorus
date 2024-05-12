@@ -68,12 +68,12 @@ export default class TrackListIcon {
 
         const snipInfo = await this.getTrack(song.id)
 
-        await this._store.saveTrack({
+        const savedTrack = await this._store.saveTrack({
             id: song.id,
             value: { ...snipInfo, isSkipped: !snipInfo.isSkipped },
         })
 
-        this.skipJustBlockedSong({ isSkipped: !snipInfo.isSkipped, row })
+        this.skipJustBlockedSong({ isSkipped: savedTrack.isSkipped, row })
     }
 
     #getRow(icon) {
