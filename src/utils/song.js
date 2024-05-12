@@ -37,7 +37,7 @@ export const trackSongInfo = row => {
     const title = row?.querySelector('a > div')?.textContent || 
         row?.querySelector('div[data-encore-id="type"]')?.textContent
     const songLength = row?.querySelector('button[data-encore-id="buttonTertiary"] + div')?.textContent
-    const image = row?.querySelector('img')
+    const image = row?.querySelector('img') || document.querySelector('button > div img')
 
     if (!songLength) return
 
@@ -65,8 +65,14 @@ const getTrackId = row => {
 
 const getArtists = row => {
     const artistsList = row.querySelectorAll('span > div > a, span > span > a')
-    // Here means we are at artist page and can get name from h1
-    if (!artistsList.length) return document.querySelector('span[data-testid="entityTitle"] > h1')?.textContent || ''
+
+    // Here means we are at artist or song page and can get artist from Banner
+    if (!artistsList.length) {
+        const artistInBanner = document.querySelector('span > a[data-testid="creator-link"]')
+        if (artistInBanner) return artistInBanner.innerText
+
+        return document.querySelector('span[data-testid="entityTitle"] > h1')?.textContent || ''
+    }
 
     return Array.from(artistsList).filter(artist => artist.href.includes('artist')).map(artist => artist.textContent).join(', ')
 }
