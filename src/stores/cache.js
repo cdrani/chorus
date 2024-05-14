@@ -2,6 +2,10 @@ export default class CacheStore {
     #cache
     constructor() { this.#cache = sessionStorage }
 
+    get cache() {
+        return this.#cache
+    }
+
     getKey(key) {
         const result = this.#cache.getItem(key)
         try { return JSON.parse(result) }

@@ -81,6 +81,10 @@ class CurrentData {
             value: { playbackRate: 1, preservesPitch: true }
         })
     }
+
+    get blockedTracks() {
+        return this._store.blockedTracks
+    }
 }
  
 export const currentData = new CurrentData(store)

@@ -14,6 +14,21 @@ class DataStore {
         this.#dispatcher = dispatcher
     }
 
+    get blockedTracks() {
+        const cacheValues = Object.values(JSON.parse(JSON.stringify(this.#cache.cache)))
+        return cacheValues.filter(value => {
+            try {
+                let parsed = JSON.parse(value)
+                const id = parsed?.id
+                if (!id) return false
+
+                return id.includes('by') && parsed.isSkipped
+            } catch {
+                return false
+            }
+        })
+    }
+
     async populate() {
         const response = await this.#dispatcher.sendEvent({ eventType: 'storage.populate', detail: {} })
 
