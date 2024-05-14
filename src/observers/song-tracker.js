@@ -42,8 +42,8 @@ export default class SongTracker {
 
     async handleShared(songStateData) {
         await this.#applyEffects(songStateData)
-        const { startTime: position } = songStateData
-        const track_id = location.pathname?.split('/')?.at(-1)
+        const { startTime: position, trackId } = songStateData
+        const track_id = trackId ?? location.pathname?.split('/')?.at(-1)
         this._video.currentTime = position
 
         this.#mute()
@@ -178,9 +178,11 @@ export default class SongTracker {
             if (this.#atTempSongEnd({ endTime, currentTimeMS })) return this.#handleEditingSnipMode(startTime)
             if (isSnip && !this.#atSnipSongEnd({ currentTimeMS, endTime })) return
 
-            if (autoLoop || isShared) return (this._video.currentTime = startTime)
+            if (autoLoop || (isShared && this._video.currentTime >= endTime)) {
+                return (this._video.currentTime = startTime)
+            }
 
-            if (isShared && location?.search) history.pushState(null, '', location.pathname)
+            if (!isShared && location?.search) history.pushState(null, '', location.pathname)
             if (isSnip || isSkipped) this.#nextButton.click()
         }, 100)
     }
