@@ -45,14 +45,22 @@ export default class Snip {
     }
 
     async _share() {
-        const { startTime, endTime, playbackRate = '1.00', preservesPitch = true } = await this.read()
+        const { url, startTime, endTime, playbackRate = '1.00', preservesPitch = true } = await this.read()
         const pitch = preservesPitch ? 1 : 0
         const rate = parseFloat(playbackRate) * 1000
 
         const { tempEndTime = endTime, tempStartTime = startTime } = this.tempShareTimes
-        const shareURL = `${this.trackURL}?ch=${tempStartTime}-${tempEndTime}-${rate}-${pitch}`
-        copyToClipBoard(shareURL)
 
+        const trackURL = url ?? this.trackURL ?? location.href
+        if (!trackURL) {
+            return this._alert.displayAlert({ 
+                type: 'error',
+                message: 'Unable to share as track id not found.'
+            })
+        }
+
+        const shareURL = `${trackURL}?ch=${tempStartTime}-${tempEndTime}-${rate}-${pitch}`
+        copyToClipBoard(shareURL)
         this.displayAlert()
     }
 
