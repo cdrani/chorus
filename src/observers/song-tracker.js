@@ -7,12 +7,14 @@ import { timeToSeconds } from '../utils/time.js'
 import { currentSongInfo } from '../utils/song.js'
 import { highlightElement } from '../utils/higlight.js'
 
+import Queue from '../models/queue.js'
 import Dispatcher from '../events/dispatcher.js'
 
 export default class SongTracker {
     constructor() {
         this._init = true
         this._reverbSet = false
+        this._queue = new Queue()
         this._currentSongState = null
         this._video = spotifyVideo.element
         this._dispatcher = new Dispatcher()
