@@ -60,7 +60,7 @@ const getTrackId = row => {
     if (!trackIdUrl) return
 
     const url = trackIdUrl.split('.com').at(1)
-    return { url, trackId: url.split('/').at(2) }
+    return { url: trackIdUrl, trackId: url.split('/').at(2) }
 }
 
 const getArtists = row => {
