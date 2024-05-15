@@ -1,6 +1,7 @@
 export default class TrackListObserver {
     constructor(trackList) {
         this._observer = null
+
         this._isHidden = true
         this._trackList = trackList
     }
@@ -45,9 +46,13 @@ export default class TrackListObserver {
 
     #mutationHandler = (mutationsList) => {
         for (const mutation of mutationsList) {
-            if (this.#isQueueView(mutation) || this.#isMainView(mutation) || this.#isMoreLoaded(mutation)) {
-                this._trackList.setTrackListClickEvent()
-                this._isHidden ? this._trackList.removeBlocking() : this._trackList.setUpBlocking()         
+            if (this.#isMainView(mutation) || this.#isMoreLoaded(mutation)) {
+                clearTimeout(this._observerTimeout)
+
+                this._observerTimeout = setTimeout(() => {
+                    this._trackList.setTrackListClickEvent()
+                    this._isHidden ? this._trackList.removeBlocking() : this._trackList.setUpBlocking()         
+                }, 2000)
             }
         }
     }
