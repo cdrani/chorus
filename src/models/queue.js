@@ -8,16 +8,16 @@ export default class Queue {
         this._dispatcher = new Dispatcher()
     }
 
-    get addedToQueue() {
+    get #addedToQueue() {
         return document.querySelector('[aria-label="Next in queue"]')?.children || []
     }
 
-    get nextInQueue() {
+    get #nextInQueue() {
         return document.querySelector('[aria-label="Next up"]')?.children || []
     }
 
-    get tracksInQueue() {
-        return [...this.addedToQueue, ...this.nextInQueue].map(div => {
+    get #tracksInQueue() {
+        return [...this.#addedToQueue, ...this.#nextInQueue].map(div => {
             const songInfo = Array.from(div.querySelectorAll('p > span'))
 
             const songTitle = songInfo.at(0).innerText
@@ -29,7 +29,7 @@ export default class Queue {
         })
     }
 
-    get blockedTracks() {
+    get #blockedTracks() {
         return currentData.blockedTracks
     }
 
@@ -40,6 +40,11 @@ export default class Queue {
         })
     }
 
+    async refreshQueue() {
+        await this.#getQueuedTracks()
+        await this.#setQueuedTracks()
+    }
+
     async #dispatchQueueSetter() {
         return await this._dispatcher.sendEvent({
             eventType: 'queue.set',
@@ -47,33 +52,33 @@ export default class Queue {
         })
     }
 
-    async setQueuedTracks() {
+    async #setQueuedTracks() {
         if (!this._userBlockedTracks.length) return
         if (!this._nextQueuedTracks.length) return 
 
         await this.#dispatchQueueSetter()
     }
 
-    async getQueuedTracks() {
-        this._userBlockedTracks = this.filterUnBlockedTracks()
+    async #getQueuedTracks() {
+        this._userBlockedTracks = this.#filterUnBlockedTracks()
         if (!this._userBlockedTracks.length) return
 
         const queueList = await this.#dispatchQueueList()
 
         const spotifyQueuedTracks = queueList?.data?.player_state?.next_tracks
-        this._nextQueuedTracks = this.filterQueuedTracks({ 
+        this._nextQueuedTracks = this.#filterQueuedTracks({ 
             spotifyQueuedTracks,
             userBlockedTracks: this._userBlockedTracks
         })
     }
 
-    filterUnBlockedTracks() {
-        const blocked = this.blockedTracks
-        const tracksInQueue = this.tracksInQueue
+    #filterUnBlockedTracks() {
+        const blocked = this.#blockedTracks
+        const tracksInQueue = this.#tracksInQueue
         return blocked.filter(track => tracksInQueue.includes(track.id))
     }
 
-    filterQueuedTracks({ spotifyQueuedTracks, userBlockedTracks }) {
+    #filterQueuedTracks({ spotifyQueuedTracks, userBlockedTracks }) {
         const userBlockedTrackIds = userBlockedTracks.map(track => `spotify:track:${track.trackId}`)
         return spotifyQueuedTracks.filter(item => !userBlockedTrackIds.includes(item.uri))
     }
