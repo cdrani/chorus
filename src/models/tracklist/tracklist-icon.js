@@ -1,12 +1,15 @@
 import { parseNodeString } from '../../utils/parser.js'
 import { trackSongInfo, currentSongInfo } from '../../utils/song.js'
 
+import Queue from '../queue.js'
+
 export default class TrackListIcon {
     constructor({ key, store, selector }) {
         this._key = key
         this._store = store
         this._selector = selector
         this._seen = new Set()
+        this._queue = new Queue()
     }
 
     #getIcon(row) {
@@ -76,6 +79,10 @@ export default class TrackListIcon {
         })
 
         this.skipJustBlockedSong({ isSkipped: savedTrack.isSkipped, row })
+
+        if (savedTrack.isSkipped) {
+            await this._queue.refreshQueue()
+        }
     }
 
     #getRow(icon) {
