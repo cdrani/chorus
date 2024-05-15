@@ -84,7 +84,7 @@ function updateBadgeState({ changes, changedKey }) {
 chrome.storage.onChanged.addListener(async changes => {
     const keys = Object.keys(changes)
     const changedKey = keys.find(key => (
-        ['now-playing', 'enabled', 'auth_token', 'device_id'].includes(key)
+        ['now-playing', 'enabled', 'auth_token', 'device_id', 'connection_id'].includes(key)
     ))
 
     if (!changedKey) return
@@ -109,7 +109,10 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
 
     const text = new TextDecoder('utf-8').decode(new Uint8Array(rawBody))
     const data = JSON.parse(text)
-    chrome.storage.local.set({ device_id: data.device.device_id.toString() })
+    chrome.storage.local.set({ 
+        device_id: data.device.device_id.toString(),
+        connection_id: data.connection_id.toString()
+    })
 },
     { urls: ['https://guc3-spclient.spotify.com/track-playback/v1/devices'] },
     ['requestBody']

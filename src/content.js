@@ -41,7 +41,7 @@ window.addEventListener('message', async (event) => {
 
 chrome.runtime.onMessage.addListener(message => {
     const messageKey = Object.keys(message)
-    const changedKey = messageKey.find(key => ['enabled', 'auth_token', 'device_id'].includes(key))
+    const changedKey = messageKey.find(key => ['connection_id', 'enabled', 'auth_token', 'device_id'].includes(key))
 
     if (!changedKey) return
 
