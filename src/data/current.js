@@ -83,7 +83,7 @@ class CurrentData {
     }
 
     get blockedTracks() {
-        return this._store.blockedTracks
+        return this._store.blockedTracks.map(JSON.parse)
     }
 }
  
