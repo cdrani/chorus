@@ -25,6 +25,8 @@ window.addEventListener('message', async (event) => {
     const messageHandlers = {
         'play.seek': sendBackgroundMessage,
         'play.shared': sendBackgroundMessage,
+        'queue.set' : sendBackgroundMessage,
+        'queue.get' : sendBackgroundMessage,
         'artist.disco': sendBackgroundMessage,
         'storage.populate': () => getState(null),
         'storage.get': ({ key }) => getState(key),

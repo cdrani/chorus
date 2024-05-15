@@ -2,6 +2,7 @@ import { setState, getState } from './utils/state.js'
 import { mediaKeys, chorusKeys } from './utils/selectors.js'
 import { activeOpenTab, sendMessage } from './utils/messaging.js'
 
+import { getQueueList, setQueueList } from './services/queue.js'
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 import { playSharedTrack, seekTrackToPosition } from './services/player.js'
 
@@ -140,6 +141,8 @@ function promiseHandler(promise, sendResponse) {
 
 chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
     const messageHandler = {
+        'queue.set': setQueueList,
+        'queue.get': getQueueList,
         'play.shared': playSharedTrack,
         'play.seek': seekTrackToPosition,
         'artist.disco': createArtistDiscoPlaylist,
