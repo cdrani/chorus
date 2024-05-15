@@ -6,6 +6,10 @@ export default class CacheStore {
         return this.#cache
     }
 
+    isEmpty(obj) {
+        return Object.keys(obj).length === 0 && obj.constructor === Object;
+    }
+
     getKey(key) {
         const result = this.#cache.getItem(key)
         try { return JSON.parse(result) }
@@ -14,7 +18,7 @@ export default class CacheStore {
 
     getValue({ key, value }) {
         const result = this.getKey(key)
-        if (result) return result
+        if (result && this.isEmpty(value)) return result
 
         return this.update({ key, value })
     }
