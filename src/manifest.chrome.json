@@ -2,7 +2,7 @@
   "short_name": "Chorus",
   "name": "Chorus - Spotify Enhancer",
   "description": "Enhance Spotify with controls to save favourite snips, auto-skip tracks, and set global and custom speed. More to come!",
-  "version": "1.21.3",
+  "version": "1.22.0",
   "manifest_version": 3,
   "author": "cdrani",
   "action": {
@@ -21,14 +21,22 @@
   "content_scripts": [
     {
       "run_at": "document_idle",
-      "js": ["content.js"],
-      "css": ["styles.css"],
-      "matches": ["*://open.spotify.com/*"]
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "matches": [
+        "*://open.spotify.com/*"
+      ]
     }
   ],
   "web_accessible_resources": [
     {
-      "matches": ["*://open.spotify.com/*"],
+      "matches": [
+        "*://open.spotify.com/*"
+      ],
       "resources": [
         "styles.css",
         "utils/*.js",
@@ -86,8 +94,17 @@
       "description": "Add track to block list"
     }
   },
-  "permissions": ["tabs", "storage", "activeTab", "scripting", "webRequest", "unlimitedStorage"],
-  "host_permissions": ["*://*.spotify.com/*"],
+  "permissions": [
+    "tabs",
+    "storage",
+    "activeTab",
+    "scripting",
+    "webRequest",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "*://*.spotify.com/*"
+  ],
   "background": {
     "type": "module",
     "service_worker": "background.js"
