@@ -52,7 +52,7 @@ jobs:
 
       - name: Nightly Merge
         if: steps.semver.outputs.version != ''
-        uses: robotology/gh-action-nightly-merge@v1.4.0
+        uses: robotology/gh-action-nightly-merge@v1.5.0
         with:
           allow_ff: true
           ff_only: true
