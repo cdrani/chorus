@@ -4,6 +4,7 @@ import TrackList from './tracklist/track-list.js'
 import NowPlayingIcons from './now-playing-icons.js'
 
 import Chorus from './chorus.js'
+import QueueObserver from '../observers/queue.js'
 import SongTracker from '../observers/song-tracker.js'
 import TrackListObserver from '../observers/track-list.js'
 import NowPlayingObserver from '../observers/now-playing.js'
@@ -32,6 +33,7 @@ export default class App {
             chorus: this._chorus,
             songTracker: this._songTracker
         })
+        this._queueObserver = new QueueObserver()
         this._trackListObserver = new TrackListObserver(new TrackList(this._songTracker))
         this._artistDiscoObserver = new ArtistDiscoObserver()
 
@@ -51,6 +53,8 @@ export default class App {
         this._video.reset()
 
         this._nowPlayingIcons.clearIcons()
+
+        this._queueObserver.disconnect()
         this._trackListObserver.disconnect()
         this._nowPlayingObserver.disconnect()
         this._artistDiscoObserver.disconnect()
@@ -65,6 +69,8 @@ export default class App {
         this._chorus.init()
 
         this._nowPlayingIcons.placeIcons()
+
+        this._queueObserver.observe()
         this._trackListObserver.observe()
         this._nowPlayingObserver.observe()
         this._artistDiscoObserver.observe()

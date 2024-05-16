@@ -1,7 +1,6 @@
 export default class TrackListObserver {
     constructor(trackList) {
         this._observer = null
-
         this._isHidden = true
         this._trackList = trackList
     }
@@ -13,16 +12,6 @@ export default class TrackListObserver {
         const target = document.querySelector('main')
         this._observer = new MutationObserver(this.#mutationHandler)
         this._observer.observe(target, { subtree: true, childList: true, })
-    }
-
-    #isQueueView(mutation) {
-        if (mutation.target.localName !== 'main') return false
-        if (!mutation.addedNodes.length) return false
-
-        const addedNode = Array.from(mutation.addedNodes)?.at(0)
-        if (addedNode.localName != 'section') return false
-        
-        return true
     }
 
     #isMainView(mutation) {
