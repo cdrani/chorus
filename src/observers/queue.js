@@ -13,22 +13,25 @@ export default class QueueObserver {
 
             const target = document.querySelector('aside[aria-label="Queue"]')
 
-            if (!target) return 
+            if (!target) {
+                this._observer?.disconnect()
+                this._observer = null
+                return 
+            }
 
             this._observer = new MutationObserver(this.#mutationHandler)
             this._observer.observe(target, { childList: true, subtree: true })
         }, 1000)
     }
 
-    #mutationHandler = (mutationsList) => {
+    #mutationHandler = mutationsList => {
         for (const mutation of mutationsList) {
             if (!this.#isAsideQueueView(mutation)) return
 
-            if (this._queueObserverTimeout) clearTimeout(this._queueObserverTimeout)
-            this._queueObserverTimeout = setTimeout(async () => this._queue.refreshQueue(), 1500)
+            if (this._timeout) clearTimeout(this._timeout)
+            this._timeout = setTimeout(async () => this._queue.refreshQueue(), 1500)
         }
     }
-
 
     #isAsideQueueView(mutation) {
         const target = mutation.target
