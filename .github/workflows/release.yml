@@ -105,7 +105,7 @@ jobs:
                 }
               ' dist/manifest.json > dist/manifest.temp.json && mv dist/manifest.temp.json dist/manifest.json
             fi
-            zip -r "chorus-$1.zip" dist/*
+            cd dist && zip -r "../chorus-$1.zip" . && cd ..
           }
           
           create_zip chrome
