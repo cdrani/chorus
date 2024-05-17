@@ -61,19 +61,55 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Distributable Package
+        run: pnpm build
+
       - name: Archive Extension Files
         if: steps.semver.outputs.version != ''
         run: |
           function create_zip {
-            # $1: source dir, $2: temp dir, $3: output zip name, $4: manifest name
-            cp -r "$1" "$2"
-            mv "$2/manifest.$4.json" "$2/manifest.json"
-            cd "$2" && zip -r "../$3" . && cd ..
-            rm -rf "$2"
+            # $1: target browser
+            if [ "$1" == "firefox" ]; then
+              jq '
+                .background = {
+                  "type": "module",
+                  "scripts": ["background.js"]
+                } |
+                .browser_specific_settings = {
+                  "gecko": {
+                    "id": "chorus@cdrani.dev",
+                    "strict_min_version": "112.0"
+                  }
+                }
+              ' dist/manifest.json > dist/manifest.temp.json && mv dist/manifest.temp.json dist/manifest.json
+            fi
+            zip -r "chorus-$1.zip" dist/*
           }
           
-          create_zip src chrome_temp chorus-chrome.zip chrome
-          create_zip src firefox_temp chorus-firefox.zip firefox
+          create_zip chrome
+          create_zip firefox
 
       - name: Create Release Archive & Notes
         if: steps.semver.outputs.version != ''
