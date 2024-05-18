@@ -27,7 +27,7 @@ export default class NowPlayingObserver {
         this._loopIcon.init()
         const track = await this.setNowPlayingData()
         await this._songTracker.init()
-        this._loopIcon.highlightIcon(track)
+        this._loopIcon.highlightLoop(track)
     }
 
     #isAnchor(mutation) {
@@ -66,7 +66,7 @@ export default class NowPlayingObserver {
             await this._songTracker.songChange()
 
             this._loopIcon.updateIconPosition()
-            this._loopIcon.highlightIcon(track)
+            this._loopIcon.highlightLoop(track)
 
             this._snip.updateView()
             await this._seekIcons.setSeekLabels()

@@ -81,7 +81,7 @@ export default class NowPlayingIcons {
         heartIcon.addEventListener('click', async () => {})
     }
 
-    #hightlightTrackListBlock(songStateData) {
+    #highlightTrackListBlock(songStateData) {
         if (!this.#trackRows) return
 
         const title = currentSongInfo()?.id?.split(' by ')?.at(0) || ''
@@ -114,8 +114,8 @@ export default class NowPlayingIcons {
         })
 
         if (updatedValues.isSkipped) {
-            this.#hightlightTrackListBlock(updatedValues)
-            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()
+            this.#highlightTrackListBlock(updatedValues)
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
         }
     }
 }

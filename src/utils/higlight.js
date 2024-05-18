@@ -22,8 +22,8 @@ export const highlightElement = ({
     }, 250)
 }
 
-export const highlightLoopIcon = (highlight) => {
-    const svgIcon = document.getElementById('loop-icon')
+export const highlightIcon = ({ highlight, selector }) => {
+    const svgIcon = document.getElementById(selector)
     if (!svgIcon) return
 
     const colour = highlight ? '#1ed760' : 'currentColor'
