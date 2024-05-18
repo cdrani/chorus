@@ -1,6 +1,7 @@
 <!--- Provide a general summary of your changes in the Title above -->
 
 ## Pull Request template
+
 Please, go through these steps before you submit a PR. We understand that some might find the below steps daunting, but no need to worry, just give your best attempt and the project team will help you adhere to the guidelines.
 
 1. Make sure that your PR is not a duplicate.

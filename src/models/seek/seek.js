@@ -2,7 +2,7 @@ import SeekIcons from './seek-icon.js'
 import SeekController from './seek-controller.js'
 
 import { store } from '../../stores/data.js'
-import { currentData } from '../../data/current.js'  
+import { currentData } from '../../data/current.js'
 
 export default class Seek {
     constructor() {
@@ -18,7 +18,7 @@ export default class Seek {
 
     get #inputValues() {
         const { rwInput, ffInput, seekCheckbox } = this._controls.elements
-        return  { rw: rwInput.value, ff: ffInput.value, updateShows: seekCheckbox.checked }
+        return { rw: rwInput.value, ff: ffInput.value, updateShows: seekCheckbox.checked }
     }
 
     async save() {
@@ -38,9 +38,9 @@ export default class Seek {
         await this._store.saveTrack({
             id: 'chorus-seek',
             value: {
-                shows: { ...shows, ...updateShows && { rw, ff } }, 
-                global: { ...global, ...!updateShows && { rw, ff } }
-            },
+                shows: { ...shows, ...(updateShows && { rw, ff }) },
+                global: { ...global, ...(!updateShows && { rw, ff }) }
+            }
         })
         await this._seekIcons.setSeekLabels()
     }

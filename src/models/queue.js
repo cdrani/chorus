@@ -17,13 +17,15 @@ export default class Queue {
     }
 
     get #tracksInQueue() {
-        return [...this.#addedToQueue, ...this.#nextInQueue].map(div => {
+        return [...this.#addedToQueue, ...this.#nextInQueue].map((div) => {
             const songInfo = Array.from(div.querySelectorAll('p > span'))
 
             const songTitle = songInfo.at(0).innerText
 
             const songArtistsInfo = songInfo.at(1).querySelectorAll('span > a')
-            const songArtists = Array.from(songArtistsInfo).map(a => a.innerText).join(', ')
+            const songArtists = Array.from(songArtistsInfo)
+                .map((a) => a.innerText)
+                .join(', ')
 
             return `${songTitle} by ${songArtists}`
         })
@@ -36,7 +38,7 @@ export default class Queue {
     async #dispatchQueueList() {
         return await this._dispatcher.sendEvent({
             eventType: 'queue.get',
-            detail: { key: 'queue.get', values: {} },
+            detail: { key: 'queue.get', values: {} }
         })
     }
 
@@ -48,13 +50,13 @@ export default class Queue {
     async #dispatchQueueSetter() {
         return await this._dispatcher.sendEvent({
             eventType: 'queue.set',
-            detail: { key: 'queue.set', values: { next_tracks: this._nextQueuedTracks } },
+            detail: { key: 'queue.set', values: { next_tracks: this._nextQueuedTracks } }
         })
     }
 
     async #setQueuedTracks() {
         if (!this._userBlockedTracks.length) return
-        if (!this._nextQueuedTracks.length) return 
+        if (!this._nextQueuedTracks.length) return
 
         await this.#dispatchQueueSetter()
     }
@@ -66,7 +68,7 @@ export default class Queue {
         const queueList = await this.#dispatchQueueList()
 
         const spotifyQueuedTracks = queueList?.data?.player_state?.next_tracks
-        this._nextQueuedTracks = this.#filterQueuedTracks({ 
+        this._nextQueuedTracks = this.#filterQueuedTracks({
             spotifyQueuedTracks,
             userBlockedTracks: this._userBlockedTracks
         })
@@ -75,11 +77,13 @@ export default class Queue {
     #filterUnBlockedTracks() {
         const blocked = this.#blockedTracks
         const tracksInQueue = this.#tracksInQueue
-        return blocked.filter(track => tracksInQueue.includes(track.id))
+        return blocked.filter((track) => tracksInQueue.includes(track.id))
     }
 
     #filterQueuedTracks({ spotifyQueuedTracks, userBlockedTracks }) {
-        const userBlockedTrackIds = userBlockedTracks.map(track => `spotify:track:${track.trackId}`)
-        return spotifyQueuedTracks.filter(item => !userBlockedTrackIds.includes(item.uri))
+        const userBlockedTrackIds = userBlockedTracks.map(
+            (track) => `spotify:track:${track.trackId}`
+        )
+        return spotifyQueuedTracks.filter((item) => !userBlockedTrackIds.includes(item.uri))
     }
 }

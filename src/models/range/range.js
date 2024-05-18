@@ -8,10 +8,14 @@ export default class RangeSlider {
         if (!this._data) this.#setupEvents()
 
         const { track, globals, preferredRate, preferredPitch } = data
-        const { input, speedTrackValue, speedGlobalValue, speedCheckbox, pitchCheckbox } = this.elements
+        const { input, speedTrackValue, speedGlobalValue, speedCheckbox, pitchCheckbox } =
+            this.elements
 
         input.value = preferredRate
-        this.#setSpeedAndVideoValues({ playbackRate: preferredRate, preservesPitch: preferredPitch })
+        this.#setSpeedAndVideoValues({
+            playbackRate: preferredRate,
+            preservesPitch: preferredPitch
+        })
 
         const speedChecked = track?.playbackRate ? false : true
         const pitchChecked = track?.preservesPitch ?? preferredPitch
@@ -38,7 +42,12 @@ export default class RangeSlider {
 
     #setupEvents() {
         const {
-            input, thumb, speedGlobalValue, speedTrackValue, pitchToggleButton, speedToggleButton
+            input,
+            thumb,
+            speedGlobalValue,
+            speedTrackValue,
+            pitchToggleButton,
+            speedToggleButton
         } = this.elements
 
         input.oninput = () => this.#setSpeedValue({})
@@ -47,8 +56,10 @@ export default class RangeSlider {
 
         input.addEventListener('mouseover', () => thumb.classList.add('hover'))
         input.addEventListener('mouseout', () => thumb.classList.remove('hover'))
-        input.addEventListener('mousedown', () => { thumb.classList.add('active') })
-        input.addEventListener('mouseup', () => { 
+        input.addEventListener('mousedown', () => {
+            thumb.classList.add('active')
+        })
+        input.addEventListener('mouseup', () => {
             thumb.classList.remove('active')
             this.#setSpeedAndVideoValues()
         })
@@ -67,7 +78,7 @@ export default class RangeSlider {
         const parsedValue = parseFloat(inputValue)
         const isValid = this.#isValidRate(parsedValue)
         const currentValue = this.elements.input.value
-        const playbackRate =  isValid ? this.#padValue(parsedValue) : this.#padValue(currentValue)
+        const playbackRate = isValid ? this.#padValue(parsedValue) : this.#padValue(currentValue)
 
         this.elements.input.value = playbackRate
         this.#setSpeedAndVideoValues({ playbackRate })
@@ -81,7 +92,7 @@ export default class RangeSlider {
         pitchToggleOn.style.display = pitchChecked ? 'block' : 'none'
         pitchToggleOff.style.display = pitchChecked ? 'none' : 'block'
 
-        const { pitchCheckbox, speedLabel, speedCheckbox } = this.elements 
+        const { pitchCheckbox, speedLabel, speedCheckbox } = this.elements
 
         speedLabel.textContent = speedChecked ? 'Global Speed' : 'Track Speed'
         speedCheckbox.checked = speedChecked
@@ -89,17 +100,18 @@ export default class RangeSlider {
     }
 
     #toggleSpeedCheckbox() {
-        const {  input, speedCheckbox, speedTrackValue, speedGlobalValue, pitchCheckbox } = this.elements
+        const { input, speedCheckbox, speedTrackValue, speedGlobalValue, pitchCheckbox } =
+            this.elements
         speedCheckbox.checked = !speedCheckbox.checked
 
         const { checked } = speedCheckbox
         this.#setCheckedUI({ speedChecked: checked, pitchChecked: pitchCheckbox.checked })
 
         const { track, globals } = this._data
-        
+
         input.value = checked
             ? parseFloat(speedGlobalValue.value) || globals?.playbackRate || 1
-            : parseFloat(speedTrackValue.value)|| track?.playbackRate || 1
+            : parseFloat(speedTrackValue.value) || track?.playbackRate || 1
 
         this._video.currentSpeed = input.value
 
@@ -119,8 +131,14 @@ export default class RangeSlider {
         speedTrackValue.style.backgroundColor = !speedChecked ? 'green' : 'unset'
         speedTrackValue.style.border = !speedChecked ? '1px solid #fff' : 'none'
 
-        if (speedChecked) { speedGlobalValue.focus(); speedTrackValue.blur() }
-        if (!speedChecked) { speedGlobalValue.blur(); speedTrackValue.focus() }
+        if (speedChecked) {
+            speedGlobalValue.focus()
+            speedTrackValue.blur()
+        }
+        if (!speedChecked) {
+            speedGlobalValue.blur()
+            speedTrackValue.focus()
+        }
     }
 
     #togglePitchCheckbox() {
@@ -174,15 +192,15 @@ export default class RangeSlider {
         minOutput.textContent = `${input.min}x`
         maxOutput.textContent = `${input.max}x`
 
-        if (speedCheckbox?.checked) (speedGlobalValue.value = this.#padValue(value))
-        if (!speedCheckbox?.checked) (speedTrackValue.value = this.#padValue(value))
+        if (speedCheckbox?.checked) speedGlobalValue.value = this.#padValue(value)
+        if (!speedCheckbox?.checked) speedTrackValue.value = this.#padValue(value)
 
         return { speedValue: value, pitchPreserved }
     }
 
     #setVideoValues({ speedValue, pitchPreserved }) {
         this._video.playbackRate = speedValue
-        this._video.currentSpeed = speedValue 
+        this._video.currentSpeed = speedValue
         this._video.preservesPitch = pitchPreserved
     }
 

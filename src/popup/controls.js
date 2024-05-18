@@ -16,13 +16,19 @@ class ExtControls {
     setupEvents() {
         if (this._eventsSet) return
 
-        Object.values(this.btns).forEach(btn => {
-            btn.onclick = () => { this._port?.postMessage({ type: 'controls', key: btn.getAttribute('role') }) }
-            btn.onmouseover = () => { btn.style.scale = 1.125 }
-            btn.onmouseout = () => { btn.style.scale = 1 }
+        Object.values(this.btns).forEach((btn) => {
+            btn.onclick = () => {
+                this._port?.postMessage({ type: 'controls', key: btn.getAttribute('role') })
+            }
+            btn.onmouseover = () => {
+                btn.style.scale = 1.125
+            }
+            btn.onmouseout = () => {
+                btn.style.scale = 1
+            }
         })
 
-        this._eventsSet = true 
+        this._eventsSet = true
     }
 
     updateControlsState(active) {
@@ -33,7 +39,7 @@ class ExtControls {
     }
 
     #setColours({ textColour, backgroundColour }) {
-        if (textColour) this._colours.textColour =  textColour
+        if (textColour) this._colours.textColour = textColour
         if (backgroundColour) this._colours.backgroundColour = backgroundColour
     }
 
@@ -41,8 +47,17 @@ class ExtControls {
         this.#setColours({ textColour, backgroundColour })
         const { playBtn } = this.btns
         const { rwSpan, ffSpan } = this.spans
-        const { 
-            loopIcon, playIcon, heartIcon, repeatIcon, shuffleIcon, blockIcon, nextIcon, previousIcon, rwIcon, ffIcon
+        const {
+            loopIcon,
+            playIcon,
+            heartIcon,
+            repeatIcon,
+            shuffleIcon,
+            blockIcon,
+            nextIcon,
+            previousIcon,
+            rwIcon,
+            ffIcon
         } = this.icons
 
         playBtn.style.backgroundColor = textColour
@@ -74,7 +89,7 @@ class ExtControls {
         repeatIcon.style.strokeWidth = 0.5
 
         rwIcon.style.stroke = textColour
-        rwIcon.style.strokeWidth = 7 
+        rwIcon.style.strokeWidth = 7
         rwSpan.style.color = textColour
 
         ffIcon.style.stroke = textColour
@@ -83,11 +98,15 @@ class ExtControls {
     }
 
     get spans() {
-        return { rwSpan: document.getElementById('seek-rw'), ffSpan: document.getElementById('seek-ff') }
+        return {
+            rwSpan: document.getElementById('seek-rw'),
+            ffSpan: document.getElementById('seek-ff')
+        }
     }
 
     #getPathKey({ type, key, result }) {
-        if (key == 'play/pause') return (type == 'state') ? result : (result == 'play' ? 'pause' : 'play')
+        if (key == 'play/pause')
+            return type == 'state' ? result : result == 'play' ? 'pause' : 'play'
 
         if (type == 'controls') return result?.includes('one') ? 'repeat1' : 'repeat'
         return result?.includes('disable') ? 'repeat1' : 'repeat'
@@ -119,7 +138,8 @@ class ExtControls {
         svg.style.fill = textColour
 
         const span = document.getElementById(`${key}-dot`)
-        const enabled = type == 'state' ? state?.search(/(one)|(disable)/g) >= 0 : state?.includes('enable')
+        const enabled =
+            type == 'state' ? state?.search(/(one)|(disable)/g) >= 0 : state?.includes('enable')
         this.#updateSpan({ span, enabled, textColour })
     }
 
@@ -151,7 +171,9 @@ class ExtControls {
 
         if (['repeat', 'play/pause'].includes(key)) {
             const pathKey = this.#getPathKey({ type, key, result })
-            const newPath = parseNodeString(`<svg xmlns="http://www.w3.org/2000/svg">${SVG_PATHS[pathKey]}</svg>`)
+            const newPath = parseNodeString(
+                `<svg xmlns="http://www.w3.org/2000/svg">${SVG_PATHS[pathKey]}</svg>`
+            )
             svg.replaceChildren(...newPath.childNodes)
         }
 
@@ -177,7 +199,7 @@ class ExtControls {
             blockBtn: document.getElementById('block-btn'),
             repeatBtn: document.getElementById('repeat-btn'),
             shuffleBtn: document.getElementById('shuffle-btn'),
-            previousBtn: document.getElementById('previous-btn'),
+            previousBtn: document.getElementById('previous-btn')
         }
     }
 
@@ -192,7 +214,7 @@ class ExtControls {
             blockIcon: document.getElementById('block-icon'),
             repeatIcon: document.getElementById('repeat-icon'),
             shuffleIcon: document.getElementById('shuffle-icon'),
-            previousIcon: document.getElementById('previous-icon'),
+            previousIcon: document.getElementById('previous-icon')
         }
     }
 }

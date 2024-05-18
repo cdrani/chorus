@@ -22,7 +22,7 @@ export default class TrackListIcon {
         if (!this.#getIcon(row)) {
             const heartIcon = row.querySelector('button[data-encore-id="buttonTertiary"]')
             const iconEl = parseNodeString(this._iconUI)
-            heartIcon?.parentNode?.insertBefore(iconEl, heartIcon) 
+            heartIcon?.parentNode?.insertBefore(iconEl, heartIcon)
         }
 
         const icon = this.#getIcon(row)
@@ -47,10 +47,17 @@ export default class TrackListIcon {
 
         this._seen.add(song.id)
 
-        const track = await this.getTrack(song.id) ?? {}
+        const track = (await this.getTrack(song.id)) ?? {}
         await this._store.getTrack({
             id: song.id,
-            value: { ...song, isSkipped: false, isSnip: false, startTime: 0, endTime: song.endTime, ...track }
+            value: {
+                ...song,
+                isSkipped: false,
+                isSnip: false,
+                startTime: 0,
+                endTime: song.endTime,
+                ...track
+            }
         })
     }
 
@@ -61,9 +68,9 @@ export default class TrackListIcon {
     skipJustBlockedSong({ isSkipped, row }) {
         const { id: currentSongId } = currentSongInfo()
         const { id: trackSongId } = trackSongInfo(row)
-          
+
         if (isSkipped && currentSongId == trackSongId) {
-            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()
         }
     }
 
@@ -75,7 +82,7 @@ export default class TrackListIcon {
 
         const savedTrack = await this._store.saveTrack({
             id: song.id,
-            value: { ...snipInfo, isSkipped: !snipInfo.isSkipped },
+            value: { ...snipInfo, isSkipped: !snipInfo.isSkipped }
         })
 
         this.skipJustBlockedSong({ isSkipped: savedTrack.isSkipped, row })

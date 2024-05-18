@@ -11,7 +11,7 @@ export default class TrackListObserver {
 
         const target = document.querySelector('main')
         this._observer = new MutationObserver(this.#mutationHandler)
-        this._observer.observe(target, { subtree: true, childList: true, })
+        this._observer.observe(target, { subtree: true, childList: true })
     }
 
     #isMainView(mutation) {
@@ -29,8 +29,7 @@ export default class TrackListObserver {
 
     #isMoreLoaded(mutation) {
         const { target } = mutation
-        return target?.role == 'presentation' &&
-            mutation.addedNodes.length >= 1
+        return target?.role == 'presentation' && mutation.addedNodes.length >= 1
     }
 
     #mutationHandler = (mutationsList) => {
@@ -40,7 +39,9 @@ export default class TrackListObserver {
 
                 this._observerTimeout = setTimeout(() => {
                     this._trackList.setTrackListClickEvent()
-                    this._isHidden ? this._trackList.removeBlocking() : this._trackList.setUpBlocking()         
+                    this._isHidden
+                        ? this._trackList.removeBlocking()
+                        : this._trackList.setUpBlocking()
                 }, 2000)
             }
         }

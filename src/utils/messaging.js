@@ -1,5 +1,9 @@
 async function getActiveTab() {
-    const currentWindow = await chrome.tabs.query({ active: true, currentWindow: true, url: ['*://open.spotify.com/*'] })
+    const currentWindow = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+        url: ['*://open.spotify.com/*']
+    })
     if (currentWindow.length) return currentWindow.at(0)
 
     const anyWindow = await chrome.tabs.query({ url: ['*://open.spotify.com/*'] })
@@ -22,9 +26,9 @@ async function sendMessage({ message }) {
     messenger({ tabId: activeTab.id, message })
 }
 
-function sendBackgroundMessage(message){
+function sendBackgroundMessage(message) {
     return new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage(message, response => {
+        chrome.runtime.sendMessage(message, (response) => {
             if (chrome.runtime.lastError) return reject({ error: chrome.runtime.lastError })
             return resolve(response)
         })

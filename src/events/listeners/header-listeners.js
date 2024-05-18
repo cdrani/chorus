@@ -41,7 +41,7 @@ export default class HeaderListeners extends Listeners {
         this._viewInFocus = selectedView
         if (selectedView != 'snip') this._video.resetTempTimes()
 
-        this._VIEWS.forEach(view => {
+        this._VIEWS.forEach((view) => {
             const viewButton = document.getElementById(`chorus-${view}-button`)
             const viewInFocusContainer = document.getElementById(`chorus-${view}-controls`)
             if (!viewButton || !viewInFocusContainer) return
@@ -53,9 +53,9 @@ export default class HeaderListeners extends Listeners {
 
     #snipViewToggle() {
         const snipButton = document.getElementById('chorus-snip-button')
-        snipButton?.addEventListener('click', async () => { 
-              this.currentView = 'snip'
-              await this._snip.init()
+        snipButton?.addEventListener('click', async () => {
+            this.currentView = 'snip'
+            await this._snip.init()
         })
     }
 
@@ -77,6 +77,8 @@ export default class HeaderListeners extends Listeners {
 
     #closeModalListener() {
         const closeButton = document.getElementById('chorus-modal-close-button')
-        closeButton?.addEventListener('click', async () =>  { await this.hide() })
+        closeButton?.addEventListener('click', async () => {
+            await this.hide()
+        })
     }
 }

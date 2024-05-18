@@ -1,21 +1,18 @@
-const isHighlightable = ({ 
-    isSnip, 
-    isSkipped,
-    playbackRate = '1',
-    preservesPitch = true,
-}) => (
+const isHighlightable = ({ isSnip, isSkipped, playbackRate = '1', preservesPitch = true }) =>
     isSnip || isSkipped || !preservesPitch || !['1', '1.000', '1000'].includes(playbackRate)
-)
 
-export const highlightElement = ({ 
-    selector, 
+export const highlightElement = ({
+    selector,
     songStateData,
     context = document,
-    property = 'stroke', 
+    property = 'stroke'
 }) => {
     let element
     const timer = setInterval(() => {
-        if (element) { clearInterval(timer); return }
+        if (element) {
+            clearInterval(timer)
+            return
+        }
 
         element = context.querySelector(selector)
         if (!element) return
@@ -25,7 +22,7 @@ export const highlightElement = ({
     }, 250)
 }
 
-export const highlightLoopIcon = highlight => {
+export const highlightLoopIcon = (highlight) => {
     const svgIcon = document.getElementById('loop-icon')
     if (!svgIcon) return
 
@@ -33,4 +30,3 @@ export const highlightLoopIcon = highlight => {
     svgIcon.setAttribute('fill', colour)
     svgIcon.setAttribute('stroke', colour)
 }
-

@@ -3,11 +3,11 @@ import { SKIP_ICON, createIcon } from '../../components/icons/icon.js'
 
 export default class SkipIcon extends TrackListIcon {
     constructor(store) {
-        super({ 
-            store, 
-            key: 'isSkipped', 
+        super({
+            store,
+            key: 'isSkipped',
             selector: 'button[role="skip"]'
-        }) 
+        })
     }
 
     setInitialState(row) {

@@ -24,26 +24,34 @@ export default class CurrentSnip extends Snip {
     }
 
     #displayTrackInfo() {
-        const { id } = currentSongInfo() 
+        const { id } = currentSongInfo()
         const [title, artists] = id.split(' by ')
         super._setTrackInfo({ title, artists })
     }
 
-    get _defaultTrack() { return currentData.readTrack() }
+    get _defaultTrack() {
+        return currentData.readTrack()
+    }
 
-    updateView() { super._updateView() }
+    updateView() {
+        super._updateView()
+    }
 
-    get trackURL() { return currentSongInfo().url }
+    get trackURL() {
+        return currentSongInfo().url
+    }
 
-    share() { super._share() }
+    share() {
+        super._share()
+    }
 
     skipTrackOnSave({ isSkipped }) {
-        isSkipped && document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
+        isSkipped && document.querySelector('[data-testid="control-button-skip-forward"]')?.click()
     }
 
     async delete() {
         const track = await this.read()
-        const updatedValues = await this._store.saveTrack({ 
+        const updatedValues = await this._store.saveTrack({
             id: currentSongInfo().id,
             value: { ...track, isSnip: false, startTime: 0, endTime: playback.duration() }
         })
@@ -65,8 +73,8 @@ export default class CurrentSnip extends Snip {
                 startTime: inputLeft.value,
                 endTime: inputRight.value,
                 autoLoop: loopCheckBox.checked,
-                isSkipped: inputRight.value == 0 || isSkipped,
-            },
+                isSkipped: inputRight.value == 0 || isSkipped
+            }
         })
 
         this._video.resetTempTimes()

@@ -12,22 +12,23 @@ function stateResolver({ resolve, reject, result, key, values }) {
 
 function setState({ key, values }) {
     return new Promise((resolve, reject) => {
-        chrome.storage.local.set( 
-            { [key]: values }, 
-            result => stateResolver({ resolve, reject, result, values })
+        chrome.storage.local.set({ [key]: values }, (result) =>
+            stateResolver({ resolve, reject, result, values })
         )
     })
 }
 
 function getState(key) {
     return new Promise((resolve, reject) => {
-        chrome.storage.local.get(key, result => stateResolver({ key, resolve, reject, result }))
+        chrome.storage.local.get(key, (result) => stateResolver({ key, resolve, reject, result }))
     })
 }
 
 function removeState(key) {
     return new Promise((resolve, reject) => {
-        chrome.storage.local.remove(key, result => stateResolver({ key, resolve, reject, result }))
+        chrome.storage.local.remove(key, (result) =>
+            stateResolver({ key, resolve, reject, result })
+        )
     })
 }
 

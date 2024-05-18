@@ -1,19 +1,24 @@
 export default class CacheStore {
     #cache
-    constructor() { this.#cache = sessionStorage }
+    constructor() {
+        this.#cache = sessionStorage
+    }
 
     get cache() {
         return this.#cache
     }
 
     isEmpty(obj) {
-        return Object.keys(obj).length === 0 && obj.constructor === Object;
+        return Object.keys(obj).length === 0 && obj.constructor === Object
     }
 
     getKey(key) {
         const result = this.#cache.getItem(key)
-        try { return JSON.parse(result) }
-        catch (error) { return result }
+        try {
+            return JSON.parse(result)
+        } catch (error) {
+            return result
+        }
     }
 
     getValue({ key, value }) {
@@ -31,5 +36,7 @@ export default class CacheStore {
         return this.getKey(key)
     }
 
-    removeKey(key) { this.#cache.removeItem(key) }
+    removeKey(key) {
+        this.#cache.removeItem(key)
+    }
 }

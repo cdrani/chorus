@@ -1,20 +1,24 @@
-export const createToggleButton = ({ 
+export const createToggleButton = ({
     buttonId,
     onPathId,
     offPathId,
     checkboxId,
     labelId = '',
     fillColor = '',
-    labelText = '',
+    labelText = ''
 }) => `
     <button 
         id="${buttonId}"
         class="chorus-icon-active"
         style="z-index:100;padding:0;background-color:transparent;display:flex;align-items:center;user-select:none;"
     >
-        ${labelId && labelText && `
+        ${
+            labelId &&
+            labelText &&
+            `
             <span id="${labelId}" style="font-weight:600;font-size:1rem;color:#fff;margin-right:1rem">${labelText}</span>
-        `}
+        `
+        }
 
         <input 
             type="checkbox"

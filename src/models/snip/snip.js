@@ -15,14 +15,18 @@ export default class Snip {
         this._controls = new SliderControls()
     }
 
-    init() { this._controls.init() }
+    init() {
+        this._controls.init()
+    }
 
     async read() {
         const track = await currentData.readTrack()
         return track
     }
 
-    reset() { this._controls.setInitialValues() }
+    reset() {
+        this._controls.setInitialValues()
+    }
 
     async _delete() {
         await this._store.deleteTrack(this._defaultTrack)
@@ -30,7 +34,7 @@ export default class Snip {
     }
 
     async _updateView(initData = null) {
-        const response = initData ?? await this.read()
+        const response = initData ?? (await this.read())
         const { isSnip, isSkipped } = response
 
         this.#setUpdateControls(response)
@@ -41,11 +45,20 @@ export default class Snip {
         const tempEndTime = document.getElementById('chorus-end')?.value
         const tempStartTime = document.getElementById('chorus-start')?.value
 
-        return { tempEndTime: timeToSeconds(tempEndTime), tempStartTime: timeToSeconds(tempStartTime) }
+        return {
+            tempEndTime: timeToSeconds(tempEndTime),
+            tempStartTime: timeToSeconds(tempStartTime)
+        }
     }
 
     async _share() {
-        const { url, startTime, endTime, playbackRate = '1.00', preservesPitch = true } = await this.read()
+        const {
+            url,
+            startTime,
+            endTime,
+            playbackRate = '1.00',
+            preservesPitch = true
+        } = await this.read()
         const pitch = preservesPitch ? 1 : 0
         const rate = parseFloat(playbackRate) * 1000
 
@@ -53,7 +66,7 @@ export default class Snip {
 
         const trackURL = url ?? this.trackURL ?? location.href
         if (!trackURL) {
-            return this._alert.displayAlert({ 
+            return this._alert.displayAlert({
                 type: 'error',
                 message: 'Unable to share as track id not found.'
             })
@@ -71,7 +84,9 @@ export default class Snip {
         removeButton.style.display = showRemove ? 'block' : 'none'
     }
 
-    #setUpdateControls(response) { this._controls.updateControls(response) }
+    #setUpdateControls(response) {
+        this._controls.updateControls(response)
+    }
 
     get _elements() {
         return {
@@ -79,11 +94,15 @@ export default class Snip {
             artists: document.getElementById('track-artists'),
             inputRight: document.getElementById('input-end'),
             inputLeft: document.getElementById('input-start'),
-            loopCheckBox: document.getElementById('loop-checkbox'),
+            loopCheckBox: document.getElementById('loop-checkbox')
         }
     }
 
-    displayAlert() { this._alert.displayAlert() }
+    displayAlert() {
+        this._alert.displayAlert()
+    }
 
-    _setTrackInfo({ title, artists }) { setTrackInfo({ title, artists, chorusView: true }) }
+    _setTrackInfo({ title, artists }) {
+        setTrackInfo({ title, artists, chorusView: true })
+    }
 }

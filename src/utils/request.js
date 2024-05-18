@@ -1,17 +1,17 @@
 import { getState } from './state.js'
 
-export const setOptions = async ({ method = 'GET', body = null, connect = false  }) => {
+export const setOptions = async ({ method = 'GET', body = null, connect = false }) => {
     const authHeader = await getAuthHeader()
     const connectHeader = connect ? await getConnectHeader() : null
 
     return {
         method,
         body: body ? JSON.stringify(body) : null,
-        headers: { 
-            Authorization: authHeader, 
+        headers: {
+            Authorization: authHeader,
             'Content-Type': 'application/json',
-            ...connect && { 'X-Spotify-Connection-Id': connectHeader },
-        },
+            ...(connect && { 'X-Spotify-Connection-Id': connectHeader })
+        }
     }
 }
 
@@ -31,5 +31,7 @@ export const request = async ({ url, options }) => {
             const jsonResponse = await response?.json()
             return jsonResponse
         }
-    } catch (error) { throw error } 
+    } catch (error) {
+        throw error
+    }
 }

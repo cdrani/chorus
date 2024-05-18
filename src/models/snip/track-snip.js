@@ -22,7 +22,7 @@ export default class TrackSnip extends Snip {
     }
 
     #displayTrackInfo() {
-        const { id } = trackSongInfo(this._row) 
+        const { id } = trackSongInfo(this._row)
         const [title, artists] = id.split(' by ')
         super._setTrackInfo({ title, artists })
     }
@@ -37,8 +37,8 @@ export default class TrackSnip extends Snip {
                 endTime,
                 startTime: 0,
                 isSnip: false,
-                isSkipped: false,
-            },
+                isSkipped: false
+            }
         }
     }
 
@@ -53,11 +53,11 @@ export default class TrackSnip extends Snip {
     }
 
     highlightSnip(songStateData) {
-        highlightElement({ 
+        highlightElement({
             songStateData,
             property: 'color',
             context: this._row,
-            selector: 'svg[role="snip"]',
+            selector: 'svg[role="snip"]'
         })
 
         this.toggleIconVisibility(songStateData)
@@ -86,8 +86,8 @@ export default class TrackSnip extends Snip {
                 isSnip: true,
                 startTime: inputLeft.value,
                 endTime: inputRight.value,
-                isSkipped: inputRight.value == 0 || isSkipped,
-            },
+                isSkipped: inputRight.value == 0 || isSkipped
+            }
         })
 
         this.updateView(songStateData)

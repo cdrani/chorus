@@ -21,7 +21,7 @@ export default class SongTracker {
     async init() {
         this.#setupListeners()
         const songStateData = await this.#setCurrentSongData()
-        songStateData.isShared 
+        songStateData.isShared
             ? await this.handleShared(songStateData)
             : await this.songChange(songStateData)
     }
@@ -29,14 +29,14 @@ export default class SongTracker {
     async #dispatchPlaySharedSong({ track_id, position }) {
         await this._dispatcher.sendEvent({
             eventType: 'play.shared',
-            detail: { key: 'play.shared', values: { track_id, position} },
+            detail: { key: 'play.shared', values: { track_id, position } }
         })
     }
 
     async #dispatchSeekToPosition(position) {
         await this._dispatcher.sendEvent({
             eventType: 'play.seek',
-            detail: { key: 'play.seek', values: { position } },
+            detail: { key: 'play.seek', values: { position } }
         })
     }
 
@@ -54,7 +54,7 @@ export default class SongTracker {
     async updateCurrentSongData(values) {
         if (!values) return
 
-        this._currentSongState = { ...this._currentSongState || {}, ...values }
+        this._currentSongState = { ...(this._currentSongState || {}), ...values }
         await this.#applyEffects(this._currentSongState)
     }
 
@@ -65,16 +65,26 @@ export default class SongTracker {
         return playButton.getAttribute('aria-label') == 'Pause'
     }
 
-    get #muteButton() { return document.querySelector('[data-testid="volume-bar-toggle-mute-button"]') }
+    get #muteButton() {
+        return document.querySelector('[data-testid="volume-bar-toggle-mute-button"]')
+    }
 
-    get #isMute() { return this.#muteButton?.getAttribute('aria-label') == 'Unmute' }
+    get #isMute() {
+        return this.#muteButton?.getAttribute('aria-label') == 'Unmute'
+    }
 
-    #mute() { if (!this.#isMute) this.#muteButton?.click() }
-    #unMute() { if (this.#isMute) this.#muteButton?.click() }
+    #mute() {
+        if (!this.#isMute) this.#muteButton?.click()
+    }
+    #unMute() {
+        if (this.#isMute) this.#muteButton?.click()
+    }
 
-    get #isFirefox() { return navigator.userAgent.includes('Firefox') }
+    get #isFirefox() {
+        return navigator.userAgent.includes('Firefox')
+    }
 
-    async #setReverb () {
+    async #setReverb() {
         if (this._reverbSet) return
 
         const effect = sessionStorage.getItem('reverb') ?? 'none'
@@ -82,7 +92,9 @@ export default class SongTracker {
         this._reverbSet = true
     }
 
-    #setupListeners() { this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate) }
+    #setupListeners() {
+        this._video.element.addEventListener('timeupdate', this.#handleTimeUpdate)
+    }
 
     clearListeners() {
         this._video.element.removeEventListener('timeupdate', this.#handleTimeUpdate)
@@ -95,8 +107,8 @@ export default class SongTracker {
         this._video.playbackRate = this._video.currentSpeed
         this._video.preservesPitch = isShared ? preservesPitch : preferredPitch
 
-        highlightElement({ 
-            selector: '#chorus-icon > svg', 
+        highlightElement({
+            selector: '#chorus-icon > svg',
             songStateData: { isSnip, isShared, ...track }
         })
     }
@@ -111,7 +123,7 @@ export default class SongTracker {
     async songChange(initialData = null) {
         if (!this._init) this.#mute()
 
-        const songStateData = initialData ?? await this.#setCurrentSongData()
+        const songStateData = initialData ?? (await this.#setCurrentSongData())
         await this.#applyEffects(songStateData)
         const { isSnip, isSkipped, startTime } = songStateData
 
@@ -125,16 +137,20 @@ export default class SongTracker {
 
             if (parsedStartTime != 0 && currentPositionTime < parsedStartTime) {
                 await this.#dispatchSeekToPosition(parsedStartTime)
-            } 
+            }
         }
 
         this.#unMute()
         this._init = false
     }
 
-    get #nextButton() { return document.querySelector('[data-testid="control-button-skip-forward"]') }
+    get #nextButton() {
+        return document.querySelector('[data-testid="control-button-skip-forward"]')
+    }
 
-    get #playbackPosition() { return document.querySelector('[data-testid="playback-position"]') }
+    get #playbackPosition() {
+        return document.querySelector('[data-testid="playback-position"]')
+    }
 
     #handleEditingSnipMode(startTime) {
         const { tempStartTime } = this.#tempVideoAttributes
@@ -145,7 +161,7 @@ export default class SongTracker {
         return {
             tempEndTime: this._video.element.getAttribute('endTime'),
             tempStartTime: this._video.element.getAttribute('startTime'),
-            lastSetThumb: this._video.element.getAttribute('lastSetThumb'),
+            lastSetThumb: this._video.element.getAttribute('lastSetThumb')
         }
     }
 
@@ -153,9 +169,10 @@ export default class SongTracker {
         const { tempStartTime, tempEndTime, lastSetThumb } = this.#tempVideoAttributes
         if (!tempStartTime && !tempEndTime) return false
 
-        const tempEndTimeMS = (parseFloat(tempEndTime ?? endTime) * 1000) - 100
+        const tempEndTimeMS = parseFloat(tempEndTime ?? endTime) * 1000 - 100
         const thumbSet = !!lastSetThumb
-        const loopEndTime = (!thumbSet || lastSetThumb == 'start') ? tempEndTimeMS : tempEndTimeMS + 3000
+        const loopEndTime =
+            !thumbSet || lastSetThumb == 'start' ? tempEndTimeMS : tempEndTimeMS + 3000
 
         return !Number.isNaN(tempEndTimeMS) && currentTimeMS > Math.min(loopEndTime, endTime * 1000)
     }
@@ -172,10 +189,18 @@ export default class SongTracker {
         if (!this._currentSongState) return
 
         setTimeout(() => {
-            const { isShared, isSnip, isSkipped, startTime, endTime, autoLoop = false } = this._currentSongState
+            const {
+                isShared,
+                isSnip,
+                isSkipped,
+                startTime,
+                endTime,
+                autoLoop = false
+            } = this._currentSongState
             const currentTimeMS = parseFloat(this._video.currentTime * 1000)
 
-            if (this.#atTempSongEnd({ endTime, currentTimeMS })) return this.#handleEditingSnipMode(startTime)
+            if (this.#atTempSongEnd({ endTime, currentTimeMS }))
+                return this.#handleEditingSnipMode(startTime)
             if (isSnip && !this.#atSnipSongEnd({ currentTimeMS, endTime })) return
 
             if (autoLoop || (isShared && this._video.currentTime >= endTime)) {

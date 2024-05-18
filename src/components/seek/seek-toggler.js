@@ -15,16 +15,15 @@ export const createSeekToggler = () => `
 
         <div>
             <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end">
-                ${createToggleButton({ 
+                ${createToggleButton({
                     labelText: 'Global',
                     labelId: 'seek-label',
                     onPathId: 'seek-toggle-on',
                     checkboxId: 'seek-checkbox',
                     offPathId: 'seek-toggle-off',
-                    buttonId: 'seek-toggle-button',
+                    buttonId: 'seek-toggle-button'
                 })}
             </div>
         </div>
     </div>
 `
-

@@ -1,5 +1,5 @@
-// type: rw | ff; 
-export const createSeekIcon = type => `
+// type: rw | ff;
+export const createSeekIcon = (type) => `
     <button 
         role="${type}"
         class="chorus-hover-white"
@@ -9,7 +9,7 @@ export const createSeekIcon = type => `
     >
         <span 
             id="seek-icon-${type}-label"
-            style="position:absolute;z-index:-10;background:transparent;font-weight:bold;font-size:small;top:46%;${type =='ff'? 'left' :'right'}:50%;text-align:center;">
+            style="position:absolute;z-index:-10;background:transparent;font-weight:bold;font-size:small;top:46%;${type == 'ff' ? 'left' : 'right'}:50%;text-align:center;">
         </span>
         <svg 
             fill="none"
@@ -26,4 +26,4 @@ export const createSeekIcon = type => `
             <polyline points="4.65 22.33 12.52 32.62 22.81 24.75"></polyline>
         </svg>
     </button>
-` 
+`

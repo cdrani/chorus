@@ -1,14 +1,25 @@
 {
-  "name": "chorus",
-  "private": true,
-  "type": "module",
-  "version": "1.22.2",
-  "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w"
-  },
-  "devDependencies": {
-    "rollup": "3.28.1",
-    "rollup-plugin-chrome-extension": "3.6.12"
-  }
+    "name": "chorus",
+    "private": true,
+    "type": "module",
+    "version": "1.22.2",
+    "scripts": {
+        "build": "rollup -c",
+        "watch": "rollup -c -w",
+        "prepare": "husky"
+    },
+    "devDependencies": {
+        "husky": "^9.0.11",
+        "prettier": "^3.2.5",
+        "rollup": "3.28.1",
+        "rollup-plugin-chrome-extension": "3.6.12"
+    },
+    "lint-staged": {
+        "*.{js,jsx,json,css,md}": "prettier --write"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "pnpm lint-staged"
+        }
+    }
 }

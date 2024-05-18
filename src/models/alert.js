@@ -3,14 +3,16 @@ import { parseNodeString } from '../utils/parser.js'
 
 export default class Alert {
     #craftMessageNode({ message, link, linkMessage }) {
-        const messageHTML =  `
+        const messageHTML = `
             <div style="display:flex;flex-direction:column;">
                 <p>${message ?? 'Snip copied to clipboard.'}</p>
-                ${link 
-                    ? `<p><a style="text-decoration-line:underline" href="${link}">
+                ${
+                    link
+                        ? `<p><a style="text-decoration-line:underline" href="${link}">
                           ${linkMessage ?? 'Go To Playlist.'}
                       </a></p>`
-                    : ''}
+                        : ''
+                }
             </div>
         `
         return parseNodeString(messageHTML)
@@ -24,9 +26,9 @@ export default class Alert {
 
         const messageNode = this.#craftMessageNode({ message, link, linkMessage })
         alertMessage.replaceChildren(messageNode)
-        
-        this.#chorusAlert.style.display = 'flex' 
-        setTimeout(() => this.#chorusAlert.style.display = 'none', duration)
+
+        this.#chorusAlert.style.display = 'flex'
+        setTimeout(() => (this.#chorusAlert.style.display = 'none'), duration)
     }
 
     #handleAlert(target) {
@@ -42,10 +44,10 @@ export default class Alert {
         if (this.#chorusAlert) return
 
         const alertEl = parseNodeString(createAlert())
-        document.body.appendChild(alertEl) 
+        document.body.appendChild(alertEl)
 
         const closeAlertButton = document.getElementById('chorus-alert-close-button')
-        closeAlertButton?.addEventListener('click', () =>  { 
+        closeAlertButton?.addEventListener('click', () => {
             this.#handleAlert(closeAlertButton)
         })
     }

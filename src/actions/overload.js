@@ -24,9 +24,13 @@ class SpotifyVideo {
         }
     }
 
-    get element() { return this._video }
+    get element() {
+        return this._video
+    }
 
-    get reverb() { return this._reverb }
+    get reverb() {
+        return this._reverb
+    }
 }
 
 export const spotifyVideo = new SpotifyVideo()
