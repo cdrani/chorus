@@ -23,7 +23,20 @@ export const NOW_PLAYING_SKIP_ICON = {
     id: 'chorus-skip'
 }
 
+export const HEART_ICON = {
+    lw: 22,
+    id: 'heart',
+    role: 'heart',
+    ariaLabel: 'Like Song',
+    stroke: 'currentColor',
+    fill: 'none',
+    viewBox: '-5 -4 24 24',
+}
+
 const SVG_PATHS = {
+    heart: `
+        <path d="M15.724 4.22A4.313 4.313 0 0 0 12.192.814a4.269 4.269 0 0 0-3.622 1.13.837.837 0 0 1-1.14 0 4.272 4.272 0 0 0-6.21 5.855l5.916 7.05a1.128 1.128 0 0 0 1.727 0l5.916-7.05a4.228 4.228 0 0 0 .945-3.577z"/>
+    `,
     skip: `
         <path role="skip" fill-rule="evenodd"
               d="M5.965 4.904l9.131 9.131a6.5 6.5 0 00-9.131-9.131zm8.07 10.192L4.904 5.965a6.5 6.5 0 009.131 9.131zM4.343 4.343a8 8 0 1111.314 11.314A8 8 0 014.343 4.343z" clip-rule="evenodd"
@@ -43,7 +56,7 @@ const BUTTON_STYLES = {
         'visibility:hidden;border:none;background:unset;display:flex;align-items:center;cursor:pointer;'
 }
 
-export const createIcon = ({ role, viewBox, id, ariaLabel, strokeWidth, stroke }) => {
+export const createIcon = ({ role, viewBox, id, ariaLabel, strokeWidth, stroke, fill = "currentColor", lw = '1.25rem'}) => {
     const svgPath = SVG_PATHS[role] || SVG_PATHS.default
     const buttonStylesKey = id ? 'settings' : 'default'
     const buttonStyles = BUTTON_STYLES[buttonStylesKey]
@@ -59,9 +72,9 @@ export const createIcon = ({ role, viewBox, id, ariaLabel, strokeWidth, stroke }
         >
             <svg
                 role="${role}"
-                width="1.25rem"
-                height="1.25rem"
-                fill="currentColor"
+                width="${lw}"
+                height="${lw}"
+                fill="${fill}"
                 stroke="${stroke || ''}"
                 stroke-width="${strokeWidth || 1.5}"
                 xmlns="http://www.w3.org/2000/svg"

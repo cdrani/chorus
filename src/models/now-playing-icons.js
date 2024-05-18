@@ -1,7 +1,7 @@
 import { store } from '../stores/data.js'
 import { currentData } from '../data/current.js'
 import { createControls } from '../components/controls.js'
-import { SETTINGS_ICON, NOW_PLAYING_SKIP_ICON, createIcon } from '../components/icons/icon.js'
+import { SETTINGS_ICON, NOW_PLAYING_SKIP_ICON, createIcon, HEART_ICON } from '../components/icons/icon.js'
 
 import { currentSongInfo } from '../utils/song.js'
 import { parseNodeString } from '../utils/parser.js'
@@ -25,6 +25,7 @@ export default class NowPlayingIcons {
     #createRootContainer() {
         return `
             <div id="chorus">
+                ${this.#createHeartIcon()}
                 ${this.#createSettingsIcon()}
                 ${this.#createSkipIcon()}
                 <div id="chorus-main" style="display: none">
@@ -56,6 +57,10 @@ export default class NowPlayingIcons {
 
     #createSkipIcon() {
         return createIcon(NOW_PLAYING_SKIP_ICON)
+    }
+
+    #createHeartIcon() {
+        return createIcon(HEART_ICON)
     }
 
     #setIconListeners() {
