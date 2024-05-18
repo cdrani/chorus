@@ -25,7 +25,7 @@ export const NOW_PLAYING_SKIP_ICON = {
 
 export const HEART_ICON = {
     lw: 22,
-    id: 'heart',
+    id: 'chorus-heart',
     role: 'heart',
     ariaLabel: 'Like Song',
     stroke: 'currentColor',

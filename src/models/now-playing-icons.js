@@ -75,6 +75,10 @@ export default class NowPlayingIcons {
 
         const skipIcon = document.getElementById('chorus-skip')
         skipIcon.addEventListener('click', async () => this.#handleSkipTrack())
+
+        // TODO: add listener here to toggle like/unlike of track
+        const heartIcon = document.getElementById('chorus-heart') 
+        heartIcon.addEventListener('click', async () => {})
     }
 
     #hightlightTrackListBlock(songStateData) {
