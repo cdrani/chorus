@@ -27,6 +27,7 @@ export default class NowPlayingObserver {
         this.#toggleSnipUI()
         this._seekIcons.init()
         this._loopIcon.init()
+        this._heartIcon.init()
         const track = await this.setNowPlayingData()
         await this._songTracker.init()
         this._loopIcon.highlightLoop(track)
@@ -92,6 +93,7 @@ export default class NowPlayingObserver {
         this._observer?.disconnect()
         this._currentSongId = null
         this._loopIcon.removeIcon()
+        this._heartIcon.removeIcon()
         this._seekIcons.removeIcons()
         this._songTracker.clearListeners()
         this._observer = null
