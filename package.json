@@ -6,7 +6,8 @@
     "scripts": {
         "build": "rollup -c",
         "watch": "rollup -c -w",
-        "prepare": "husky"
+        "prepare": "husky",
+        "format": "prettier --write ."
     },
     "devDependencies": {
         "husky": "^9.0.11",
