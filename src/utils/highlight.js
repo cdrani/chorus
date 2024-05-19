@@ -23,7 +23,7 @@ export const highlightElement = ({
 }
 
 export const highlightIcon = ({ highlight, selector }) => {
-    const svgIcon = document.getElementById(selector)
+    const svgIcon = document.querySelector(selector)
     if (!svgIcon) return
 
     const colour = highlight ? '#1ed760' : 'currentColor'
