@@ -2,6 +2,7 @@ import { store } from '../stores/data.js'
 import { currentData } from '../data/current.js'
 
 import LoopIcon from '../models/loop-icon.js'
+import HeartIcon from '../models/heart-icon.js'
 import SeekIcons from '../models/seek/seek-icon.js'
 import { currentSongInfo } from '../utils/song.js'
 
@@ -15,6 +16,7 @@ export default class NowPlayingObserver {
         this._chorus = chorus
         this._seekIcons = new SeekIcons()
         this._loopIcon = new LoopIcon(songTracker)
+        this._heartIcon = new HeartIcon('current')
     }
 
     async observe() {
@@ -28,6 +30,7 @@ export default class NowPlayingObserver {
         const track = await this.setNowPlayingData()
         await this._songTracker.init()
         this._loopIcon.highlightLoop(track)
+        this._heartIcon.highlightIcon()
     }
 
     #isAnchor(mutation) {
@@ -67,6 +70,7 @@ export default class NowPlayingObserver {
 
             this._loopIcon.updateIconPosition()
             this._loopIcon.highlightLoop(track)
+            this._heartIcon.highlightIcon()
 
             this._snip.updateView()
             await this._seekIcons.setSeekLabels()
