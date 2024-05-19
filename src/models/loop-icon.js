@@ -4,7 +4,7 @@ import { spotifyVideo } from '../actions/overload.js'
 
 import { playback } from '../utils/playback.js'
 import { parseNodeString } from '../utils/parser.js'
-import { highlightIcon } from '../utils/higlight.js'
+import { highlightIcon } from '../utils/highlight.js'
 
 export default class LoopIcon {
     constructor(songTracker) {
@@ -63,19 +63,14 @@ export default class LoopIcon {
         parentElement?.insertBefore(this.#loopButton, parentElement.lastElementChild.nextSibling)
     }
 
-    get #isHiglighted() {
-        const svgIcon = document.getElementById('loop-icon')
+    get #isHighlighted() {
+        const svgIcon =  document.getElementById('loop-icon')
         if (!svgIcon) return false
 
         return svgIcon.getAttribute('fill') == '#1ed760'
     }
-<<<<<<< HEAD
 
-    highlightIcon({ isSnip, autoLoop = false }) {
-=======
-    
     highlightLoop({ isSnip, autoLoop = false }) { 
->>>>>>> dff1b32 (refactor: highlightIcon function arguments)
         if (!isSnip && autoLoop) {
             this._video.element.setAttribute('startTime', 0)
             this._video.element.setAttribute('endTime', playback.duration())
@@ -89,7 +84,7 @@ export default class LoopIcon {
             'aria-label',
             autoLoop ? 'Remove Loop' : `Loop ${isSnip ? 'Snip' : 'Track'}`
         )
-        highlightIcon({ higlight: autoLoop, selector: 'loop-icon' }) 
+        highlightIcon({ highlight: autoLoop, selector: '#loop-icon' }) 
     }
 
     removeIcon() {
@@ -98,7 +93,7 @@ export default class LoopIcon {
 
     async #handleLoopButton() {
         const track = await currentData.readTrack()
-        const autoLoop = track.isSnip ? !track?.autoLoop : !this.#isHiglighted
+        const autoLoop = track.isSnip ? !track?.autoLoop : !this.#isHighlighted
         this.highlightLoop({ isSnip: track.isSnip, autoLoop })
 
         if (!track.isSnip) return

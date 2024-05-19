@@ -5,7 +5,7 @@ import { spotifyVideo } from '../actions/overload.js'
 import { playback } from '../utils/playback.js'
 import { timeToSeconds } from '../utils/time.js'
 import { currentSongInfo } from '../utils/song.js'
-import { highlightElement } from '../utils/higlight.js'
+import { highlightElement } from '../utils/highlight.js'
 
 import Dispatcher from '../events/dispatcher.js'
 

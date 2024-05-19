@@ -1,7 +1,7 @@
 import Snip from './snip.js'
 
 import { trackSongInfo } from '../../utils/song.js'
-import { highlightElement } from '../../utils/higlight.js'
+import { highlightElement } from '../../utils/highlight.js'
 
 export default class TrackSnip extends Snip {
     constructor(store) {

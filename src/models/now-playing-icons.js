@@ -5,7 +5,7 @@ import { SETTINGS_ICON, NOW_PLAYING_SKIP_ICON, createIcon, HEART_ICON } from '..
 
 import { currentSongInfo } from '../utils/song.js'
 import { parseNodeString } from '../utils/parser.js'
-import { highlightElement } from '../utils/higlight.js'
+import { highlightElement } from '../utils/highlight.js'
 
 export default class NowPlayingIcons {
     constructor({ snip, chorus }) {
