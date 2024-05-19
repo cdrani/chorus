@@ -33,6 +33,7 @@ window.addEventListener('message', async (event) => {
         'queue.set': sendBackgroundMessage,
         'queue.get': sendBackgroundMessage,
         'artist.disco': sendBackgroundMessage,
+        'tracks.update' : sendBackgroundMessage,
         'storage.populate': () => getState(null),
         'storage.get': ({ key }) => getState(key),
         'storage.delete': ({ key }) => removeState(key),

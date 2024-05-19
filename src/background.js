@@ -2,6 +2,7 @@ import { setState, getState } from './utils/state.js'
 import { mediaKeys, chorusKeys } from './utils/selectors.js'
 import { activeOpenTab, sendMessage } from './utils/messaging.js'
 
+import { updateLikedTracks } from './services/track.js'
 import { getQueueList, setQueueList } from './services/queue.js'
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 import { playSharedTrack, seekTrackToPosition } from './services/player.js'
@@ -162,7 +163,8 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
         'queue.get': getQueueList,
         'play.shared': playSharedTrack,
         'play.seek': seekTrackToPosition,
-        'artist.disco': createArtistDiscoPlaylist
+        'tracks.update': updateLikedTracks,
+        'artist.disco': createArtistDiscoPlaylist,
     }
     const handlerFn = messageHandler[key]
     handlerFn
