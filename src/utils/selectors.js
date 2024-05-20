@@ -5,7 +5,7 @@ const mediaKeys = {
     previous: '[data-testid="control-button-skip-back"]',
     'play/pause': '[data-testid="control-button-playpause"]',
     'mute/unmute': '[data-testid="volume-bar-toggle-mute-button"]',
-    'save/unsave': '[data-testid="now-playing-widget"] > [data-encore-id="buttonTertiary"]'
+    'save/unsave': '[data-testid="now-playing-widget"] > #chorus-heart'
 }
 
 const chorusKeys = {
