@@ -1,21 +1,21 @@
-export const secondsToTime = seconds => {
+export const secondsToTime = (seconds) => {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
     const remainingSeconds = seconds % 60
 
-    let time = ""
+    let time = ''
 
     if (hours > 0) {
-        time += hours + ":"
+        time += hours + ':'
     }
 
     if (minutes < 10 && hours !== 0) {
-      time += "0"
+        time += '0'
     }
 
-    time += minutes + ":"
+    time += minutes + ':'
     if (remainingSeconds < 10) {
-        time += "0"
+        time += '0'
     }
 
     time += remainingSeconds
@@ -23,7 +23,7 @@ export const secondsToTime = seconds => {
     return time
 }
 
-export const formatTimeInSeconds = totalSeconds => {
+export const formatTimeInSeconds = (totalSeconds) => {
     const parsedSeconds = parseFloat(totalSeconds)
 
     if (isNaN(parsedSeconds) || parsedSeconds < 0) return
@@ -36,24 +36,23 @@ export const formatTimeInSeconds = totalSeconds => {
     return `${hours}:${minutes}:${seconds}:${milliseconds}`
 }
 
-export const timeToMilliseconds = ({ hours, mins, secs, ms }) => (
+export const timeToMilliseconds = ({ hours, mins, secs, ms }) =>
     Number(hours) * 3600 * 1000 + Number(mins) * 60 * 1000 + Number(secs) * 1000 + Number(ms)
-)
 
-export const timeToSeconds = time => {
+export const timeToSeconds = (time) => {
     if (!time || !time?.includes(':')) return
 
-    const timeParts = time.split(":").map(Number)
+    const timeParts = time.split(':').map(Number)
 
     if (timeParts.length === 3) {
-        const [hours, minutes, seconds ] = timeParts
+        const [hours, minutes, seconds] = timeParts
         return (hours || 0) * 3600 + minutes * 60 + seconds
     } else if (timeParts.length === 2) {
-        const [minutes, seconds ] = timeParts
+        const [minutes, seconds] = timeParts
         return minutes * 60 + seconds
     } else if (timeParts.length === 4) {
-        const [hours, minutes, seconds, milliseconds] = timeParts;
-        return (hours || 0) * 3600 + minutes * 60 + seconds + milliseconds / 100;
+        const [hours, minutes, seconds, milliseconds] = timeParts
+        return (hours || 0) * 3600 + minutes * 60 + seconds + milliseconds / 100
     }
 
     return timeParts.at(0)

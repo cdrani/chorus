@@ -37,12 +37,12 @@ export default class App {
         this._trackListObserver = new TrackListObserver(new TrackList(this._songTracker))
         this._artistDiscoObserver = new ArtistDiscoObserver()
 
-        this.#resetInterval()    
+        this.#resetInterval()
         this.#reInit()
     }
 
     #resetInterval() {
-        if (!this._intervalId) return 
+        if (!this._intervalId) return
 
         clearInterval(this._intervalId)
         this._intervalId = null
@@ -58,7 +58,7 @@ export default class App {
         this._trackListObserver.disconnect()
         this._nowPlayingObserver.disconnect()
         this._artistDiscoObserver.disconnect()
-        
+
         this.#resetInterval()
 
         navigator.userAgent.includes('Firefox') && this._reverb.setReverbEffect('none')

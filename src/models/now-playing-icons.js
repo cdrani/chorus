@@ -54,18 +54,21 @@ export default class NowPlayingIcons {
         return createIcon(SETTINGS_ICON)
     }
 
-    #createSkipIcon()  {
+    #createSkipIcon() {
         return createIcon(NOW_PLAYING_SKIP_ICON)
     }
 
     #setIconListeners() {
         const settingsIcon = document.getElementById('chorus-icon')
-        settingsIcon?.addEventListener('click', () => { 
+        settingsIcon?.addEventListener('click', () => {
             this.chorus.toggle()
-            if (this.chorus.isShowing) { this.snip.init(); this.snip.updateView() }
+            if (this.chorus.isShowing) {
+                this.snip.init()
+                this.snip.updateView()
+            }
         })
 
-        const skipIcon = document.getElementById('chorus-skip') 
+        const skipIcon = document.getElementById('chorus-skip')
         skipIcon.addEventListener('click', async () => this.#handleSkipTrack())
     }
 
@@ -73,8 +76,9 @@ export default class NowPlayingIcons {
         if (!this.#trackRows) return
 
         const title = currentSongInfo()?.id?.split(' by ')?.at(0) || ''
-        const context = this.#trackRows.find(row => 
-            row.querySelector('[data-testid="internal-track-link"] div')?.textContent == title
+        const context = this.#trackRows.find(
+            (row) =>
+                row.querySelector('[data-testid="internal-track-link"] div')?.textContent == title
         )
         if (!context) return
 
@@ -97,12 +101,12 @@ export default class NowPlayingIcons {
 
         const updatedValues = await store.saveTrack({
             id: currentSongInfo().id,
-            value: { ...songInfo, isSkipped: !songInfo.isSkipped },
+            value: { ...songInfo, isSkipped: !songInfo.isSkipped }
         })
 
         if (updatedValues.isSkipped) {
             this.#hightlightTrackListBlock(updatedValues)
-            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()
         }
     }
 }

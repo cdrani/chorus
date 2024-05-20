@@ -15,5 +15,5 @@ export const playback = {
         const playbackPosition = getPlaybackPosition()?.textContent
 
         return timeToSeconds(playbackPosition)
-    },
+    }
 }

@@ -52,17 +52,22 @@ function addArtistDiscoUI() {
 async function sendArtistDiscoMessage() {
     const artist_id = location.pathname.split('/artist/').at(-1)
     const artist_name = document.querySelector('span > h1').textContent
-    
-    const { state,  data } = await dispatcher.sendEvent({
+
+    const { state, data } = await dispatcher.sendEvent({
         eventType: 'artist.disco',
-        detail: { key: 'artist.disco', values: { artist_name, artist_id } },
+        detail: { key: 'artist.disco', values: { artist_name, artist_id } }
     })
 
     if (state == 'completed') {
         const alertMessage = `Playlist "${artist_name}" Added.`
-        alert.displayAlert({ type: 'success', message: alertMessage, duration: 5000, link: data.playlist.url })
+        alert.displayAlert({
+            type: 'success',
+            message: alertMessage,
+            duration: 5000,
+            link: data.playlist.url
+        })
         return
-    } 
+    }
 
     const alertMessage = 'Something is wrong. Uh... Please Try Again.'
     alert.displayAlert({ type: 'error', message: alertMessage })
@@ -73,8 +78,11 @@ function loadArtistDiscoUI() {
         const actionBar = document.querySelector('[data-testid="action-bar"]')
         const discoUI = document.getElementById('artist-disco')
 
-        if (actionBar && discoUI) { clearInterval(setup); return }
-        if (actionBar && !discoUI) addArtistDiscoUI() 
+        if (actionBar && discoUI) {
+            clearInterval(setup)
+            return
+        }
+        if (actionBar && !discoUI) addArtistDiscoUI()
     }, 0)
 }
 

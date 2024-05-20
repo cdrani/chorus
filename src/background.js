@@ -13,23 +13,34 @@ async function getUIState({ selector, tabId }) {
     const result = await chrome.scripting.executeScript({
         args: [selector],
         target: { tabId },
-        func: selector => document.querySelector(selector)?.getAttribute('aria-label').toLowerCase()
+        func: (selector) =>
+            document.querySelector(selector)?.getAttribute('aria-label').toLowerCase()
     })
 
     return result?.at(0).result
 }
 
 async function getMediaControlsState(tabId) {
-    const requiredKeys = ['repeat', 'shuffle', 'play/pause', 'seek-rewind', 'seek-fastforward', 'loop',  'save/unsave']
+    const requiredKeys = [
+        'repeat',
+        'shuffle',
+        'play/pause',
+        'seek-rewind',
+        'seek-fastforward',
+        'loop',
+        'save/unsave'
+    ]
     const selectorKeys = { ...mediaKeys, ...chorusKeys }
-    const selectors = requiredKeys.map(key => selectorKeys[key] ?? undefined).filter(Boolean)
+    const selectors = requiredKeys.map((key) => selectorKeys[key] ?? undefined).filter(Boolean)
 
-    const promises = selectors.map(selector => (
-        new Promise(resolve => {
-            if (selector.search(/(loop)|(add-button)/g) < 0) return resolve(getUIState({ selector, tabId }))
-            return setTimeout(() => resolve(getUIState({ selector, tabId })), 500)
-        })
-    ))
+    const promises = selectors.map(
+        (selector) =>
+            new Promise((resolve) => {
+                if (selector.search(/(loop)|(add-button)/g) < 0)
+                    return resolve(getUIState({ selector, tabId }))
+                return setTimeout(() => resolve(getUIState({ selector, tabId })), 500)
+            })
+    )
 
     const results = await Promise.allSettled(promises)
     const state = results.map((item, idx) => ({ data: item.value, key: requiredKeys[idx] }))
@@ -45,14 +56,14 @@ async function setMediaState({ active, tabId }) {
     return popupPort.postMessage({ type: 'state', data: state })
 }
 
-chrome.runtime.onConnect.addListener(async port => {
+chrome.runtime.onConnect.addListener(async (port) => {
     if (port.name !== 'popup') return
 
     popupPort = port
     const { active, tabId } = await activeOpenTab()
     await setMediaState({ active, tabId })
 
-    port.onMessage.addListener(async message => {
+    port.onMessage.addListener(async (message) => {
         if (message?.type !== 'controls') return
 
         const { selector, tabId } = await executeButtonClick({ command: message.key })
@@ -82,11 +93,11 @@ function updateBadgeState({ changes, changedKey }) {
     setBadgeInfo(ENABLED)
 }
 
-chrome.storage.onChanged.addListener(async changes => {
+chrome.storage.onChanged.addListener(async (changes) => {
     const keys = Object.keys(changes)
-    const changedKey = keys.find(key => (
+    const changedKey = keys.find((key) =>
         ['now-playing', 'enabled', 'auth_token', 'device_id', 'connection_id'].includes(key)
-    ))
+    )
 
     if (!changedKey) return
 
@@ -96,36 +107,41 @@ chrome.storage.onChanged.addListener(async changes => {
         if (!popupPort) return
 
         const { active, tabId } = await activeOpenTab()
-        active && popupPort.postMessage({ type: changedKey, data: changes[changedKey].newValue }) 
+        active && popupPort.postMessage({ type: changedKey, data: changes[changedKey].newValue })
         return await setMediaState({ active, tabId })
     }
 
-    const messageValue = changedKey == 'enabled' ? changes[changedKey] : changes[changedKey].newValue
-    sendMessage({ message: { [changedKey]: messageValue }})
+    const messageValue =
+        changedKey == 'enabled' ? changes[changedKey] : changes[changedKey].newValue
+    sendMessage({ message: { [changedKey]: messageValue } })
 })
 
-chrome.webRequest.onBeforeRequest.addListener(details => {
-    const rawBody = details?.requestBody?.raw?.at(0)?.bytes
-    if (!rawBody) return
+chrome.webRequest.onBeforeRequest.addListener(
+    (details) => {
+        const rawBody = details?.requestBody?.raw?.at(0)?.bytes
+        if (!rawBody) return
 
-    const text = new TextDecoder('utf-8').decode(new Uint8Array(rawBody))
-    const data = JSON.parse(text)
-    chrome.storage.local.set({ 
-        device_id: data.device.device_id.toString(),
-        connection_id: data.connection_id.toString()
-    })
-},
+        const text = new TextDecoder('utf-8').decode(new Uint8Array(rawBody))
+        const data = JSON.parse(text)
+        chrome.storage.local.set({
+            device_id: data.device.device_id.toString(),
+            connection_id: data.connection_id.toString()
+        })
+    },
     { urls: ['https://guc3-spclient.spotify.com/track-playback/v1/devices'] },
     ['requestBody']
 )
 
-chrome.webRequest.onBeforeSendHeaders.addListener(details => {
-    const authHeader = details?.requestHeaders?.find(header => header?.name == 'authorization')
-    if (!authHeader) return
+chrome.webRequest.onBeforeSendHeaders.addListener(
+    (details) => {
+        const authHeader = details?.requestHeaders?.find(
+            (header) => header?.name == 'authorization'
+        )
+        if (!authHeader) return
 
-    chrome.storage.local.set({ auth_token: authHeader?.value })
-},
-    { 
+        chrome.storage.local.set({ auth_token: authHeader?.value })
+    },
+    {
         urls: [
             'https://api.spotify.com/*',
             'https://guc3-spclient.spotify.com/track-playback/v1/devices'
@@ -135,8 +151,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
 )
 
 function promiseHandler(promise, sendResponse) {
-    promise.then(result => sendResponse({ state: 'completed', data: result }))
-          .catch(error => sendResponse({ state: 'error', error: error.message }))
+    promise
+        .then((result) => sendResponse({ state: 'completed', data: result }))
+        .catch((error) => sendResponse({ state: 'error', error: error.message }))
 }
 
 chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
@@ -145,11 +162,12 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
         'queue.get': getQueueList,
         'play.shared': playSharedTrack,
         'play.seek': seekTrackToPosition,
-        'artist.disco': createArtistDiscoPlaylist,
+        'artist.disco': createArtistDiscoPlaylist
     }
     const handlerFn = messageHandler[key]
-    handlerFn ? promiseHandler(handlerFn(values), sendResponse)
-              : sendResponse({ state: 'error', error: 'key not not configured'})
+    handlerFn
+        ? promiseHandler(handlerFn(values), sendResponse)
+        : sendResponse({ state: 'error', error: 'key not not configured' })
     return true
 })
 
@@ -158,9 +176,9 @@ async function executeButtonClick({ command, isShortCutKey = false }) {
     if (!active) return
 
     if (command == 'on/off') {
-        const enabled = await getState('enabled')        
+        const enabled = await getState('enabled')
         return chrome.storage.local.set({ enabled: !enabled })
-    } 
+    }
 
     const selector = chorusKeys[command] || mediaKeys[command]
     const isChorusCommand = Object.keys(chorusKeys).includes(command)
@@ -170,10 +188,12 @@ async function executeButtonClick({ command, isShortCutKey = false }) {
     await chrome.scripting.executeScript({
         args: [selector],
         target: { tabId },
-        func: selector => document.querySelector(selector)?.click(),
+        func: (selector) => document.querySelector(selector)?.click()
     })
 
     if (!isShortCutKey) return { selector, tabId }
 }
 
-chrome.commands.onCommand.addListener(async command => await executeButtonClick({ command, isShortCutKey: true }))
+chrome.commands.onCommand.addListener(
+    async (command) => await executeButtonClick({ command, isShortCutKey: true })
+)

@@ -7,12 +7,15 @@ import { parseNodeString } from '../utils/parser.js'
 import { highlightLoopIcon } from '../utils/higlight.js'
 
 export default class LoopIcon {
-    constructor(songTracker) { 
+    constructor(songTracker) {
         this._songTracker = songTracker
         this._video = spotifyVideo.element
     }
 
-    init() { this.#placeIcon(); this.#setupListeners() }
+    init() {
+        this.#placeIcon()
+        this.#setupListeners()
+    }
 
     get #autoLoopUI() {
         return `
@@ -40,40 +43,53 @@ export default class LoopIcon {
         `
     }
 
-    get #loopButton() { return document.getElementById('loop-button') }
+    get #loopButton() {
+        return document.getElementById('loop-button')
+    }
 
     #placeIcon() {
-        const skipForwardButton = document.querySelector('[data-testid="control-button-skip-forward"]')
+        const skipForwardButton = document.querySelector(
+            '[data-testid="control-button-skip-forward"]'
+        )
         const loopButton = parseNodeString(this.#autoLoopUI)
         skipForwardButton?.parentElement?.appendChild(loopButton)
     }
 
     updateIconPosition() {
-        const skipForwardButton = document.querySelector('[data-testid="control-button-skip-forward"]')
+        const skipForwardButton = document.querySelector(
+            '[data-testid="control-button-skip-forward"]'
+        )
         const parentElement = skipForwardButton?.parentElement
         parentElement?.insertBefore(this.#loopButton, parentElement.lastElementChild.nextSibling)
     }
 
     get #isHiglighted() {
-        const svgIcon =  document.getElementById('loop-icon')
+        const svgIcon = document.getElementById('loop-icon')
         if (!svgIcon) return false
 
         return svgIcon.getAttribute('fill') == '#1ed760'
     }
-    
-    highlightIcon({ isSnip, autoLoop = false }) { 
+
+    highlightIcon({ isSnip, autoLoop = false }) {
         if (!isSnip && autoLoop) {
             this._video.element.setAttribute('startTime', 0)
             this._video.element.setAttribute('endTime', playback.duration())
         }
 
-        if (!isSnip && !autoLoop) { this._video.resetTempTimes() }
+        if (!isSnip && !autoLoop) {
+            this._video.resetTempTimes()
+        }
 
-        this.#loopButton.setAttribute('aria-label', autoLoop ? 'Remove Loop' : `Loop ${isSnip ? 'Snip' : 'Track'}` )
-        highlightLoopIcon(autoLoop) 
+        this.#loopButton.setAttribute(
+            'aria-label',
+            autoLoop ? 'Remove Loop' : `Loop ${isSnip ? 'Snip' : 'Track'}`
+        )
+        highlightLoopIcon(autoLoop)
     }
 
-    removeIcon() { this.#loopButton?.remove() }
+    removeIcon() {
+        this.#loopButton?.remove()
+    }
 
     async #handleLoopButton() {
         const track = await currentData.readTrack()
@@ -82,10 +98,11 @@ export default class LoopIcon {
 
         if (!track.isSnip) return
 
-        const updatedTrack = await store.saveTrack({ id: track.id, value: { ...track, autoLoop }})
+        const updatedTrack = await store.saveTrack({ id: track.id, value: { ...track, autoLoop } })
         await this._songTracker.updateCurrentSongData(updatedTrack)
     }
 
-    #setupListeners() { this.#loopButton.onclick = async () => await this.#handleLoopButton() }
+    #setupListeners() {
+        this.#loopButton.onclick = async () => await this.#handleLoopButton()
+    }
 }
-

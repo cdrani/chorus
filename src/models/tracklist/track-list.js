@@ -16,9 +16,9 @@ export default class TrackList {
 
         this._visibleEvents = ['mouseenter']
         this._events = ['mouseenter', 'mouseleave']
-        
+
         this._icons = [
-            this._skipIcon , // this._snipIcon
+            this._skipIcon // this._snipIcon
         ]
         this._previousRowNum = null
     }
@@ -42,11 +42,13 @@ export default class TrackList {
     }
 
     #toggleBlockDisplay(hide) {
-        const blockIcons = this.#trackRows.map(row => (
-            Array.from(row.querySelectorAll(['button[role="snip"]', 'button[role="skip"]']))
-        )).flat()
+        const blockIcons = this.#trackRows
+            .map((row) =>
+                Array.from(row.querySelectorAll(['button[role="snip"]', 'button[role="skip"]']))
+            )
+            .flat()
 
-        blockIcons?.forEach(icon => {
+        blockIcons?.forEach((icon) => {
             if (!icon) return
 
             icon.style.display = hide ? 'none' : 'flex'
@@ -61,23 +63,25 @@ export default class TrackList {
         const song = trackSongInfo(row)
         if (!song) return
 
-        this._events.forEach(event => {
+        this._events.forEach((event) => {
             row?.addEventListener(event, async () => {
                 const snipInfo = await this._snipIcon.getTrack(song.id)
                 const icons = this.#getRowIcons(row)
                 const keys = { snip: 'isSnip', skip: 'isSkipped' }
 
-                icons.forEach(icon => {
-                      icon.style.visibility = this._visibleEvents.includes(event) ? 'visible' : 'hidden'
-                      const role = icon.getAttribute('role')
-                      this._snipIcon._burn({ icon, burn: snipInfo[keys[role]] })
-                      this._snipIcon._glow({ icon, glow: snipInfo[keys[role]] })
+                icons.forEach((icon) => {
+                    icon.style.visibility = this._visibleEvents.includes(event)
+                        ? 'visible'
+                        : 'hidden'
+                    const role = icon.getAttribute('role')
+                    this._snipIcon._burn({ icon, burn: snipInfo[keys[role]] })
+                    this._snipIcon._glow({ icon, glow: snipInfo[keys[role]] })
                 })
             })
         })
     }
 
-    #handleClick = async e => {
+    #handleClick = async (e) => {
         const target = e.target
         const role = target?.getAttribute('role')
 
@@ -90,16 +94,16 @@ export default class TrackList {
             const currentIndex = row.parentElement.getAttribute('aria-row-index')
 
             if (role == 'snip') {
-                if (!this._previousRowNum || (currentIndex != this._previousRowNum)) {
+                if (!this._previousRowNum || currentIndex != this._previousRowNum) {
                     this._chorus.show()
                     await this._trackSnip.init(row)
                 } else if (currentIndex == this._previousRowNum) {
                     this._chorus.toggle()
                 }
-                
+
                 const icon = row.querySelector('button[role="snip"]')
                 this._snipIcon._animate(icon)
-                this._previousRowNum = currentIndex 
+                this._previousRowNum = currentIndex
             } else {
                 const icon = row.querySelector('button[role="skip"]')
                 await this._skipIcon._saveTrack(row)
@@ -111,27 +115,27 @@ export default class TrackList {
     setTrackListClickEvent() {
         const trackLists = Array.from(
             document.querySelectorAll([
-                '[data-testid="track-list"]', 
+                '[data-testid="track-list"]',
                 '[data-testid="playlist-tracklist"]'
             ])
         )
-        const containers = trackLists?.map(trackList => (
+        const containers = trackLists?.map((trackList) =>
             trackList.querySelector('[data-testid="top-sentinel"] + [role="presentation"]')
-        ))
+        )
 
         if (!containers?.length) return
 
         this._previousRowNum = null
 
-        containers.forEach(container => { 
+        containers.forEach((container) => {
             container?.removeEventListener('click', this.#handleClick)
             container?.addEventListener('click', this.#handleClick)
         })
     }
 
     #setRowEvents() {
-        this.#trackRows.forEach(row => {
-            this._icons.forEach(icon => {
+        this.#trackRows.forEach((row) => {
+            this._icons.forEach((icon) => {
                 icon.setUI(row)
                 icon.setInitialState(row)
             })

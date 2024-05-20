@@ -17,14 +17,16 @@ export default class Speed {
         this._controls.init(data)
     }
 
-    clearCurrentSpeed() { this._video.clearCurrentSpeed() }
+    clearCurrentSpeed() {
+        this._video.clearCurrentSpeed()
+    }
 
     get #inputValues() {
         const { input, speedCheckbox, pitchCheckbox } = this._controls.elements
-        return  {
+        return {
             playbackRate: input.value,
             preservesPitch: pitchCheckbox?.checked,
-            settingGlobalSpeed: speedCheckbox?.checked,
+            settingGlobalSpeed: speedCheckbox?.checked
         }
     }
 
@@ -35,7 +37,10 @@ export default class Speed {
 
     async saveTrackSpeed({ playbackRate, preservesPitch }) {
         const trackInfo = await currentData.readTrack()
-        await this._store.saveTrack({ id: currentData.songId, value: { ...trackInfo, playbackRate, preservesPitch } })
+        await this._store.saveTrack({
+            id: currentData.songId,
+            value: { ...trackInfo, playbackRate, preservesPitch }
+        })
 
         this.#updateVideoSpeed({ playbackRate, preservesPitch })
     }
@@ -50,12 +55,17 @@ export default class Speed {
         const globalsInfo = await currentData.readGlobals()
         const trackInfo = await currentData.readTrack()
 
-        await this._store.saveTrack({ id: 'globals', value: { ...globalsInfo, playbackRate, preservesPitch } })
+        await this._store.saveTrack({
+            id: 'globals',
+            value: { ...globalsInfo, playbackRate, preservesPitch }
+        })
         if (!trackInfo?.playbackRate) this.#updateVideoSpeed({ playbackRate, preservesPitch })
     }
 
     async #saveSelectedSpeed(speedValues) {
-        await (this.#inputValues.settingGlobalSpeed ? this.saveGlobalSpeed(speedValues) : this.saveTrackSpeed(speedValues))
+        await (this.#inputValues.settingGlobalSpeed
+            ? this.saveGlobalSpeed(speedValues)
+            : this.saveTrackSpeed(speedValues))
     }
 
     async reset() {

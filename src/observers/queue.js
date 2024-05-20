@@ -16,7 +16,7 @@ export default class QueueObserver {
             if (!target) {
                 this._observer?.disconnect()
                 this._observer = null
-                return 
+                return
             }
 
             this._observer = new MutationObserver(this.#mutationHandler)
@@ -24,7 +24,7 @@ export default class QueueObserver {
         }, 1000)
     }
 
-    #mutationHandler = mutationsList => {
+    #mutationHandler = (mutationsList) => {
         for (const mutation of mutationsList) {
             if (!this.#isAsideQueueView(mutation)) return
 
@@ -35,7 +35,7 @@ export default class QueueObserver {
 
     #isAsideQueueView(mutation) {
         const target = mutation.target
-        if (target?.localName !== "ul") return false
+        if (target?.localName !== 'ul') return false
 
         const listLabels = ['Next in queue', 'Next up', 'Now playing']
         const attribute = target.getAttribute('aria-label')

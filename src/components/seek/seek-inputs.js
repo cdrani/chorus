@@ -14,7 +14,7 @@ const createSeekButton = ({ role, text }) => `
     </button>
 `
 
-const createInput = ({ id, name, scale = 1}) => `
+const createInput = ({ id, name, scale = 1 }) => `
     <div style="position:relative;height:3rem;margin:0 .5rem;">
         <input
             min="1"

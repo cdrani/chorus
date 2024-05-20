@@ -1,12 +1,14 @@
 import { sendBackgroundMessage } from './utils/messaging.js'
 import { getState, setState, removeState } from './utils/state.js'
 
-const loadScript = filePath => {
+const loadScript = (filePath) => {
     const script = document.createElement('script')
     script.src = chrome.runtime.getURL(filePath)
     script.type = 'module'
     document.head.appendChild(script)
-    script.onload = () => { script.remove() }
+    script.onload = () => {
+        script.remove()
+    }
 }
 
 loadScript('actions/init.js')
@@ -14,7 +16,10 @@ sessionStorage.setItem('soundsDir', chrome.runtime.getURL('/lib/sounds/'))
 sessionStorage.setItem('reverbPath', chrome.runtime.getURL('/lib/reverb/reverb.js'))
 
 const sendEventToPage = ({ eventType, detail }) => {
-    window.postMessage({ type: 'FROM_CONTENT_SCRIPT', requestType: eventType, payload: detail }, window.location.origin)
+    window.postMessage(
+        { type: 'FROM_CONTENT_SCRIPT', requestType: eventType, payload: detail },
+        window.location.origin
+    )
 }
 
 window.addEventListener('message', async (event) => {
@@ -25,14 +30,14 @@ window.addEventListener('message', async (event) => {
     const messageHandlers = {
         'play.seek': sendBackgroundMessage,
         'play.shared': sendBackgroundMessage,
-        'queue.set' : sendBackgroundMessage,
-        'queue.get' : sendBackgroundMessage,
+        'queue.set': sendBackgroundMessage,
+        'queue.get': sendBackgroundMessage,
         'artist.disco': sendBackgroundMessage,
         'storage.populate': () => getState(null),
         'storage.get': ({ key }) => getState(key),
         'storage.delete': ({ key }) => removeState(key),
-        'storage.set': ({ key, values }) => setState({ key, values }),
-    };
+        'storage.set': ({ key, values }) => setState({ key, values })
+    }
 
     const handlerFn = messageHandlers[requestType]
     if (!handlerFn) return
@@ -41,11 +46,16 @@ window.addEventListener('message', async (event) => {
     sendEventToPage({ eventType: `${requestType}.response`, detail: response })
 })
 
-chrome.runtime.onMessage.addListener(message => {
+chrome.runtime.onMessage.addListener((message) => {
     const messageKey = Object.keys(message)
-    const changedKey = messageKey.find(key => ['connection_id', 'enabled', 'auth_token', 'device_id'].includes(key))
+    const changedKey = messageKey.find((key) =>
+        ['connection_id', 'enabled', 'auth_token', 'device_id'].includes(key)
+    )
 
     if (!changedKey) return
 
-    sendEventToPage({ eventType: `app.${changedKey}`, detail: { [changedKey]: message[changedKey] } })
+    sendEventToPage({
+        eventType: `app.${changedKey}`,
+        detail: { [changedKey]: message[changedKey] }
+    })
 })

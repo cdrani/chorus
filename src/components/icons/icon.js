@@ -4,23 +4,23 @@ export const SETTINGS_ICON = {
     strokeWidth: 1.5,
     viewBox: '0 0 24 24',
     ariaLabel: 'Settings',
-    stroke: 'currentColor',
+    stroke: 'currentColor'
 }
 
 export const SNIP_ICON = {
     role: 'snip',
     ariaLabel: 'Edit Snip',
-    stroke: 'currentColor',
+    stroke: 'currentColor'
 }
 
 export const SKIP_ICON = {
     role: 'skip',
-    ariaLabel: 'Skip Song',
+    ariaLabel: 'Skip Song'
 }
 
 export const NOW_PLAYING_SKIP_ICON = {
     ...SKIP_ICON,
-    id: 'chorus-skip',
+    id: 'chorus-skip'
 }
 
 const SVG_PATHS = {
@@ -33,15 +33,17 @@ const SVG_PATHS = {
         <path stroke-linecap="round" stroke-linejoin="round"
               d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
         />
-    `,
+    `
 }
 
 const BUTTON_STYLES = {
-    settings: 'padding:0 4px;border:none;background:none;display:flex;justify-content:center;align-items:center;cursor:pointer;',
-    default: 'visibility:hidden;border:none;background:unset;display:flex;align-items:center;cursor:pointer;'
+    settings:
+        'padding:0 4px;border:none;background:none;display:flex;justify-content:center;align-items:center;cursor:pointer;',
+    default:
+        'visibility:hidden;border:none;background:unset;display:flex;align-items:center;cursor:pointer;'
 }
 
-export const createIcon = ({ role, viewBox, id, ariaLabel, strokeWidth, stroke}) => {
+export const createIcon = ({ role, viewBox, id, ariaLabel, strokeWidth, stroke }) => {
     const svgPath = SVG_PATHS[role] || SVG_PATHS.default
     const buttonStylesKey = id ? 'settings' : 'default'
     const buttonStyles = BUTTON_STYLES[buttonStylesKey]

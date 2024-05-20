@@ -26,13 +26,21 @@ export default class Chorus {
         return this.mainElement.style.display == 'block'
     }
 
-    get mainElement() { return document.getElementById('chorus-main') }
+    get mainElement() {
+        return document.getElementById('chorus-main')
+    }
 
-    get chorusControls() { return document.getElementById('chorus-controls') }
+    get chorusControls() {
+        return document.getElementById('chorus-controls')
+    }
 
-    toggle() { this.isShowing ? this.hide() : this.show() }
+    toggle() {
+        this.isShowing ? this.hide() : this.show()
+    }
 
-    get #hasSnipControls() { return !!document.getElementById('chorus-snip-controls') }
+    get #hasSnipControls() {
+        return !!document.getElementById('chorus-snip-controls')
+    }
 
     #insertIntoDOM() {
         if (this.#hasSnipControls) return
@@ -50,10 +58,10 @@ export default class Chorus {
 
     async hide() {
         if (!this.mainElement) return
-        
+
         await this.headerListeners.hide()
         this.mainElement.style.display = 'none'
-        this._video.resetTempTimes() 
+        this._video.resetTempTimes()
     }
 
     show() {

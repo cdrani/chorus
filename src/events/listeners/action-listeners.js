@@ -33,7 +33,8 @@ export default class ActionListeners extends Listeners {
     #deleteTrackListener() {
         const deleteButton = document.getElementById('chorus-snip-remove-button')
         deleteButton?.addEventListener('click', async () => {
-            await this._snip.delete(); this._hide()
+            await this._snip.delete()
+            this._hide()
         })
     }
 

@@ -1,6 +1,5 @@
-const createOptions = optionNames => (
-    optionNames.map(name => `<option name="${name}" value="${name}">${name}</option>`).join('')
-)
+const createOptions = (optionNames) =>
+    optionNames.map((name) => `<option name="${name}" value="${name}">${name}</option>`).join('')
 
 export const createEffectsSelector = ({ labelName, name, optionNames }) => `
     <div style="display:flex;justify-content:space-between">

@@ -1,4 +1,4 @@
-const createLabel = text => `
+const createLabel = (text) => `
     <div class="chorus-common" style="display:flex;align-items:center;height:22px;">
         <span class="chorus-text chorus-pill" style="font-size:1rem;line-height:22px;height:100%;text-align:center;min-width:43px;width:56px;padding:0 4px">
             ${text}

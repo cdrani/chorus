@@ -7,16 +7,20 @@ class ExtToggle {
         this._eventsSet = false
     }
 
-    set on(enabled) { this._on = enabled }
+    set on(enabled) {
+        this._on = enabled
+    }
 
-    get on() { return this._on }
+    get on() {
+        return this._on
+    }
 
     get ui() {
         return createToggleButton({
             onPathId: 'ext-toggle-on',
             offPathId: 'ext-toggle-off',
             checkboxId: 'ext-checkbox',
-            buttonId: 'ext-toggle-button',
+            buttonId: 'ext-toggle-button'
         })
     }
 
@@ -30,8 +34,10 @@ class ExtToggle {
         const extToggleButton = document.getElementById('ext-toggle-button')
         if (this._eventsSet) return
 
-        extToggleButton.onclick = async () =>  { await this.#toggleExtCheckbox(callback) }
-        this._eventsSet = true 
+        extToggleButton.onclick = async () => {
+            await this.#toggleExtCheckbox(callback)
+        }
+        this._eventsSet = true
     }
 
     setFill(fillColor) {

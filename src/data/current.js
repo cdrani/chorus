@@ -44,13 +44,13 @@ class CurrentData {
         return {
             preferredRate,
             preferredPitch,
-            globals: { 
+            globals: {
                 playbackRate: globals.playbackRate,
                 preservesPitch: globals.preservesPitch,
                 speedCheckboxChecked: globals?.speedCheckboxChecked ?? true,
                 pitchCheckboxChecked: globals?.speedCheckboxChecked ?? true
             },
-            track: { 
+            track: {
                 playbackRate: track.playbackRate,
                 preservesPitch: track.preservesPitch
             }
@@ -61,8 +61,8 @@ class CurrentData {
         return await this._store.getTrack({
             id: 'chorus-seek',
             value: {
-                shows: { ff: 15, rw: 15 },  // audiobooks, podcasts, (longform audio)
-                global: { ff: 10, rw: 10 }, // albums, playlists, tracks (shortform audio)
+                shows: { ff: 15, rw: 15 }, // audiobooks, podcasts, (longform audio)
+                global: { ff: 10, rw: 10 } // albums, playlists, tracks (shortform audio)
             }
         })
     }
@@ -72,7 +72,7 @@ class CurrentData {
         const existingTrack = await this._store.getTrack({ id: currentInfo.id })
         if (existingTrack) return existingTrack
 
-        const trackParams = { 
+        const trackParams = {
             id: currentInfo.id,
             value: { ...this.#trackDefaults, ...currentInfo }
         }
@@ -92,5 +92,5 @@ class CurrentData {
         return this._store.blockedTracks.map(JSON.parse)
     }
 }
- 
+
 export const currentData = new CurrentData(store)

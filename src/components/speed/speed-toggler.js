@@ -15,21 +15,21 @@ export const createSpeedToggler = () => `
         </div>
 
         <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end">
-            ${createToggleButton({ 
+            ${createToggleButton({
                 labelId: 'speed-label',
                 labelText: 'Global Rate',
                 onPathId: 'speed-toggle-on',
                 offPathId: 'speed-toggle-off',
                 checkboxId: 'speed-checkbox',
-                buttonId: 'speed-toggle-button',
+                buttonId: 'speed-toggle-button'
             })}
-            ${createToggleButton({ 
+            ${createToggleButton({
                 labelId: 'pitch-label',
                 labelText: 'Pitch Correct',
                 onPathId: 'pitch-toggle-on',
                 offPathId: 'pitch-toggle-off',
                 checkboxId: 'pitch-checkbox',
-                buttonId: 'pitch-toggle-button',
+                buttonId: 'pitch-toggle-button'
             })}
         </div>
     </div>

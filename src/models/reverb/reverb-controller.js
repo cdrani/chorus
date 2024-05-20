@@ -20,28 +20,38 @@ export default class ReverbController {
             this.setValuesToNone()
         } else {
             presetSelection.textContent = effect
-            const selectedElement = drinkPresets.includes(effect) ? drinkEffectSelect : convolverEffectSelect
+            const selectedElement = drinkPresets.includes(effect)
+                ? drinkEffectSelect
+                : convolverEffectSelect
             selectedElement.value = effect
         }
 
-        drinkEffectSelect.onchange = async (e) => { await this.handleSelection(e) }
-        convolverEffectSelect.onchange = async (e) => { await this.handleSelection(e) }
+        drinkEffectSelect.onchange = async (e) => {
+            await this.handleSelection(e)
+        }
+        convolverEffectSelect.onchange = async (e) => {
+            await this.handleSelection(e)
+        }
     }
 
     get elements() {
-        return { 
+        return {
             presetSelection: document.getElementById('preset-selection'),
             drinkEffectSelect: document.getElementById('drink-effect-presets'),
-            convolverEffectSelect: document.getElementById('convolver-effect-presets') 
+            convolverEffectSelect: document.getElementById('convolver-effect-presets')
         }
     }
 
     async handleSelection(e) {
-        const { target: { value, id } } = e
+        const {
+            target: { value, id }
+        } = e
         await this._reverb.setReverbEffect(value)
 
         const { convolverEffectSelect, drinkEffectSelect } = this.elements
-        const nonSelectedElement = id?.startsWith('drink') ? convolverEffectSelect : drinkEffectSelect
+        const nonSelectedElement = id?.startsWith('drink')
+            ? convolverEffectSelect
+            : drinkEffectSelect
         nonSelectedElement.value = 'none'
 
         this.elements.presetSelection.textContent = value
@@ -53,7 +63,7 @@ export default class ReverbController {
 
     setValuesToNone() {
         const { presetSelection, drinkEffectSelect, convolverEffectSelect } = this.elements
-        presetSelection.textContent = 'none' 
+        presetSelection.textContent = 'none'
         drinkEffectSelect.value = 'none'
         convolverEffectSelect.value = 'none'
     }

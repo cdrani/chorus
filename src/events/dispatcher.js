@@ -16,11 +16,14 @@ export default class Dispatcher {
     }
 
     sendEvent({ eventType, detail = {} }) {
-        window.postMessage({
-            type: 'FROM_PAGE_SCRIPT',
-            requestType: eventType,
-            payload: detail
-        }, window.location.origin)
+        window.postMessage(
+            {
+                type: 'FROM_PAGE_SCRIPT',
+                requestType: eventType,
+                payload: detail
+            },
+            window.location.origin
+        )
 
         return new Promise((resolve) => {
             const resultListener = (e) => {

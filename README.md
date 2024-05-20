@@ -17,17 +17,15 @@
 
 Enhance Spotify with controls to save favourite track section and auto-skip. Save sections can be used for infinite looping of a chorus, verse, etc. Snips can be shared with others. Auto-skip tracks in a playlists or albums and never hear them again. Additionally set global playback speed and per track speed! More features to come!
 
-
 ## ⬇️ **Install** ⬇️
 
 [link-chrome]: https://chrome.google.com/webstore/detail/cdrani/jfnjmnapkhdbaidedlbdcmhiphfjljcd 'Version published on Chrome Web Store'
-[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/jfnjmnapkhdbaidedlbdcmhiphfjljcd?label=%20">][link-chrome] and other Chromium browsers (Edge, Opera, Brave, Vivaldi, [etc](https://en.wikipedia.org/wiki/Chromium_(web_browser)#Active))
 
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/jfnjmnapkhdbaidedlbdcmhiphfjljcd?label=%20">][link-chrome] and other Chromium browsers (Edge, Opera, Brave, Vivaldi, [etc](<https://en.wikipedia.org/wiki/Chromium_(web_browser)#Active>))
 
 [link-firefox]: https://addons.mozilla.org/firefox/addon/chorus-spotify-enhancer/ 'Version published on Mozilla Add-ons'
+
 [<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/firefox/firefox.svg" width="48" alt="Firefox" valign="middle">][link-firefox] [<img valign="middle" src="https://img.shields.io/amo/v/chorus-spotify-enhancer.svg?label=%20">][link-firefox] (Might occasionally be behind until I setup auto-publishing to Addons. Bare with me. 🐻)
-
-
 
 ## **🎉 Chorus Features 🎉**
 
@@ -68,16 +66,13 @@ Enhance Spotify with controls to save favourite track section and auto-skip. Sav
 
 📓 Review. View your favourite snips and blocked songs. Some filtering.
 
-
 ### 🎀 **V2** 🎀
 
 📱 Web App. This will likely just be a simple UI utilizing Spotify Connect to apply the above features/controls, but areas like search, playlist creation, music discovery will left to the official Spotify App.
 
-
 ## ⚙️ **Releases** ⚙️
 
 Releases are automated based on semantic releases and tagged as such in the [Releases](https://github.com/cdrani/chorus/releases) page. Releases have the newest features, bug fixes, etc, but the Web Store / Addons versions are most likely a day or two behind due to Chrome/Mozilla review cycle. If you want the latest and greatest, the download the `chorus-chrome.zip` or `chorus-firefox.zip` file from the newest release.
-
 
 ## 👋 **Closing Remarks** 👋
 
@@ -86,7 +81,6 @@ Please give a ⭐ if you like and/or use this project. [Contributions](./contrib
 For issues, questions, feature suggestions, etc please report it [here](https://github.com/cdrani/chorus/issues/new/choose).
 
 [Kofi Page](https://ko-fi.com/cdrani) if you are inclined. No obligation - in fact I might take it as an offence. This project is about adding some missing features in Spotify that I deem might warrant the price hikes. Just giving it a :star: here and rating on the Web Store is sufficient for me to keep adding features, fixing bugs, and maintaining it. Thanks!
-
 
 ## 👷‍♀️ **Contributors** 👷‍♂️
 

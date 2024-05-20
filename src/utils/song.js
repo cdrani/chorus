@@ -1,13 +1,15 @@
 import { timeToSeconds } from './time.js'
 
-const getImage = imageSrc => {
+const getImage = (imageSrc) => {
     if (!imageSrc) return undefined
 
     return imageSrc?.replace('4851', 'b273')
 }
 
 export const currentSongInfo = () => {
-    const songLabel = document.querySelector('[data-testid="now-playing-widget"]')?.getAttribute('aria-label')
+    const songLabel = document
+        .querySelector('[data-testid="now-playing-widget"]')
+        ?.getAttribute('aria-label')
     const image = document.querySelector('[data-testid="CoverSlotCollapsed__container"] img')
     const anchor = document.querySelector('[data-testid="CoverSlotCollapsed__container"] a')
     const contextType = anchor?.getAttribute('data-context-item-type')
@@ -21,22 +23,24 @@ export const currentSongInfo = () => {
     const params = new URLSearchParams(anchor?.href)
     const trackId = params?.get('uri')?.split(`${contextType}:`).at(1)
 
-    return  {
+    return {
         id,
         cover,
-        ...contextType && {
+        ...(contextType && {
             type: contextType,
-            trackId, 
-            url: `${location.origin}/${contextType}/${trackId}`,
-        }
+            trackId,
+            url: `${location.origin}/${contextType}/${trackId}`
+        })
     }
-
 }
 
-export const trackSongInfo = row => {
-    const title = row?.querySelector('a > div')?.textContent || 
+export const trackSongInfo = (row) => {
+    const title =
+        row?.querySelector('a > div')?.textContent ||
         row?.querySelector('div[data-encore-id="type"]')?.textContent
-    const songLength = row?.querySelector('button[data-encore-id="buttonTertiary"] + div')?.textContent
+    const songLength = row?.querySelector(
+        'button[data-encore-id="buttonTertiary"] + div'
+    )?.textContent
     const image = row?.querySelector('img') || document.querySelector('button > div img')
 
     if (!songLength) return
@@ -51,11 +55,11 @@ export const trackSongInfo = row => {
         cover: getImage(image?.src),
         id: `${title} by ${artists}`,
         endTime: timeToSeconds(songLength),
-        ...trackInfo && {...trackInfo }
+        ...(trackInfo && { ...trackInfo })
     }
-}    
+}
 
-const getTrackId = row => {
+const getTrackId = (row) => {
     const trackIdUrl = row.querySelector('a[data-testid="internal-track-link"]')?.href
     if (!trackIdUrl) return
 
@@ -63,7 +67,7 @@ const getTrackId = row => {
     return { url: trackIdUrl, trackId: url.split('/').at(2) }
 }
 
-const getArtists = row => {
+const getArtists = (row) => {
     const artistsList = row.querySelectorAll('span > div > a, span > span > a')
 
     // Here means we are at artist or song page and can get artist from Banner
@@ -74,5 +78,8 @@ const getArtists = row => {
         return document.querySelector('span[data-testid="entityTitle"] > h1')?.textContent || ''
     }
 
-    return Array.from(artistsList).filter(artist => artist.href.includes('artist')).map(artist => artist.textContent).join(', ')
+    return Array.from(artistsList)
+        .filter((artist) => artist.href.includes('artist'))
+        .map((artist) => artist.textContent)
+        .join(', ')
 }

@@ -9,10 +9,7 @@ export default class VideoOverride {
     async #overrideMediaProperty(propertyName, handler) {
         const self = this
 
-        const descriptor = Object.getOwnPropertyDescriptor(
-            HTMLMediaElement.prototype,
-            propertyName
-        )
+        const descriptor = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, propertyName)
 
         if (!descriptor || descriptor._isOverridden) return
 
@@ -43,7 +40,7 @@ export default class VideoOverride {
         return !isNaN(numRate) && isFinite(numRate)
     }
 
-    #handlePlaybackRateSetting = async value => {
+    #handlePlaybackRateSetting = async (value) => {
         if (value?.source !== 'chorus') {
             if (this._video.currentSpeed) return this._video.currentSpeed
 

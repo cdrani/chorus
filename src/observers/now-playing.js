@@ -51,10 +51,10 @@ export default class NowPlayingObserver {
     get #songChanged() {
         if (this._currentSongId == null) return true
 
-        return this.#songId !== this._currentSongId 
+        return this.#songId !== this._currentSongId
     }
 
-    #mutationHandler = async mutationsList => {
+    #mutationHandler = async (mutationsList) => {
         for (const mutation of mutationsList) {
             if (!this.#isAnchor(mutation)) return
             if (!this.#songChanged) return
@@ -63,7 +63,7 @@ export default class NowPlayingObserver {
             if (this._chorus.isShowing) this._snip.init()
 
             const track = await this.setNowPlayingData()
-            await this._songTracker.songChange() 
+            await this._songTracker.songChange()
 
             this._loopIcon.updateIconPosition()
             this._loopIcon.highlightIcon(track)

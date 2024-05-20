@@ -7,7 +7,7 @@ export default class SnipIcon extends TrackListIcon {
             store,
             key: 'isSnip',
             selector: 'button[role="snip"]'
-        }) 
+        })
     }
 
     setInitialState(row) {

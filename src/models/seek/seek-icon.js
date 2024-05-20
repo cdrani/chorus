@@ -24,22 +24,28 @@ export default class SeekIcons {
         this._data = await currentData.getSeekValues()
         return this._data
     }
-    
+
     get #seekType() {
         const anchor = document.querySelector('[data-testid="context-item-info-title"] > span > a')
         // album, track, episode, chapter
         const contextType = anchor?.getAttribute('href')?.split('/')?.at(1)
-        
+
         return ['track', 'album'].includes(contextType) ? 'global' : 'shows'
     }
 
-    get rwIcon() { return createSeekIcon('rw') }
+    get rwIcon() {
+        return createSeekIcon('rw')
+    }
 
-    get ffIcon() { return createSeekIcon('ff') }
+    get ffIcon() {
+        return createSeekIcon('ff')
+    }
 
     get #spotifySeekIcons() {
         const spotifyRWIcon = document.querySelector('[data-testid="control-button-seek-back-15"]')
-        const spotifyFFIcon = document.querySelector('[data-testid="control-button-seek-forward-15"]')
+        const spotifyFFIcon = document.querySelector(
+            '[data-testid="control-button-seek-forward-15"]'
+        )
         return { spotifyFFIcon, spotifyRWIcon }
     }
 
@@ -94,7 +100,7 @@ export default class SeekIcons {
 
         const rwIconLabel = document.getElementById('seek-icon-rw-label')
         const ffIconLabel = document.getElementById('seek-icon-ff-label')
-        
+
         const { rw, ff } = data[this.#seekType]
 
         rwIconLabel.textContent = rw
@@ -124,10 +130,17 @@ export default class SeekIcons {
         let currentTime = parseInt(this._video.currentTime, 10)
         if (currentTime !== playback.current()) currentTime = playback.current()
 
-        const newTimeFF = Math.min(parseInt(currentTime + seekTime, 10), parseInt(endTime, 10) - 0.5)
+        const newTimeFF = Math.min(
+            parseInt(currentTime + seekTime, 10),
+            parseInt(endTime, 10) - 0.5
+        )
         const newStartTime = currentTime < parseInt(startTime) ? 0 : startTime
-        const newTimeRW = Math.max(parseInt(currentTime - seekTime, 10), parseInt(newStartTime, 10), 0)
-        
+        const newTimeRW = Math.max(
+            parseInt(currentTime - seekTime, 10),
+            parseInt(newStartTime, 10),
+            0
+        )
+
         return role == 'ff' ? newTimeFF : newTimeRW
     }
 
@@ -138,14 +151,15 @@ export default class SeekIcons {
 
         const newTime = await this.#calculateCurrentTime({ role, seekTime })
         this._video.currentTime = newTime
-        document.querySelector('[data-testid="playback-position"]').textContent = secondsToTime(newTime)
+        document.querySelector('[data-testid="playback-position"]').textContent =
+            secondsToTime(newTime)
     }
 
     #setupListeners() {
         const rwIconButton = document.getElementById('seek-player-rw-button')
         const ffIconButton = document.getElementById('seek-player-ff-button')
 
-        rwIconButton.onclick = e => this.#handleSeekButton(e)
-        ffIconButton.onclick = e => this.#handleSeekButton(e)
+        rwIconButton.onclick = (e) => this.#handleSeekButton(e)
+        ffIconButton.onclick = (e) => this.#handleSeekButton(e)
     }
 }

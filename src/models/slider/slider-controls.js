@@ -3,9 +3,13 @@ import { playback } from '../../utils/playback.js'
 import { formatTimeInSeconds } from '../../utils/time.js'
 
 export default class SliderControls {
-    constructor() { this._slider = new Slider() }
+    constructor() {
+        this._slider = new Slider()
+    }
 
-    init() { this._slider.init() }
+    init() {
+        this._slider.init()
+    }
 
     setInitialValues(track) {
         this._slider.setInitialValues(track)
@@ -13,7 +17,10 @@ export default class SliderControls {
     }
 
     get #inputElements() {
-        return { inputStart: document.getElementById('chorus-start'), inputEnd: document.getElementById('chorus-end') }
+        return {
+            inputStart: document.getElementById('chorus-start'),
+            inputEnd: document.getElementById('chorus-end')
+        }
     }
 
     #setInitialStartAndEndValues(track) {
@@ -32,7 +39,7 @@ export default class SliderControls {
     updateControls(track) {
         if (!this.#isControlsOpen) return
 
-        const startValue =  track.startTime ?? playback.current()
+        const startValue = track.startTime ?? playback.current()
         const endValue = track.endTime ?? playback.duration()
         this._slider.updateSliderLeftHalf(startValue)
         this._slider.updateSliderRightHalf(endValue)

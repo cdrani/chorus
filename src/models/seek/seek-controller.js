@@ -1,5 +1,7 @@
 export default class SeekController {
-    constructor() { this._data = null }
+    constructor() {
+        this._data = null
+    }
 
     init(data) {
         if (!this._data) {
@@ -20,9 +22,8 @@ export default class SeekController {
     }
 
     #setupEvents() {
-        const { 
-            seekToggleButton, rwButtonUp, rwButtonDown, ffButtonUp, ffButtonDown,
-        } = this.elements
+        const { seekToggleButton, rwButtonUp, rwButtonDown, ffButtonUp, ffButtonDown } =
+            this.elements
 
         rwButtonUp.onclick = (e) => this.#handleButtonPress(e)
         rwButtonDown.onclick = (e) => this.#handleButtonPress(e)
@@ -33,7 +34,7 @@ export default class SeekController {
     }
 
     #handleButtonPress(event) {
-        const { target }  = event
+        const { target } = event
         const { rwInput, ffInput } = this.elements
 
         // ex. ff-up
@@ -41,22 +42,21 @@ export default class SeekController {
 
         if (seekAction == 'ff') {
             const currentFFValue = parseInt(ffInput.value)
-            ffInput.value = direction == 'up' 
-                ? Math.min(currentFFValue + 1, ffInput.max)
-                : Math.max(currentFFValue - 1, ffInput.min)
+            ffInput.value =
+                direction == 'up'
+                    ? Math.min(currentFFValue + 1, ffInput.max)
+                    : Math.max(currentFFValue - 1, ffInput.min)
         } else {
             const currentRWValue = parseInt(rwInput.value)
-            rwInput.value = direction == 'up' 
-                ? Math.min(currentRWValue + 1, rwInput.max)
-                : Math.max(currentRWValue - 1, rwInput.min)
+            rwInput.value =
+                direction == 'up'
+                    ? Math.min(currentRWValue + 1, rwInput.max)
+                    : Math.max(currentRWValue - 1, rwInput.min)
         }
     }
 
     #setCheckedUI(seekChecked) {
-        const { 
-            seekLabel, 
-            seekCheckbox, seekToggleOn, seekToggleOff, 
-        } = this.elements
+        const { seekLabel, seekCheckbox, seekToggleOn, seekToggleOff } = this.elements
 
         seekToggleOn.style.display = seekChecked ? 'block' : 'none'
         seekToggleOff.style.display = seekChecked ? 'none' : 'block'
@@ -73,7 +73,7 @@ export default class SeekController {
         this.#setCheckedUI(checked)
 
         const { shows, global } = this._data
-        
+
         rwInput.value = checked ? shows.rw : global.rw
         ffInput.value = checked ? shows.ff : global.ff
 
@@ -96,7 +96,7 @@ export default class SeekController {
 
             ffButtonUp: document.getElementById('seek-ff-up-button'),
             ffButtonDown: document.getElementById('seek-ff-down-button'),
-            
+
             seekLabel: document.getElementById('seek-label'),
             seekToggleOn: document.getElementById('seek-toggle-on'),
             seekToggleOff: document.getElementById('seek-toggle-off'),
@@ -105,7 +105,7 @@ export default class SeekController {
             seekToggleButton: document.getElementById('seek-toggle-button'),
 
             seekShowsLabel: document.getElementById('seek-shows-label'),
-            seekGlobalLabel: document.getElementById('seek-global-label'),
+            seekGlobalLabel: document.getElementById('seek-global-label')
         }
     }
 }

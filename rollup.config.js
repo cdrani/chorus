@@ -4,11 +4,8 @@ export default {
     input: 'src/manifest.chrome.json',
     output: {
         dir: 'dist',
-        format: 'esm',
+        format: 'esm'
         // sourcemap: true
     },
-    plugins: [
-        chromeExtension(),
-        simpleReloader()
-    ],
+    plugins: [chromeExtension(), simpleReloader()]
 }
