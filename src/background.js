@@ -10,15 +10,21 @@ import { playSharedTrack, seekTrackToPosition } from './services/player.js'
 let ENABLED = true
 let popupPort = null
 
-async function getUIState({ selector, tabId }) {
-    const result = await chrome.scripting.executeScript({
-        args: [selector],
+async function getUIState({ selector, tabId, delay = 0 }) {
+    const [result] = await chrome.scripting.executeScript({
+        args: [selector, delay],
         target: { tabId },
-        func: (selector) =>
-            document.querySelector(selector)?.getAttribute('aria-label').toLowerCase()
+        func: (selector, delay) =>
+            new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(
+                        document.querySelector(selector)?.getAttribute('aria-label').toLowerCase()
+                    )
+                }, delay)
+            })
     })
 
-    return result?.at(0).result
+    return result?.result
 }
 
 async function getMediaControlsState(tabId) {
@@ -37,8 +43,9 @@ async function getMediaControlsState(tabId) {
     const promises = selectors.map(
         (selector) =>
             new Promise((resolve) => {
-                if (selector.search(/(loop)|(add-button)/g) < 0)
+                if (selector.search(/(loop)|(heart)/g) < 0) {
                     return resolve(getUIState({ selector, tabId }))
+                }
                 return setTimeout(() => resolve(getUIState({ selector, tabId })), 500)
             })
     )
@@ -68,7 +75,10 @@ chrome.runtime.onConnect.addListener(async (port) => {
         if (message?.type !== 'controls') return
 
         const { selector, tabId } = await executeButtonClick({ command: message.key })
-        const result = await getUIState({ selector, tabId })
+
+        const delay = selector.includes('heart') ? 50 : 0
+        const result = await getUIState({ selector, tabId, delay })
+
         port.postMessage({ type: 'controls', data: { key: message.key, result } })
     })
 
@@ -164,7 +174,7 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
         'play.shared': playSharedTrack,
         'play.seek': seekTrackToPosition,
         'tracks.update': updateLikedTracks,
-        'artist.disco': createArtistDiscoPlaylist,
+        'artist.disco': createArtistDiscoPlaylist
     }
     const handlerFn = messageHandler[key]
     handlerFn
