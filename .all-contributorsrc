@@ -62,6 +62,17 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "sstephanyy",
+      "name": "Stephany",
+      "avatar_url": "https://avatars.githubusercontent.com/u/128330097?v=4",
+      "profile": "https://github.com/sstephanyy",
+      "contributions": [
+        "bug",
+        "doc",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
