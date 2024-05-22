@@ -42,7 +42,7 @@ export default class TrackListObserver {
                     this._isHidden
                         ? this._trackList.removeBlocking()
                         : this._trackList.setUpBlocking()
-                }, 2000)
+                }, 500)
             }
         }
     }
