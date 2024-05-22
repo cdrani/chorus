@@ -1,5 +1,6 @@
 import SkipIcon from './skip-icon.js'
 import SnipIcon from './snip-icon.js'
+import HeartIcon from './heart-icon.js'
 
 import Chorus from '../chorus.js'
 import TrackSnip from '../snip/track-snip.js'
@@ -11,6 +12,7 @@ export default class TrackList {
     constructor(songTracker) {
         this._chorus = new Chorus(songTracker)
         this._skipIcon = new SkipIcon(store)
+        this._heartIcon = new HeartIcon(store)
         this._snipIcon = new SnipIcon(store)
         this._trackSnip = new TrackSnip(store)
 
@@ -18,6 +20,7 @@ export default class TrackList {
         this._events = ['mouseenter', 'mouseleave']
 
         this._icons = [
+            this._heartIcon,
             this._skipIcon // this._snipIcon
         ]
         this._previousRowNum = null
@@ -56,7 +59,9 @@ export default class TrackList {
     }
 
     #getRowIcons(row) {
-        return Array.from(row.querySelectorAll(['button[role="snip"]', 'button[role="skip"]']))
+        return Array.from(
+            row.querySelectorAll('button[role="snip"], button[role="skip"], button[role="heart"]')
+        )
     }
 
     #setMouseEvents(row) {
@@ -75,10 +80,15 @@ export default class TrackList {
                         : 'hidden'
 
                     const role = icon.getAttribute('role')
-                    const display = snipInfo?.[keys[role]] ?? false
 
-                    this._skipIcon._burn({ icon, burn: display })
-                    this._skipIcon._glow({ icon, glow: display })
+                    if (role == 'heart') {
+                        this._heartIcon.animate(icon)
+                    } else {
+                        const display = snipInfo?.[keys[role]] ?? false
+
+                        this._skipIcon._burn({ icon, burn: display })
+                        this._skipIcon._glow({ icon, glow: display })
+                    }
                 })
             })
         })
