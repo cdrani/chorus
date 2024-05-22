@@ -10,7 +10,7 @@ export default class HeartIcon extends TrackListIcon {
         })
     }
 
-    isLiked(row) {
+    #isLiked(row) {
         const button = row.querySelector('button[data-encore-id="buttonTertiary"]')
         return JSON.parse(button.getAttribute('aria-checked'))
     }
@@ -20,28 +20,40 @@ export default class HeartIcon extends TrackListIcon {
         this.animate(icon)
     }
 
-    glow({ icon, glow }) {
+    #burn({ icon, burn }) {
+        const svg = icon.querySelector('svg')
+
+        if (burn) {
+            icon.style.visibility = 'visible'
+        }
+
+        icon.setAttribute('aria-label', `${burn ? 'Remove from' : 'Save to'} Liked`)
+        svg.style.fill = burn ? '#1ed760' : 'transparent'
+        svg.style.stroke = burn ? '#1ed760' : 'currentColor'
+    }
+
+    #glow({ icon, glow }) {
         const svg = icon.querySelector('svg')
 
         svg.addEventListener('mouseover', () => {
             if (glow && svg.style.fill == '#1ed760') return
 
-            svg.style.fill = glow ? '#1ed760' : 'unset'
+            svg.style.fill = glow ? '#1ed760' : 'transparent'
             svg.style.stroke = glow ? '#1ed760' : '#fff'
         })
 
         svg.addEventListener('mouseleave', () => {
             if (glow && svg.style.fill == '#1ed760') return
 
-            svg.style.fill = glow ? '#1ed760' : 'unset'
+            svg.style.fill = glow ? '#1ed760' : 'transparent'
             svg.style.stroke = glow ? '#1ed760' : 'currentColor'
         })
     }
 
     animate(icon) {
-        const isLiked = this.isLiked(icon.parentElement)
-        this._burn({ icon, burn: isLiked })
-        this.glow({ icon, glow: isLiked })
+        const isLiked = this.#isLiked(icon.parentElement)
+        this.#burn({ icon, burn: isLiked })
+        this.#glow({ icon, glow: isLiked })
     }
 
     setUI(row) {

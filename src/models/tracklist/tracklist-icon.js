@@ -121,11 +121,6 @@ export default class TrackListIcon {
 
         if (icon.role == 'skip') {
             icon.setAttribute('aria-label', `${burn ? 'Uns' : 'S'}kip Song`)
-        } else if (icon.role == 'heart') {
-            icon.setAttribute('aria-label', `${burn ? 'Remove from' : 'Save to'} Liked`)
-            svg.style.fill = burn ? '#1ed760' : 'unset'
-            svg.style.stroke = burn ? '#1ed760' : 'currentColor'
-            return
         }
 
         const styleProp = this.#getStyleProp(icon)
