@@ -108,7 +108,7 @@ async function setupFromStorage() {
 function loadDefaultUI({ enabled, active }) {
     const { chorusPopup, cover } = getElements()
 
-    cover.src = '../icons/logo.png'
+    cover.src = chrome.runtime.getURL('../icons/logo.png')
     cover.style.transform = 'scale(1.15)'
 
     const title =
