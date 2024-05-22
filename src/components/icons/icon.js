@@ -23,14 +23,19 @@ export const NOW_PLAYING_SKIP_ICON = {
     id: 'chorus-skip'
 }
 
-export const HEART_ICON = {
-    lw: 22,
-    id: 'chorus-heart',
+export const TRACK_HEART = {
+    lw: 20,
     role: 'heart',
     ariaLabel: 'Like Song',
     stroke: 'currentColor',
     fill: 'none',
-    viewBox: '-5 -4 24 24',
+    viewBox: '-5 -4 24 24'
+}
+
+export const HEART_ICON = {
+    id: 'chorus-heart',
+    lw: 22,
+    ...TRACK_HEART
 }
 
 const SVG_PATHS = {
@@ -56,10 +61,20 @@ const BUTTON_STYLES = {
         'visibility:hidden;border:none;background:unset;display:flex;align-items:center;cursor:pointer;'
 }
 
-export const createIcon = ({ role, viewBox, id, ariaLabel, strokeWidth, stroke, fill = "currentColor", lw = '1.25rem'}) => {
+export const createIcon = ({
+    role,
+    viewBox,
+    id,
+    ariaLabel,
+    strokeWidth,
+    stroke,
+    fill = 'currentColor',
+    lw = '1.25rem'
+}) => {
     const svgPath = SVG_PATHS[role] || SVG_PATHS.default
     const buttonStylesKey = id ? 'settings' : 'default'
-    const buttonStyles = BUTTON_STYLES[buttonStylesKey]
+    let buttonStyles = BUTTON_STYLES[buttonStylesKey]
+    if (role == 'skip' && !id) buttonStyles += 'padding-right: 4px;'
 
     return `
         <button 
