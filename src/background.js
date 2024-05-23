@@ -2,7 +2,6 @@ import { setState, getState } from './utils/state.js'
 import { mediaKeys, chorusKeys } from './utils/selectors.js'
 import { activeOpenTab, sendMessage } from './utils/messaging.js'
 
-import { updateLikedTracks } from './services/track.js'
 import { getQueueList, setQueueList } from './services/queue.js'
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 import { playSharedTrack, seekTrackToPosition } from './services/player.js'
@@ -115,11 +114,12 @@ chrome.storage.onChanged.addListener(async (changes) => {
     updateBadgeState({ changes, changedKey })
 
     if (changedKey == 'now-playing' && ENABLED) {
-        if (!popupPort) return
-
-        const { active, tabId } = await activeOpenTab()
-        active && popupPort.postMessage({ type: changedKey, data: changes[changedKey].newValue })
-        return await setMediaState({ active, tabId })
+        if (popupPort) {
+            const { active, tabId } = await activeOpenTab()
+            active &&
+                popupPort.postMessage({ type: changedKey, data: changes[changedKey].newValue })
+            await setMediaState({ active, tabId })
+        }
     }
 
     const messageValue =
@@ -143,8 +143,25 @@ chrome.webRequest.onBeforeRequest.addListener(
     ['requestBody']
 )
 
+function getTrackId(url) {
+    const query = new URL(url)
+    const params = new URLSearchParams(query.search)
+    const variables = params.get('variables')
+    const uris = JSON.parse(decodeURIComponent(variables)).uris.at(0)
+    return uris.split('track:').at(-1)
+}
+
 chrome.webRequest.onBeforeSendHeaders.addListener(
-    (details) => {
+    async (details) => {
+        if (details.url.includes('areEntitiesInLibrary')) {
+            const nowPlaying = await getState('now-playing')
+            if (!nowPlaying) return
+            if (nowPlaying?.trackId) return
+
+            nowPlaying.trackId = getTrackId(details.url)
+            chrome.storage.local.set({ 'now-playing': nowPlaying })
+        }
+
         const authHeader = details?.requestHeaders?.find(
             (header) => header?.name == 'authorization'
         )
@@ -155,7 +172,8 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     {
         urls: [
             'https://api.spotify.com/*',
-            'https://guc3-spclient.spotify.com/track-playback/v1/devices'
+            'https://guc3-spclient.spotify.com/track-playback/v1/devices',
+            'https://api-partner.spotify.com/pathfinder/v1/query?operationName=areEntitiesInLibrary*'
         ]
     },
     ['requestHeaders']

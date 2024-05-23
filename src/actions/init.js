@@ -33,6 +33,11 @@ async function load() {
         sessionStorage.setItem('connection_id', connection_id)
     })
 
+    document.addEventListener('app.now-playing', async (e) => {
+        const now_playing = e.detail['now-playing']
+        sessionStorage.setItem('now-playing', now_playing)
+    })
+
     document.addEventListener('app.auth_token', async (e) => {
         const { auth_token } = e.detail
         sessionStorage.setItem('auth_token', auth_token)
