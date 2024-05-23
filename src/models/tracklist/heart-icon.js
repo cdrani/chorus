@@ -51,6 +51,7 @@ export default class HeartIcon extends TrackListIcon {
     }
 
     animate(icon) {
+        if (!icon?.parentElement) return
         const isLiked = this.#isLiked(icon.parentElement)
         this.#burn({ icon, burn: isLiked })
         this.#glow({ icon, glow: isLiked })
