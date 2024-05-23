@@ -38,6 +38,20 @@ class DataStore {
         })
     }
 
+    checkInCollection(id) {
+        const userCurations = this.#cache.getValue({ key: 'user-curated', value: {} })
+        if (userCurations.hasOwnProperty(id)) return userCurations[id]
+
+        return null
+    }
+
+    saveInCollection({ id, saved }) {
+        const userCurations = this.#cache.getValue({ key: 'user-curated', value: {} })
+        userCurations[id] = saved
+
+        this.#cache.update({ key: 'user-curated', value: userCurations })
+    }
+
     async populate() {
         const response = await this.#dispatcher.sendEvent({
             eventType: 'storage.populate',
