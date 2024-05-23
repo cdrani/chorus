@@ -5,6 +5,7 @@ import { activeOpenTab, sendMessage } from './utils/messaging.js'
 import { getQueueList, setQueueList } from './services/queue.js'
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 import { playSharedTrack, seekTrackToPosition } from './services/player.js'
+import { checkIfTracksInCollection, updateLikedTracks } from './services/track.js'
 
 let ENABLED = true
 let popupPort = null
@@ -192,8 +193,10 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
         'play.shared': playSharedTrack,
         'play.seek': seekTrackToPosition,
         'tracks.update': updateLikedTracks,
+        'tracks.liked': checkIfTracksInCollection,
         'artist.disco': createArtistDiscoPlaylist
     }
+
     const handlerFn = messageHandler[key]
     handlerFn
         ? promiseHandler(handlerFn(values), sendResponse)
