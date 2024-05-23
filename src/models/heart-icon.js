@@ -1,17 +1,21 @@
 import { parseNodeString } from '../utils/parser.js'
 import { highlightIconTimer } from '../utils/highlight.js'
 
+import { store } from '../stores/data.js'
 import Dispatcher from '../events/dispatcher.js'
 import { currentData } from '../data/current.js'
 import { createIcon, HEART_ICON } from '../components/icons/icon.js'
 
 export default class HeartIcon {
-    constructor(type = 'current') {
-        this._type = type
+    constructor() {
+        this._id = null
         this._dispatcher = new Dispatcher()
     }
 
-    init() { this.#placeIcon(); this.#setupListener(); }
+    init() {
+        this.#placeIcon()
+        this.#setupListener()
+    }
 
     removeIcon() {
         this.#heartIcon?.remove()
@@ -44,27 +48,34 @@ export default class HeartIcon {
         this.#heartIcon?.addEventListener('click', async () => this.#handleClick())
     }
 
-    async #dispatchLikedTracks() {
-        const method = this.#isHeartIconHighlighted ? 'DELETE' : 'PUT'
-        const { trackId: id } = await currentData.readTrack()
-
+    async #dispatchIsInCollection(ids) {
         return await this._dispatcher.sendEvent({
-            eventType: 'tracks.update',
-            detail: { key: 'tracks.update', values: { id, method } },
+            eventType: 'tracks.liked',
+            detail: { key: 'tracks.liked', values: { ids } }
         })
     }
 
-    async #handleClick() {
-        await this.#dispatchLikedTracks()
-        this.highlightIcon(!this.#isHeartIconHighlighted)
+    async #dispatchLikedTracks() {
+        const method = (await this.#isHeartIconHighlighted()) ? 'DELETE' : 'PUT'
+        const { trackId: id } = await currentData.readTrack()
+
+        await this._dispatcher.sendEvent({
+            eventType: 'tracks.update',
+            detail: { key: 'tracks.update', values: { id, method } }
+        })
+
+        return method == 'PUT'
     }
 
-    get isCurrent() {
-        return this._type == 'current'
+    async #handleClick() {
+        const highlight = await this.#dispatchLikedTracks()
+        this.highlightIcon(highlight)
     }
 
     get #nowPlayingButton() {
-        return document.querySelector('div[data-testid="now-playing-widget"] > button[data-encore-id="buttonTertiary"]')
+        return document.querySelector(
+            'div[data-testid="now-playing-widget"] > button[data-encore-id="buttonTertiary"]'
+        )
     }
 
     get #isSpotifyHighlighted() {
@@ -74,23 +85,51 @@ export default class HeartIcon {
         return JSON.parse(button.getAttribute('aria-checked'))
     }
 
-    get #isHeartIconHighlighted() {
+    async #isHeartIconHighlighted() {
+        const trackState = store.checkInCollection(this._id)
+        if (trackState !== null) return trackState
+
+        // If Spotify does not mark is 'curated', then it's not in ANY of user's playlists
+        if (!this.#isSpotifyHighlighted) {
+            store.saveInCollection({ id: this._id, saved: false })
+            return false
+        }
+
         return this.#heartIcon.firstElementChild.getAttribute('fill') != 'unset'
     }
 
-    highlightIcon(highlight) {
-        const update = highlight ?? this.#isSpotifyHighlighted
-        highlightIconTimer({ 
+    async #getIsTrackLiked() {
+        if (!this._id) return false
+
+        const trackState = store.checkInCollection(this._id)
+        if (trackState !== null) return trackState
+
+        const response = await this.#dispatchIsInCollection(this._id)
+
+        const saved = response?.data?.at(0)
+        store.saveInCollection({ id: this._id, saved })
+        return saved
+    }
+
+    async highlightIcon(highlight) {
+        this._id = null
+        const { trackId } = await currentData.readTrack()
+        this._id = trackId
+
+        const shouldUpdate = highlight ?? (await this.#getIsTrackLiked())
+
+        highlightIconTimer({
             fill: true,
-            highlight: update,
-            selector: '#chorus-heart > svg',
+            highlight: shouldUpdate,
+            selector: '#chorus-heart > svg'
         })
 
-        this.#updateIconLabel(update)
+        this.#updateIconLabel(shouldUpdate)
+        store.saveInCollection({ id: this._id, saved: shouldUpdate })
     }
 
     #updateIconLabel(highlight) {
-        const text = `${highlight ? 'Remove from' : 'Save to' } Liked`
+        const text = `${highlight ? 'Remove from' : 'Save to'} Liked`
         this.#heartIcon.setAttribute('aria-label', text)
     }
 }

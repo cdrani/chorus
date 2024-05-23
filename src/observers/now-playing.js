@@ -16,7 +16,7 @@ export default class NowPlayingObserver {
         this._chorus = chorus
         this._seekIcons = new SeekIcons()
         this._loopIcon = new LoopIcon(songTracker)
-        this._heartIcon = new HeartIcon('current')
+        this._heartIcon = new HeartIcon()
     }
 
     async observe() {
@@ -31,7 +31,7 @@ export default class NowPlayingObserver {
         const track = await this.setNowPlayingData()
         await this._songTracker.init()
         this._loopIcon.highlightLoop(track)
-        this._heartIcon.highlightIcon()
+        await this._heartIcon.highlightIcon()
     }
 
     #isAnchor(mutation) {
@@ -71,7 +71,7 @@ export default class NowPlayingObserver {
 
             this._loopIcon.updateIconPosition()
             this._loopIcon.highlightLoop(track)
-            this._heartIcon.highlightIcon()
+            await this._heartIcon.highlightIcon()
 
             this._snip.updateView()
             await this._seekIcons.setSeekLabels()
