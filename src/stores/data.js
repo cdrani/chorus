@@ -38,6 +38,11 @@ class DataStore {
         })
     }
 
+    get collectionTrackIds() {
+        const userCurations = this.#cache.getValue({ key: 'user-curated', value: {} })
+        return Object.keys(userCurations)
+    }
+
     checkInCollection(id) {
         const userCurations = this.#cache.getValue({ key: 'user-curated', value: {} })
         if (userCurations.hasOwnProperty(id)) return userCurations[id]
@@ -46,10 +51,18 @@ class DataStore {
     }
 
     saveInCollection({ id, saved }) {
+        if (!id) return
+
         const userCurations = this.#cache.getValue({ key: 'user-curated', value: {} })
         userCurations[id] = saved
 
         this.#cache.update({ key: 'user-curated', value: userCurations })
+    }
+
+    mergetoCollection(newEntries) {
+        const userCurations = this.#cache.getValue({ key: 'user-curated', value: {} })
+        const collection = Object.assign(userCurations, newEntries)
+        this.#cache.update({ key: 'user-curated', value: collection })
     }
 
     async populate() {
