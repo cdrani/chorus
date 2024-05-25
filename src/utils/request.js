@@ -27,9 +27,10 @@ export const request = async ({ url, options }) => {
             throw new Error('Network response was not ok')
         }
 
-        if (response?.status !== 204) {
-            const jsonResponse = await response?.json()
-            return jsonResponse
+        try {
+            return await response?.json()
+        } catch (err) {
+            return 'empty response'
         }
     } catch (error) {
         throw error
