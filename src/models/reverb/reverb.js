@@ -9,14 +9,9 @@ export default class Reverb {
         return drinkPresets.includes(effect)
     }
 
-    // TODO: remove after all users have upgraded past/to v1.20.0
-    #disconnectEffect(effect) {
-        return effect == 'none' || !drinkPresets.includes(effect)
-    }
-
     async setReverbEffect(effect) {
         this.#setup()
-        if (this.#disconnectEffect(effect)) return this.#disconnect()
+        if (effect == 'none') return this.#disconnect()
 
         const isDigital = this.#isDigital(effect)
         await (isDigital ? this.#createDigitalReverb(effect) : this.#createImpulseReverb(effect))
