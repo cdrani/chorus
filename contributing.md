@@ -15,7 +15,6 @@ This project and everyone participating in it are governed by the [Code of Condu
 
 Any form of contribution (except for stars), as long as they are unique, will be recognized by having the user's github profile included in the all-contributors list and in the README [contributors wall](./README.md#%EF%B8%8F-contributors-%EF%B8%8F).
 
-
 ## Reporting Bugs
 
 This section guides you through submitting a bug report for Chorus. Following these guidelines helps maintainers, and the community understand your report :pencil:, reproduce the behavior :computer:, and find related reports :mag_right:.
@@ -35,9 +34,7 @@ Explain the problem and include additional details to help reproduce the problem
 
 Include details about your environment.
 
-  
 ## Suggesting Enhancements
-
 
 This section guides you through submitting an enhancement suggestion for Chorus. Following these guidelines helps maintainers and the community understand your suggestion :pencil: and find related suggestions :mag_right:.
 
@@ -54,9 +51,7 @@ Create an issue on that repository and provide the following information:
 -   **Describe the current behavior** and **explain which behavior you expected to see instead** and why.
 -   **Explain why this enhancement would be useful** to most users.
 
-
 ## CodeBase Contribution
-
 
 Please feel free to contribute to this open source project. First timers are more than welcome. Unsure where to begin contributing to Chorus? You can start by looking through these `good-first-issue` and `help-wanted` issues:
 
