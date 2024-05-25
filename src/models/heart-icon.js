@@ -126,6 +126,33 @@ export default class HeartIcon {
 
         this.#updateIconLabel(shouldUpdate)
         store.saveInCollection({ id: this._id, saved: shouldUpdate })
+        this.#highlightInTracklist(shouldUpdate)
+    }
+
+    #highlightInTracklist(highlight) {
+        if (!this._id) return
+
+        const anchors = document.querySelectorAll(
+            `a[data-testid="internal-track-link"][href="/track/${this._id}"]`
+        )
+        if (!anchors?.length) return
+
+        anchors.forEach((anchor) => {
+            const trackRow = anchor?.parentElement?.parentElement?.parentElement
+            if (!trackRow) return
+
+            const heartIcon = trackRow.querySelector('button[role="heart"]')
+            if (!heartIcon) return
+
+            const svg = heartIcon.querySelector('svg')
+            if (!svg) return
+
+            heartIcon.style.visibility = highlight ? 'visible' : 'hidden'
+
+            heartIcon.setAttribute('aria-label', `${highlight ? 'Remove from' : 'Save to'} Liked`)
+            svg.style.fill = highlight ? '#1ed760' : 'transparent'
+            svg.style.stroke = highlight ? '#1ed760' : 'currentColor'
+        })
     }
 
     #updateIconLabel(highlight) {
