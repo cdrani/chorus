@@ -59,7 +59,7 @@ export const trackSongInfo = (row) => {
     }
 }
 
-const getTrackId = (row) => {
+export const getTrackId = (row) => {
     const trackIdUrl = row.querySelector('a[data-testid="internal-track-link"]')?.href
     if (!trackIdUrl) return
 
