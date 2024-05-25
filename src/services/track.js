@@ -6,10 +6,8 @@ const API_URL = 'https://api.spotify.com/v1/me/tracks'
 export function updateLikedTracks({ id, method }) {
     return new Promise(async (resolve, reject) => {
         try {
-            const body = { ids: [id] }
-            const options = await setOptions({ method, body })
-
-            const response = await request({ url: API_URL, options })
+            const options = await setOptions({ method })
+            const response = await request({ url: `${API_URL}?ids=${id}`, options })
             resolve(response)
         } catch (error) {
             reject(error)
@@ -22,7 +20,6 @@ export function checkIfTracksInCollection({ ids }) {
     return new Promise(async (resolve, reject) => {
         try {
             const options = await setOptions({ method: 'GET' })
-
             const url = `${API_URL}/contains?ids=${ids}`
             const response = await request({ url, options })
             resolve(response)
