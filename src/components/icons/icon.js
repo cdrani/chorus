@@ -24,7 +24,7 @@ export const NOW_PLAYING_SKIP_ICON = {
 }
 
 export const TRACK_HEART = {
-    lw: 20,
+    lw: 22,
     role: 'heart',
     ariaLabel: 'Like Song',
     stroke: 'currentColor',
@@ -34,13 +34,12 @@ export const TRACK_HEART = {
 
 export const HEART_ICON = {
     id: 'chorus-heart',
-    lw: 22,
     ...TRACK_HEART
 }
 
 const SVG_PATHS = {
     heart: `
-        <path d="M15.724 4.22A4.313 4.313 0 0 0 12.192.814a4.269 4.269 0 0 0-3.622 1.13.837.837 0 0 1-1.14 0 4.272 4.272 0 0 0-6.21 5.855l5.916 7.05a1.128 1.128 0 0 0 1.727 0l5.916-7.05a4.228 4.228 0 0 0 .945-3.577z"/>
+        <path role="heart" d="M15.724 4.22A4.313 4.313 0 0 0 12.192.814a4.269 4.269 0 0 0-3.622 1.13.837.837 0 0 1-1.14 0 4.272 4.272 0 0 0-6.21 5.855l5.916 7.05a1.128 1.128 0 0 0 1.727 0l5.916-7.05a4.228 4.228 0 0 0 .945-3.577z"/>
     `,
     skip: `
         <path role="skip" fill-rule="evenodd"
