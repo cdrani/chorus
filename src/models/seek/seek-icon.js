@@ -126,7 +126,7 @@ export default class SeekIcons {
     }
 
     async #calculateCurrentTime({ role, seekTime }) {
-        const { startTime, endTime } = await songState()
+        const { startTime = 0, endTime = playback.duration() } = await songState()
         let currentTime = parseInt(this._video.currentTime, 10)
         if (currentTime !== playback.current()) currentTime = playback.current()
 
@@ -150,6 +150,7 @@ export default class SeekIcons {
         const seekTime = parseInt(button.firstElementChild.textContent, 10)
 
         const newTime = await this.#calculateCurrentTime({ role, seekTime })
+        console.log({ seekTime, newTime })
         this._video.currentTime = newTime
         document.querySelector('[data-testid="playback-position"]').textContent =
             secondsToTime(newTime)
