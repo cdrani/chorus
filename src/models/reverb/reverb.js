@@ -1,4 +1,4 @@
-import { drinkPresets, getParamsListForEffect } from '../../lib/reverb/presets.js'
+import { roomPresets, convolverPresets, getParamsListForEffect } from '../../lib/reverb/presets.js'
 
 export default class Reverb {
     constructor(video) {
@@ -6,7 +6,11 @@ export default class Reverb {
     }
 
     #isDigital(effect) {
-        return drinkPresets.includes(effect)
+        return roomPresets.includes(effect)
+    }
+
+    isAPreset(effect) {
+        return [...roomPresets, ...convolverPresets].includes(effect)
     }
 
     async setReverbEffect(effect) {
