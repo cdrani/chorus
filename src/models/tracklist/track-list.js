@@ -4,12 +4,14 @@ import HeartIcon from './heart-icon.js'
 
 import Chorus from '../chorus.js'
 import TrackSnip from '../snip/track-snip.js'
+import Dispatcher from '../../events/dispatcher.js'
 
 import { store } from '../../stores/data.js'
-import { trackSongInfo } from '../../utils/song.js'
+import { getTrackId, trackSongInfo } from '../../utils/song.js'
 
 export default class TrackList {
     constructor(songTracker) {
+        this._dispatcher = new Dispatcher()
         this._chorus = new Chorus(songTracker)
         this._skipIcon = new SkipIcon(store)
         this._heartIcon = new HeartIcon(store)
@@ -31,8 +33,74 @@ export default class TrackList {
         return trackRows?.length > 0 ? Array.from(trackRows) : undefined
     }
 
-    setUpBlocking() {
+    get #trackIdsToCheck() {
+        const trackIds = new Set(this.#trackRows.map((row) => getTrackId(row).trackId))
+        const collectionTrackIds = new Set(store.collectionTrackIds)
+
+        const trackIdsToCheckIfLiked = [...trackIds.difference(collectionTrackIds)]
+        return trackIdsToCheckIfLiked
+    }
+
+    get #plusCircles() {
+        const plusCircleButtons = document.querySelectorAll(
+            '[role="presentation"] > div > button[data-encore-id="buttonTertiary"][aria-checked]'
+        )
+        if (!plusCircleButtons.length) return []
+        return Array.from(plusCircleButtons)
+    }
+
+    #updateButtonStyles({ button, show = false }) {
+        button.style.padding = show ? '12px' : 0
+        button.style.width = show ? '16px' : 0
+        button.style.visibility = show ? 'visible' : 'hidden'
+        button.style.marginRight = show ? 12 : 0
+    }
+
+    showPlusCircles() {
+        this.#plusCircles
+            .filter((button) => button.style.visibility == 'hidden')
+            .forEach((button) => this.#updateButtonStyles({ button, show: true }))
+    }
+
+    #hidePlusCircles() {
+        this.#plusCircles.forEach((button) => this.#updateButtonStyles({ button }))
+    }
+
+    #hidePlusCircle(row) {
+        const button = row.querySelector('button[role="buttonTertiary"]')
+        if (!button) return
+        this.#updateButtonStyles(button)
+    }
+
+    async #updateCollectionLikedTracks(ids) {
+        const { state, data } = await this._dispatcher.sendEvent({
+            eventType: 'tracks.liked',
+            detail: { key: 'tracks.liked', values: { ids: ids.join(',') } }
+        })
+
+        if (state !== 'completed') return
+
+        const collection = ids.reduce((obj, id, index) => {
+            obj[id] = data[index]
+            return obj
+        }, {})
+
+        store.mergetoCollection(collection)
+    }
+
+    get #isOnLikedSongsPage() {
+        return location.pathname == '/collection/tracks'
+    }
+
+    async setUpBlocking() {
         if (!this.#trackRows?.length) return
+        this.#hidePlusCircles()
+
+        const trackIds = this.#trackIdsToCheck
+
+        if (trackIds.length && !this.#isOnLikedSongsPage) {
+            await this.#updateCollectionLikedTracks(trackIds)
+        }
 
         this.#toggleBlockDisplay(false)
         this.#setRowEvents()
@@ -42,12 +110,19 @@ export default class TrackList {
         if (!this.#trackRows?.length) return
 
         this.#toggleBlockDisplay(true)
+        this.showPlusCircles()
     }
 
     #toggleBlockDisplay(hide) {
         const blockIcons = this.#trackRows
             .map((row) =>
-                Array.from(row.querySelectorAll(['button[role="snip"]', 'button[role="skip"]']))
+                Array.from(
+                    row.querySelectorAll([
+                        //'button[role="snip"]',
+                        'button[role="heart"]',
+                        'button[role="skip"]'
+                    ])
+                )
             )
             .flat()
 
@@ -67,6 +142,8 @@ export default class TrackList {
     #setMouseEvents(row) {
         const song = trackSongInfo(row)
         if (!song) return
+
+        this.#hidePlusCircle(row)
 
         this._events.forEach((event) => {
             row?.addEventListener(event, async () => {
@@ -98,7 +175,7 @@ export default class TrackList {
         const target = e.target
         const role = target?.getAttribute('role')
 
-        if (['snip', 'skip'].includes(role)) {
+        if (['snip', 'skip', 'heart'].includes(role)) {
             let row = target.parentElement
             do {
                 row = row.parentElement
@@ -117,10 +194,14 @@ export default class TrackList {
                 const icon = row.querySelector('button[role="snip"]')
                 this._snipIcon._animate(icon)
                 this._previousRowNum = currentIndex
-            } else {
+            } else if (role == 'skip') {
                 const icon = row.querySelector('button[role="skip"]')
                 await this._skipIcon._saveTrack(row)
                 this._skipIcon._animate(icon)
+            } else {
+                const icon = row.querySelector('button[role="heart"]')
+                await this._heartIcon.toggleTrackLiked(row)
+                this._heartIcon.animate(icon)
             }
         }
     }
