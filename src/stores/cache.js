@@ -23,7 +23,8 @@ export default class CacheStore {
 
     getValue({ key, value }) {
         const result = this.getKey(key)
-        if (typeof result == 'string' || (result && this.isEmpty(value))) return result
+        if (['object', 'string'].includes(typeof result) || (result && this.isEmpty(value)))
+            return result
 
         return this.update({ key, value })
     }
