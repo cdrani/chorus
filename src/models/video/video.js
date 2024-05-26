@@ -13,7 +13,9 @@ export default class VideoElement {
         if (navigator.userAgent.includes('Firefox')) return
 
         const effect = sessionStorage.getItem('reverb') ?? 'none'
-        this._reverb.setReverbEffect(value ? effect : 'none')
+        const reverbEffect = this._reverb.isAPreset(effect) ? effect : 'none'
+
+        this._reverb.setReverbEffect(value ? reverbEffect : 'none')
     }
 
     get active() {

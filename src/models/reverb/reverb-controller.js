@@ -1,6 +1,6 @@
 import { store } from '../../stores/data.js'
 import { spotifyVideo } from '../../actions/overload.js'
-import { drinkPresets } from '../../lib/reverb/presets.js'
+import { roomPresets } from '../../lib/reverb/presets.js'
 
 export default class ReverbController {
     constructor() {
@@ -14,19 +14,19 @@ export default class ReverbController {
     }
 
     #setupEvents(effect) {
-        const { drinkEffectSelect, convolverEffectSelect, presetSelection } = this.elements
+        const { roomEffectSelect, convolverEffectSelect, presetSelection } = this.elements
 
         if (effect == 'none') {
             this.setValuesToNone()
         } else {
             presetSelection.textContent = effect
-            const selectedElement = drinkPresets.includes(effect)
-                ? drinkEffectSelect
+            const selectedElement = roomPresets.includes(effect)
+                ? roomEffectSelect
                 : convolverEffectSelect
             selectedElement.value = effect
         }
 
-        drinkEffectSelect.onchange = async (e) => {
+        roomEffectSelect.onchange = async (e) => {
             await this.handleSelection(e)
         }
         convolverEffectSelect.onchange = async (e) => {
@@ -37,7 +37,7 @@ export default class ReverbController {
     get elements() {
         return {
             presetSelection: document.getElementById('preset-selection'),
-            drinkEffectSelect: document.getElementById('drink-effect-presets'),
+            roomEffectSelect: document.getElementById('room-effect-presets'),
             convolverEffectSelect: document.getElementById('convolver-effect-presets')
         }
     }
@@ -48,10 +48,8 @@ export default class ReverbController {
         } = e
         await this._reverb.setReverbEffect(value)
 
-        const { convolverEffectSelect, drinkEffectSelect } = this.elements
-        const nonSelectedElement = id?.startsWith('drink')
-            ? convolverEffectSelect
-            : drinkEffectSelect
+        const { convolverEffectSelect, roomEffectSelect } = this.elements
+        const nonSelectedElement = id?.startsWith('room') ? convolverEffectSelect : roomEffectSelect
         nonSelectedElement.value = 'none'
 
         this.elements.presetSelection.textContent = value
@@ -62,9 +60,9 @@ export default class ReverbController {
     }
 
     setValuesToNone() {
-        const { presetSelection, drinkEffectSelect, convolverEffectSelect } = this.elements
+        const { presetSelection, roomEffectSelect, convolverEffectSelect } = this.elements
         presetSelection.textContent = 'none'
-        drinkEffectSelect.value = 'none'
+        roomEffectSelect.value = 'none'
         convolverEffectSelect.value = 'none'
     }
 
