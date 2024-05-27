@@ -70,7 +70,7 @@ class CurrentData {
     async readTrack() {
         const currentInfo = currentSongInfo()
         const existingTrack = await this._store.getTrack({ id: currentInfo.id })
-        if (existingTrack) return existingTrack
+        if (existingTrack && Object.keys(existingTrack).length) return existingTrack
 
         const trackParams = {
             id: currentInfo.id,

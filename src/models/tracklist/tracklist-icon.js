@@ -104,8 +104,9 @@ export default class TrackListIcon {
 
         const snipInfo = await this.getTrack(song.id)
 
-        this._burn({ icon, burn: snipInfo[this._key] })
-        this._glow({ icon, glow: snipInfo[this._key] })
+        const display = snipInfo?.[this._key] ?? false
+        this._burn({ icon, burn: display })
+        this._glow({ icon, glow: display })
     }
 
     #getStyleProp(icon) {

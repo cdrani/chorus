@@ -73,9 +73,12 @@ export default class TrackList {
                     icon.style.visibility = this._visibleEvents.includes(event)
                         ? 'visible'
                         : 'hidden'
+
                     const role = icon.getAttribute('role')
-                    this._snipIcon._burn({ icon, burn: snipInfo[keys[role]] })
-                    this._snipIcon._glow({ icon, glow: snipInfo[keys[role]] })
+                    const display = snipInfo?.[keys[role]] ?? false
+
+                    this._skipIcon._burn({ icon, burn: display })
+                    this._skipIcon._glow({ icon, glow: display })
                 })
             })
         })
