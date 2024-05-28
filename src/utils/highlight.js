@@ -22,11 +22,23 @@ export const highlightElement = ({
     }, 250)
 }
 
-export const highlightLoopIcon = (highlight) => {
-    const svgIcon = document.getElementById('loop-icon')
-    if (!svgIcon) return
+export const highlightIconTimer = ({ highlight, selector, fill = false }) => {
+    let updated
+    const timer = setInterval(() => {
+        if (updated) { clearInterval(timer); return }
+
+        updated = highlightIcon({ highlight, selector, fill })
+    }, 0)
+}
+
+export const highlightIcon = ({ highlight, selector, fill = false }) => {
+    const svgIcon = document.querySelector(selector)
+    if (!svgIcon) return false
 
     const colour = highlight ? '#1ed760' : 'currentColor'
-    svgIcon.setAttribute('fill', colour)
+    const fillColour = highlight ? '#1ed760' : fill ? 'unset' : 'currentColor'
     svgIcon.setAttribute('stroke', colour)
+    svgIcon.setAttribute('fill', fillColour)
+
+    return true
 }

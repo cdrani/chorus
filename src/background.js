@@ -5,19 +5,26 @@ import { activeOpenTab, sendMessage } from './utils/messaging.js'
 import { getQueueList, setQueueList } from './services/queue.js'
 import { createArtistDiscoPlaylist } from './services/artist-disco.js'
 import { playSharedTrack, seekTrackToPosition } from './services/player.js'
+import { checkIfTracksInCollection, updateLikedTracks } from './services/track.js'
 
 let ENABLED = true
 let popupPort = null
 
-async function getUIState({ selector, tabId }) {
-    const result = await chrome.scripting.executeScript({
-        args: [selector],
+async function getUIState({ selector, tabId, delay = 0 }) {
+    const [result] = await chrome.scripting.executeScript({
+        args: [selector, delay],
         target: { tabId },
-        func: (selector) =>
-            document.querySelector(selector)?.getAttribute('aria-label').toLowerCase()
+        func: (selector, delay) =>
+            new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(
+                        document.querySelector(selector)?.getAttribute('aria-label').toLowerCase()
+                    )
+                }, delay)
+            })
     })
 
-    return result?.at(0).result
+    return result?.result
 }
 
 async function getMediaControlsState(tabId) {
@@ -36,8 +43,9 @@ async function getMediaControlsState(tabId) {
     const promises = selectors.map(
         (selector) =>
             new Promise((resolve) => {
-                if (selector.search(/(loop)|(add-button)/g) < 0)
+                if (selector.search(/(loop)|(heart)/g) < 0) {
                     return resolve(getUIState({ selector, tabId }))
+                }
                 return setTimeout(() => resolve(getUIState({ selector, tabId })), 500)
             })
     )
@@ -67,7 +75,10 @@ chrome.runtime.onConnect.addListener(async (port) => {
         if (message?.type !== 'controls') return
 
         const { selector, tabId } = await executeButtonClick({ command: message.key })
-        const result = await getUIState({ selector, tabId })
+
+        const delay = selector.includes('heart') ? 250 : 0
+        const result = await getUIState({ selector, tabId, delay })
+
         port.postMessage({ type: 'controls', data: { key: message.key, result } })
     })
 
@@ -104,11 +115,12 @@ chrome.storage.onChanged.addListener(async (changes) => {
     updateBadgeState({ changes, changedKey })
 
     if (changedKey == 'now-playing' && ENABLED) {
-        if (!popupPort) return
-
-        const { active, tabId } = await activeOpenTab()
-        active && popupPort.postMessage({ type: changedKey, data: changes[changedKey].newValue })
-        return await setMediaState({ active, tabId })
+        if (popupPort) {
+            const { active, tabId } = await activeOpenTab()
+            active &&
+                popupPort.postMessage({ type: changedKey, data: changes[changedKey].newValue })
+            await setMediaState({ active, tabId })
+        }
     }
 
     const messageValue =
@@ -132,8 +144,25 @@ chrome.webRequest.onBeforeRequest.addListener(
     ['requestBody']
 )
 
+function getTrackId(url) {
+    const query = new URL(url)
+    const params = new URLSearchParams(query.search)
+    const variables = params.get('variables')
+    const uris = JSON.parse(decodeURIComponent(variables)).uris.at(0)
+    return uris.split('track:').at(-1)
+}
+
 chrome.webRequest.onBeforeSendHeaders.addListener(
-    (details) => {
+    async (details) => {
+        if (details.url.includes('areEntitiesInLibrary')) {
+            const nowPlaying = await getState('now-playing')
+            if (!nowPlaying) return
+            if (nowPlaying?.trackId) return
+
+            nowPlaying.trackId = getTrackId(details.url)
+            chrome.storage.local.set({ 'now-playing': nowPlaying })
+        }
+
         const authHeader = details?.requestHeaders?.find(
             (header) => header?.name == 'authorization'
         )
@@ -144,7 +173,8 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     {
         urls: [
             'https://api.spotify.com/*',
-            'https://guc3-spclient.spotify.com/track-playback/v1/devices'
+            'https://guc3-spclient.spotify.com/track-playback/v1/devices',
+            'https://api-partner.spotify.com/pathfinder/v1/query?operationName=areEntitiesInLibrary*'
         ]
     },
     ['requestHeaders']
@@ -162,8 +192,11 @@ chrome.runtime.onMessage.addListener(({ key, values }, _, sendResponse) => {
         'queue.get': getQueueList,
         'play.shared': playSharedTrack,
         'play.seek': seekTrackToPosition,
+        'tracks.update': updateLikedTracks,
+        'tracks.liked': checkIfTracksInCollection,
         'artist.disco': createArtistDiscoPlaylist
     }
+
     const handlerFn = messageHandler[key]
     handlerFn
         ? promiseHandler(handlerFn(values), sendResponse)

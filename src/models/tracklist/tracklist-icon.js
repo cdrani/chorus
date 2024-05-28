@@ -47,7 +47,6 @@ export default class TrackListIcon {
 
         this._seen.add(song.id)
 
-        const track = (await this.getTrack(song.id)) ?? {}
         await this._store.getTrack({
             id: song.id,
             value: {
@@ -55,8 +54,7 @@ export default class TrackListIcon {
                 isSkipped: false,
                 isSnip: false,
                 startTime: 0,
-                endTime: song.endTime,
-                ...track
+                endTime: song.endTime
             }
         })
     }

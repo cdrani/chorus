@@ -5,7 +5,7 @@ import { SETTINGS_ICON, NOW_PLAYING_SKIP_ICON, createIcon } from '../components/
 
 import { currentSongInfo } from '../utils/song.js'
 import { parseNodeString } from '../utils/parser.js'
-import { highlightElement } from '../utils/higlight.js'
+import { highlightElement } from '../utils/highlight.js'
 
 export default class NowPlayingIcons {
     constructor({ snip, chorus }) {
@@ -72,7 +72,7 @@ export default class NowPlayingIcons {
         skipIcon.addEventListener('click', async () => this.#handleSkipTrack())
     }
 
-    #hightlightTrackListBlock(songStateData) {
+    #highlightTrackListBlock(songStateData) {
         if (!this.#trackRows) return
 
         const title = currentSongInfo()?.id?.split(' by ')?.at(0) || ''
@@ -105,8 +105,8 @@ export default class NowPlayingIcons {
         })
 
         if (updatedValues.isSkipped) {
-            this.#hightlightTrackListBlock(updatedValues)
-            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()
+            this.#highlightTrackListBlock(updatedValues)
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
         }
     }
 }

@@ -33,6 +33,8 @@ window.addEventListener('message', async (event) => {
         'queue.set': sendBackgroundMessage,
         'queue.get': sendBackgroundMessage,
         'artist.disco': sendBackgroundMessage,
+        'tracks.liked': sendBackgroundMessage,
+        'tracks.update': sendBackgroundMessage,
         'storage.populate': () => getState(null),
         'storage.get': ({ key }) => getState(key),
         'storage.delete': ({ key }) => removeState(key),
@@ -49,7 +51,7 @@ window.addEventListener('message', async (event) => {
 chrome.runtime.onMessage.addListener((message) => {
     const messageKey = Object.keys(message)
     const changedKey = messageKey.find((key) =>
-        ['connection_id', 'enabled', 'auth_token', 'device_id'].includes(key)
+        ['now-playing', 'connection_id', 'enabled', 'auth_token', 'device_id'].includes(key)
     )
 
     if (!changedKey) return
