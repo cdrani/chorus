@@ -60,7 +60,7 @@ export const trackSongInfo = (row) => {
 }
 
 export const getTrackId = (row) => {
-    const trackIdUrl = row.querySelector('a[data-testid="internal-track-link"]')?.href
+    const trackIdUrl = row.querySelector('a[data-testid="internal-track-link"], a')?.href
     if (!trackIdUrl) return
 
     const url = trackIdUrl.split('.com').at(1)
