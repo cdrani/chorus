@@ -1,20 +1,34 @@
+const btnStyles =
+    'text-align:end;cursor:pointer;background:#171717;padding:2px;padding-right:16px;color:#fff;font-size:1rem;'
+
 const createOptions = (optionNames) =>
-    optionNames.map((name) => `<option name="${name}" value="${name}">${name}</option>`).join('')
+    optionNames
+        .map(
+            (name) => `<button style="${btnStyles}" name="${name}" value="${name}">${name}</button>`
+        )
+        .join('')
 
 export const createEffectsSelector = ({ labelName, name, optionNames }) => `
-    <div style="display:flex;justify-content:space-between">
+    <div id="${name}-presets" style="display:flex;position:relative;justify-content:space-between;">
         <label style="color:#b3b3b3;font-size:">${labelName}</label>
 
-        <form id="select-container" class="selector">
-            <select 
-                class="select"
-                id="${name}-presets"
-                name="${name}-presets"
-                style="color:#fff;font-size:1rem;text-align:end"
+        <form id="select-container" class="selector" style="overflow-y:auto;max-height:100px;">
+            <button id="${name}-btn" style="display:flex;align-content:center;border:solid 1px #fff;background:transparent;color:#b3b3b3;width:100px;justify-content:end;">
+                <span id="${name}-selected" style="color:#fff;font-size:1rem;margin-right: 4px">none</span>
+                <svg style="width:1rem;height:1rem;margin-top:4px;" viewBox="0 0 256 256" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        stroke-width="4px"
+                        d="m128 182a5.98159 5.98159 0 0 1 -4.24268-1.75732l-80-80a6.00006 6.00006 0 0 1 8.48536-8.48536l75.75732 75.75733 75.75732-75.75733a6.00006 6.00006 0 0 1 8.48536 8.48536l-80 80a5.98159 5.98159 0 0 1 -4.24268 1.75732z"
+                    />
+                </svg>
+            </button>
+
+            <div
+                id="${name}-list"
+                style="min-width:100px;border:1px solid #b3b3b3;border-radius:4px;right:0;overflow-y:auto;background:#171717;flex-direction:column;max-height:110px;z-index:100;position:absolute;display:none"
             >
-                <option name="none" value="none">-----</option>
-                ${createOptions(optionNames)}
-            </select>
+                ${createOptions(['none', ...optionNames])}
+            </div>
         </form>
     </div>
 `
