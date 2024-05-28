@@ -34,6 +34,8 @@ export default class TrackList {
     }
 
     get #trackIdsToCheck() {
+        if (!this.#trackRows.length) return []
+
         const trackIds = new Set(this.#trackRows.map((row) => getTrackId(row).trackId))
         const collectionTrackIds = new Set(store.collectionTrackIds)
 

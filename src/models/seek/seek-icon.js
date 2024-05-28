@@ -150,10 +150,9 @@ export default class SeekIcons {
         const seekTime = parseInt(button.firstElementChild.textContent, 10)
 
         const newTime = await this.#calculateCurrentTime({ role, seekTime })
-        console.log({ seekTime, newTime })
         this._video.currentTime = newTime
-        document.querySelector('[data-testid="playback-position"]').textContent =
-            secondsToTime(newTime)
+        const position = document.querySelector('[data-testid="playback-position"]')
+        position.textContent = secondsToTime(newTime)
     }
 
     #setupListeners() {
