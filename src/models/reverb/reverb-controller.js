@@ -33,6 +33,13 @@ export default class ReverbController {
         selectedBtn.style.background = '#3e3d3d'
     }
 
+    #resetBtnBackgrounds() {
+        const { roomList, convolverList } = this.elements
+        const reset = (btn) => (btn.style.background = '#171717')
+        ;[...roomList.children].forEach(reset)
+        ;[...convolverList.children].forEach(reset)
+    }
+
     #toggleListView = (e) => {
         e.preventDefault()
         const { roomList, convolverList } = this.elements
@@ -47,6 +54,7 @@ export default class ReverbController {
 
         if (list.style.display !== 'flex') return
 
+        this.#resetBtnBackgrounds()
         this.#highlightFirstVisibleBtn({ isRoom, effectList: list })
     }
 
