@@ -28,20 +28,13 @@ window.addEventListener('message', async (event) => {
 
     const { requestType, payload } = event.data
     const messageHandlers = {
-        'play.seek': sendBackgroundMessage,
-        'play.shared': sendBackgroundMessage,
-        'queue.set': sendBackgroundMessage,
-        'queue.get': sendBackgroundMessage,
-        'artist.disco': sendBackgroundMessage,
-        'tracks.liked': sendBackgroundMessage,
-        'tracks.update': sendBackgroundMessage,
         'storage.populate': () => getState(null),
         'storage.get': ({ key }) => getState(key),
         'storage.delete': ({ key }) => removeState(key),
         'storage.set': ({ key, values }) => setState({ key, values })
     }
 
-    const handlerFn = messageHandlers[requestType]
+    const handlerFn = messageHandlers?.[requestType] ?? sendBackgroundMessage
     if (!handlerFn) return
 
     const response = await handlerFn(payload)
