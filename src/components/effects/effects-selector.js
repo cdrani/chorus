@@ -9,7 +9,7 @@ const createOptions = (optionNames) =>
         .join('')
 
 export const createEffectsSelector = ({ labelName, name, optionNames }) => `
-    <div id="${name}-presets" style="display:flex;position:relative;justify-content:space-between;">
+    <div style="display:flex;position:relative;justify-content:space-between;min-height:24px;">
         <label style="color:#b3b3b3;font-size:">${labelName}</label>
 
         <form id="select-container" class="selector" style="overflow-y:auto;max-height:100px;">
@@ -17,7 +17,6 @@ export const createEffectsSelector = ({ labelName, name, optionNames }) => `
                 <span id="${name}-selected" style="color:#fff;font-size:1rem;margin-right: 4px">none</span>
                 <svg style="width:1rem;height:1rem;margin-top:4px;" viewBox="0 0 256 256" fill="#fff" xmlns="http://www.w3.org/2000/svg">
                     <path
-                        stroke-width="4px"
                         d="m128 182a5.98159 5.98159 0 0 1 -4.24268-1.75732l-80-80a6.00006 6.00006 0 0 1 8.48536-8.48536l75.75732 75.75733 75.75732-75.75733a6.00006 6.00006 0 0 1 8.48536 8.48536l-80 80a5.98159 5.98159 0 0 1 -4.24268 1.75732z"
                     />
                 </svg>

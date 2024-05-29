@@ -157,6 +157,6 @@ export default class HeartIcon {
 
     #updateIconLabel(highlight) {
         const text = `${highlight ? 'Remove from' : 'Save to'} Liked`
-        this.#heartIcon.setAttribute('aria-label', text)
+        this.#heartIcon?.setAttribute('aria-label', text)
     }
 }

@@ -13,10 +13,15 @@ export default class ReverbController {
         this.#setupEvents(effect)
     }
 
-    #setupButtonListeners(button) {
-        button.addEventListener('click', (e) => this.#handleSelection(e))
-        button.addEventListener('mouseover', () => (button.style.background = '#3e3d3d'))
-        button.addEventListener('mouseleave', () => (button.style.background = '#171717'))
+    #setBtnBackground(e) {
+        const isMouseOver = e.type == 'mouseover'
+        this.style.background = isMouseOver ? '#3e3d3d' : '#171717'
+    }
+
+    #setupButtonListeners = (button) => {
+        button.addEventListener('click', this.#handleSelection)
+        button.addEventListener('mouseover', this.#setBtnBackground)
+        button.addEventListener('mouseleave', this.#setBtnBackground)
     }
 
     #highlightFirstVisibleBtn({ isRoom, effectList }) {
@@ -28,11 +33,11 @@ export default class ReverbController {
         selectedBtn.style.background = '#3e3d3d'
     }
 
-    #toggleListView(e) {
+    #toggleListView = (e) => {
         e.preventDefault()
         const { roomList, convolverList } = this.elements
 
-        const isRoom = e.currentTarget.id.startsWith('room')
+        const isRoom = e.target.id.startsWith('room')
         const list = isRoom ? roomList : convolverList
         const otherList = isRoom ? convolverList : roomList
 
@@ -45,14 +50,18 @@ export default class ReverbController {
         this.#highlightFirstVisibleBtn({ isRoom, effectList: list })
     }
 
+    #setupToggleBtnEvents(btn) {
+        btn.addEventListener('click', this.#toggleListView)
+    }
+
     #setupSelectEvents() {
         const { roomBtn, roomList, convolverBtn, convolverList } = this.elements
 
-        roomBtn.addEventListener('click', (e) => this.#toggleListView(e))
-        ;[...roomList.children].forEach((btn) => this.#setupButtonListeners(btn))
+        this.#setupToggleBtnEvents(roomBtn)
+        ;[...roomList.children].forEach(this.#setupButtonListeners)
 
-        convolverBtn.addEventListener('click', (e) => this.#toggleListView(e))
-        ;[...convolverList.children].forEach((btn) => this.#setupButtonListeners(btn))
+        this.#setupToggleBtnEvents(convolverBtn)
+        ;[...convolverList.children].forEach(this.#setupButtonListeners)
     }
 
     #setupEvents(effect) {
@@ -83,7 +92,7 @@ export default class ReverbController {
         }
     }
 
-    async #handleSelection(e) {
+    #handleSelection = async (e) => {
         e.preventDefault()
 
         const value = e.target.value
