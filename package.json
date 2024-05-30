@@ -2,7 +2,7 @@
   "name": "chorus",
   "private": true,
   "type": "module",
-  "version": "1.22.3",
+  "version": "1.23.0",
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
