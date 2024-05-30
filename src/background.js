@@ -76,7 +76,7 @@ chrome.runtime.onConnect.addListener(async (port) => {
 
         const { selector, tabId } = await executeButtonClick({ command: message.key })
 
-        const delay = selector.includes('heart') ? 250 : 0
+        const delay = selector.includes('heart') ? 500 : 0
         const result = await getUIState({ selector, tabId, delay })
 
         port.postMessage({ type: 'controls', data: { key: message.key, result } })

@@ -8,7 +8,6 @@ import { createIcon, HEART_ICON } from '../components/icons/icon.js'
 
 export default class HeartIcon {
     constructor() {
-        this._id = null
         this._dispatcher = new Dispatcher()
     }
 
@@ -75,15 +74,17 @@ export default class HeartIcon {
     }
 
     async #dispatchLikedTracks() {
-        const method = (await this.#isHeartIconHighlighted()) ? 'DELETE' : 'PUT'
-        const { id: songId, trackId, type } = await currentData.readTrack()
+        const { id: songId, trackId, type = 'track' } = await currentData.readTrack()
 
         let likedTrackId = trackId
+
         if (type == 'album') {
             likedTrackId = await this.#dispatchGetTrackIdFromAlbum({ songId, albumId: trackId })
         }
 
         if (!likedTrackId) return false
+
+        const method = (await this.#isHeartIconHighlighted(likedTrackId)) ? 'DELETE' : 'PUT'
 
         await this._dispatcher.sendEvent({
             eventType: 'tracks.update',
@@ -111,39 +112,38 @@ export default class HeartIcon {
         return JSON.parse(button.getAttribute('aria-checked'))
     }
 
-    async #isHeartIconHighlighted() {
-        const trackState = store.checkInCollection(this._id)
+    async #isHeartIconHighlighted(id) {
+        const trackState = store.checkInCollection(id)
         if (trackState !== null) return trackState
 
         // If Spotify does not mark is 'curated', then it's not in ANY of user's playlists
         if (!this.#isSpotifyHighlighted) {
-            store.saveInCollection({ id: this._id, saved: false })
+            store.saveInCollection({ id, saved: false })
             return false
         }
 
         return this.#heartIcon.firstElementChild.getAttribute('fill') != 'unset'
     }
 
-    async #getIsTrackLiked() {
-        if (!this._id) return false
+    async #getIsTrackLiked({ type, trackId }) {
+        if (!trackId) return false
 
-        const trackState = store.checkInCollection(this._id)
+        const trackState = store.checkInCollection(trackId)
         if (trackState !== null) return trackState
 
-        if (this._type == 'album') {
-            this._id = await this.#dispatchGetTrackIdFromAlbum(this._id)
+        let id = trackId
+        if (type == 'album') {
+            id = await this.#dispatchGetTrackIdFromAlbum(trackId)
         }
-        const response = await this.#dispatchIsInCollection(this._id)
+        const response = await this.#dispatchIsInCollection(id)
 
         const saved = response?.data?.at(0)
-        store.saveInCollection({ id: this._id, saved })
+        store.saveInCollection({ id, saved })
         return saved
     }
 
     async highlightIcon(highlight) {
-        this._id = null
-        const { trackId, type = 'track', id: songId } = await currentData.readTrack()
-        this._id = trackId
+        let { trackId, type = 'track', id: songId } = await currentData.readTrack()
 
         let shouldUpdate = false
 
@@ -151,11 +151,11 @@ export default class HeartIcon {
             shouldUpdate = highlight
         } else {
             if (type == 'album') {
-                this._id = await this.#dispatchGetTrackIdFromAlbum({ songId, albumId: trackId })
+                trackId = await this.#dispatchGetTrackIdFromAlbum({ songId, albumId: trackId })
             }
-            if (!this._id) return
+            if (!trackId) return
 
-            shouldUpdate = await this.#getIsTrackLiked()
+            shouldUpdate = await this.#getIsTrackLiked({ type, trackId })
         }
 
         highlightIconTimer({
@@ -165,15 +165,13 @@ export default class HeartIcon {
         })
 
         this.#updateIconLabel(shouldUpdate)
-        store.saveInCollection({ id: this._id, saved: shouldUpdate })
-        this.#highlightInTracklist(shouldUpdate)
+        store.saveInCollection({ id: trackId, saved: shouldUpdate })
+        this.#highlightInTracklist(shouldUpdate, trackId)
     }
 
-    #highlightInTracklist(highlight) {
-        if (!this._id) return
-
+    #highlightInTracklist(highlight, trackId) {
         const anchors = document.querySelectorAll(
-            `a[data-testid="internal-track-link"][href="/track/${this._id}"]`
+            `a[data-testid="internal-track-link"][href="/track/${trackId}"]`
         )
         if (!anchors?.length) return
 
