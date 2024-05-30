@@ -11,26 +11,20 @@ export const currentSongInfo = () => {
         .querySelector('[data-testid="now-playing-widget"]')
         ?.getAttribute('aria-label')
     const image = document.querySelector('[data-testid="CoverSlotCollapsed__container"] img')
-    const anchor = document.querySelector('[data-testid="CoverSlotCollapsed__container"] a')
-    const contextType = anchor?.getAttribute('data-context-item-type')
+    const anchor = document.querySelector('[data-testid="now-playing-widget"] a')
 
     // Remove 'Now playing: ' prefix
     const id = songLabel?.split('Now playing: ')?.at(1)
     const cover = getImage(image?.src)
 
-    if (!contextType) return { id, cover }
-
-    const params = new URLSearchParams(anchor?.href)
-    const trackId = params?.get('uri')?.split(`${contextType}:`).at(1)
+    const [, type, trackId] = new URL(anchor?.href).pathname.split('/')
 
     return {
         id,
         cover,
-        ...(contextType && {
-            type: contextType,
-            trackId,
-            url: `${location.origin}/${contextType}/${trackId}`
-        })
+        type: type ?? 'track',
+        trackId,
+        url: anchor.href
     }
 }
 

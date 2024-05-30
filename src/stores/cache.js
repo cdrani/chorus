@@ -19,7 +19,7 @@ export default class CacheStore {
 
     getValue({ key, value }) {
         const result = this.getKey(key)
-        if (result) return result
+        if (result && result !== '{}') return result
 
         return this.update({ key, value })
     }
