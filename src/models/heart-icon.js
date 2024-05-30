@@ -55,13 +55,39 @@ export default class HeartIcon {
         })
     }
 
+    async #dispatchGetTrackIdFromAlbum({ songId, albumId }) {
+        const { state, data } = await this._dispatcher.sendEvent({
+            eventType: 'tracks.album',
+            detail: { key: 'tracks.album', values: { albumId } }
+        })
+
+        if (state == 'error') return null
+
+        const foundTrack = data.tracks.items.find((track) => {
+            const artists = track.artists.map((artist) => artist.name).join(',')
+            const songTitle = `${track.name} by ${artists}`
+            return songTitle == songId
+        })
+
+        if (!foundTrack) return null
+
+        return foundTrack.id
+    }
+
     async #dispatchLikedTracks() {
         const method = (await this.#isHeartIconHighlighted()) ? 'DELETE' : 'PUT'
-        const { trackId: id } = await currentData.readTrack()
+        const { id: songId, trackId, type } = await currentData.readTrack()
+
+        let likedTrackId = trackId
+        if (type == 'album') {
+            likedTrackId = await this.#dispatchGetTrackIdFromAlbum({ songId, albumId: trackId })
+        }
+
+        if (!likedTrackId) return false
 
         await this._dispatcher.sendEvent({
             eventType: 'tracks.update',
-            detail: { key: 'tracks.update', values: { id, method } }
+            detail: { key: 'tracks.update', values: { id: likedTrackId, method } }
         })
 
         return method == 'PUT'
@@ -104,6 +130,9 @@ export default class HeartIcon {
         const trackState = store.checkInCollection(this._id)
         if (trackState !== null) return trackState
 
+        if (this._type == 'album') {
+            this._id = await this.#dispatchGetTrackIdFromAlbum(this._id)
+        }
         const response = await this.#dispatchIsInCollection(this._id)
 
         const saved = response?.data?.at(0)
@@ -113,10 +142,21 @@ export default class HeartIcon {
 
     async highlightIcon(highlight) {
         this._id = null
-        const { trackId } = await currentData.readTrack()
+        const { trackId, type = 'track', id: songId } = await currentData.readTrack()
         this._id = trackId
 
-        const shouldUpdate = highlight ?? (await this.#getIsTrackLiked())
+        let shouldUpdate = false
+
+        if (typeof highlight !== 'undefined') {
+            shouldUpdate = highlight
+        } else {
+            if (type == 'album') {
+                this._id = await this.#dispatchGetTrackIdFromAlbum({ songId, albumId: trackId })
+            }
+            if (!this._id) return
+
+            shouldUpdate = await this.#getIsTrackLiked()
+        }
 
         highlightIconTimer({
             fill: true,
