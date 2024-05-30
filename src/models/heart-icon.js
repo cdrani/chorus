@@ -91,12 +91,12 @@ export default class HeartIcon {
             detail: { key: 'tracks.update', values: { id: likedTrackId, method } }
         })
 
-        return method == 'PUT'
+        return { highlight: method == 'PUT', id: likedTrackId }
     }
 
     async #handleClick() {
-        const highlight = await this.#dispatchLikedTracks()
-        this.highlightIcon(highlight)
+        const { highlight = false, id = null } = await this.#dispatchLikedTracks()
+        this.highlightIcon(highlight, id)
     }
 
     get #nowPlayingButton() {
@@ -125,16 +125,12 @@ export default class HeartIcon {
         return this.#heartIcon.firstElementChild.getAttribute('fill') != 'unset'
     }
 
-    async #getIsTrackLiked({ type, trackId }) {
-        if (!trackId) return false
+    async #getIsTrackLiked(id) {
+        if (!id) return false
 
-        const trackState = store.checkInCollection(trackId)
+        const trackState = store.checkInCollection(id)
         if (trackState !== null) return trackState
 
-        let id = trackId
-        if (type == 'album') {
-            id = await this.#dispatchGetTrackIdFromAlbum(trackId)
-        }
         const response = await this.#dispatchIsInCollection(id)
 
         const saved = response?.data?.at(0)
@@ -142,7 +138,7 @@ export default class HeartIcon {
         return saved
     }
 
-    async highlightIcon(highlight) {
+    async highlightIcon(highlight, id) {
         let { trackId, type = 'track', id: songId } = await currentData.readTrack()
 
         let shouldUpdate = false
@@ -155,7 +151,7 @@ export default class HeartIcon {
             }
             if (!trackId) return
 
-            shouldUpdate = await this.#getIsTrackLiked({ type, trackId })
+            shouldUpdate = await this.#getIsTrackLiked(trackId)
         }
 
         highlightIconTimer({
@@ -165,11 +161,11 @@ export default class HeartIcon {
         })
 
         this.#updateIconLabel(shouldUpdate)
-        store.saveInCollection({ id: trackId, saved: shouldUpdate })
-        this.#highlightInTracklist(shouldUpdate, trackId)
+        store.saveInCollection({ id: id ?? trackId, saved: shouldUpdate })
+        this.#highlightInTracklist({ highlight: shouldUpdate, trackId: id ?? trackId })
     }
 
-    #highlightInTracklist(highlight, trackId) {
+    #highlightInTracklist({ highlight, trackId }) {
         const anchors = document.querySelectorAll(
             `a[data-testid="internal-track-link"][href="/track/${trackId}"]`
         )

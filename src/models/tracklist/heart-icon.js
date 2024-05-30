@@ -1,7 +1,7 @@
 import TrackListIcon from './tracklist-icon.js'
 import { TRACK_HEART, createIcon } from '../../components/icons/icon.js'
 
-import { getTrackId } from '../../utils/song.js'
+import { getTrackId, trackSongInfo } from '../../utils/song.js'
 import Dispatcher from '../../events/dispatcher.js'
 import { currentData } from '../../data/current.js'
 import { highlightIconTimer } from '../../utils/highlight.js'
@@ -51,15 +51,13 @@ export default class HeartIcon extends TrackListIcon {
         const icon = row.querySelector(this._selector)
         this.animate(icon, saved)
 
-        this.#updateCurrentTrack(trackId, saved)
+        const { id: songId } = trackSongInfo(row)
+        await this.#updateCurrentTrack({ songId, highlight: saved })
     }
 
-    async #updateCurrentTrack(trackId, highlight) {
-        const currentTrack = await currentData.readTrack()
-
-        if (!currentTrack?.trackId) return
-
-        if (currentTrack?.trackId !== trackId) return
+    async #updateCurrentTrack({ songId, highlight }) {
+        const { id } = await currentData.readTrack()
+        if (id !== songId) return
 
         highlightIconTimer({
             highlight,
