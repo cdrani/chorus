@@ -8,11 +8,13 @@ import ActionListeners from '../events/listeners/action-listeners.js'
 
 import { parseNodeString } from '../utils/parser.js'
 import { spotifyVideo } from '../actions/overload.js'
+import { clickOutside } from '../utils/click-outside.js'
 
 export default class Chorus {
     constructor(songTracker) {
         this._songTracker = songTracker
         this._video = spotifyVideo.element
+        this._clickOutsideHandler = null
     }
 
     init() {
@@ -34,12 +36,18 @@ export default class Chorus {
         return document.getElementById('chorus-controls')
     }
 
-    toggle() {
-        this.isShowing ? this.hide() : this.show()
+    async toggle() {
+        this.isShowing ? await this.hide() : this.show()
     }
 
     get #hasSnipControls() {
         return !!document.getElementById('chorus-snip-controls')
+    }
+
+    #setupModal() {
+        if (this._clickOutsideHandler) return
+        this._clickOutsideHandler = clickOutside({ node: this.mainElement })
+        this.mainElement.addEventListener('click_outside', this.hide)
     }
 
     #insertIntoDOM() {
@@ -56,12 +64,20 @@ export default class Chorus {
         this.chorusControls.appendChild(seekControlsEl)
     }
 
-    async hide() {
+    #cleanUpOutsideHandler() {
+        this._clickOutsideHandler?.destroy()
+        this._clickOutsideHandler = null
+    }
+
+    hide = async () => {
         if (!this.mainElement) return
 
         await this.headerListeners.hide()
         this.mainElement.style.display = 'none'
         this._video.resetTempTimes()
+
+        this.#cleanUpOutsideHandler()
+        this.headerListeners._reverb.destroyClickHandlers()
     }
 
     show() {
@@ -70,5 +86,6 @@ export default class Chorus {
 
         this.headerListeners.init()
         this.actionListeners.init()
+        this.#setupModal()
     }
 }

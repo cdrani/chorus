@@ -17,5 +17,6 @@ export default class Listeners {
         const mainElement = document.getElementById('chorus-main')
         mainElement.style.display = 'none'
         this._video.resetTempTimes()
+        this._reverb.destroyClickHandlers()
     }
 }
