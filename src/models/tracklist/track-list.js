@@ -190,7 +190,7 @@ export default class TrackList {
                     this._chorus.show()
                     await this._trackSnip.init(row)
                 } else if (currentIndex == this._previousRowNum) {
-                    this._chorus.toggle()
+                    await this._chorus.toggle()
                 }
 
                 const icon = row.querySelector('button[role="snip"]')

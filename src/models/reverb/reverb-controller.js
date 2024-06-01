@@ -1,11 +1,13 @@
 import { store } from '../../stores/data.js'
 import { spotifyVideo } from '../../actions/overload.js'
 import { roomPresets } from '../../lib/reverb/presets.js'
+import { clickOutside } from '../../utils/click-outside.js'
 
 export default class ReverbController {
     constructor() {
         this._store = store
         this._reverb = spotifyVideo.reverb
+        this._clickOutsideHandlers = []
     }
 
     init() {
@@ -59,7 +61,28 @@ export default class ReverbController {
     }
 
     #setupToggleBtnEvents(btn) {
+        const clickHandler = clickOutside({ area: '#chorus-controls', node: btn })
+        this._clickOutsideHandlers.push(clickHandler)
+
         btn.addEventListener('click', this.#toggleListView)
+        btn.addEventListener('click_outside', () => {
+            btn.nextElementSibling.style.display = 'none'
+        })
+    }
+
+    destroyClickHandlers() {
+        this._clickOutsideHandlers.forEach((handler) => handler?.destroy())
+        this._clickOutsideHandlers = []
+
+        this.#closeLists()
+    }
+
+    #closeLists() {
+        const { roomList, convolverList } = this.elements
+        if (!roomList || !convolverList) return
+
+        roomList.style.display = 'none'
+        convolverList.style.display = 'none'
     }
 
     #setupSelectEvents() {
@@ -106,7 +129,7 @@ export default class ReverbController {
         const value = e.target.value
         await this._reverb.setReverbEffect(value)
 
-        const { roomList, convolverList, convolverEffect, roomEffect } = this.elements
+        const { convolverEffect, roomEffect } = this.elements
         const roomPresetUpdate = e.target?.parentElement?.id?.startsWith('room')
 
         convolverEffect.textContent = roomPresetUpdate ? 'none' : value
@@ -114,8 +137,7 @@ export default class ReverbController {
 
         this.elements.presetSelection.textContent = value
 
-        roomList.style.display = 'none'
-        convolverList.style.display = 'none'
+        this.#closeLists()
     }
 
     async saveSelection() {

@@ -12,6 +12,10 @@ export default class HeaderListeners extends Listeners {
     }
 
     init() {
+        if (this._viewInFocus == 'fx' && this._setup) {
+            return this._reverb.init()
+        }
+
         if (this._setup) return
 
         this.#snipViewToggle()
@@ -40,6 +44,7 @@ export default class HeaderListeners extends Listeners {
     set currentView(selectedView = 'snip') {
         this._viewInFocus = selectedView
         if (selectedView != 'snip') this._video.resetTempTimes()
+        this._reverb.destroyClickHandlers()
 
         this._VIEWS.forEach((view) => {
             const viewButton = document.getElementById(`chorus-${view}-button`)

@@ -58,14 +58,21 @@ export default class NowPlayingIcons {
         return createIcon(NOW_PLAYING_SKIP_ICON)
     }
 
+    #showModal() {
+        this.chorus.show()
+        this.snip.init()
+        this.snip.updateView()
+    }
+
+    async #hideModal() {
+        await this.chorus.hide()
+    }
+
     #setIconListeners() {
         const settingsIcon = document.getElementById('chorus-icon')
-        settingsIcon?.addEventListener('click', () => {
-            this.chorus.toggle()
-            if (this.chorus.isShowing) {
-                this.snip.init()
-                this.snip.updateView()
-            }
+        settingsIcon?.addEventListener('click', async (e) => {
+            e.preventDefault()
+            this.chorus.isShowing ? await this.#hideModal() : this.#showModal()
         })
 
         const skipIcon = document.getElementById('chorus-skip')
@@ -106,7 +113,7 @@ export default class NowPlayingIcons {
 
         if (updatedValues.isSkipped) {
             this.#highlightTrackListBlock(updatedValues)
-            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()   
+            document.querySelector('[data-testid="control-button-skip-forward"]')?.click()
         }
     }
 }
