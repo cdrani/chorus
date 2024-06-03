@@ -1,5 +1,6 @@
 import { parseNodeString } from '../../utils/parser.js'
 import { trackSongInfo, currentSongInfo } from '../../utils/song.js'
+import { updateToolTip } from '../../utils/tooltip.js'
 
 import Queue from '../queue.js'
 
@@ -105,6 +106,8 @@ export default class TrackListIcon {
         const display = snipInfo?.[this._key] ?? false
         this._burn({ icon, burn: display })
         this._glow({ icon, glow: display })
+        icon.setAttribute('aria-label', `${display ? 'Un' : 'B'}lock Track`)
+        updateToolTip(icon)
     }
 
     #getStyleProp(icon) {
@@ -118,7 +121,7 @@ export default class TrackListIcon {
         }
 
         if (icon.role == 'skip') {
-            icon.setAttribute('aria-label', `${burn ? 'Uns' : 'S'}kip Song`)
+            icon.setAttribute('aria-label', `${burn ? 'Unb' : 'B'}lock Track`)
         }
 
         const styleProp = this.#getStyleProp(icon)

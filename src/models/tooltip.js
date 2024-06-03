@@ -57,6 +57,7 @@ export default class ToolTip {
     #showToolTip = (event) => {
         if (!this.#isChorusUI(event.target)) return
 
+        this.#toolTip.style.display = 'inline-block'
         updateToolTip(event.target)
     }
 

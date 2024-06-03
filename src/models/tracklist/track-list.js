@@ -9,9 +9,10 @@ import Dispatcher from '../../events/dispatcher.js'
 
 import { store } from '../../stores/data.js'
 import { getTrackId, trackSongInfo } from '../../utils/song.js'
+import { updateToolTip } from '../../utils/tooltip.js'
 
 export default class TrackList {
-    constructor(songTracker, toolTip) {
+    constructor(songTracker) {
         this._dispatcher = new Dispatcher()
         this._chorus = new Chorus(songTracker)
         this._skipIcon = new SkipIcon(store)
@@ -202,6 +203,7 @@ export default class TrackList {
                 const icon = row.querySelector('button[role="skip"]')
                 await this._skipIcon._saveTrack(row)
                 this._skipIcon._animate(icon)
+                updateToolTip(icon)
             } else {
                 const icon = row.querySelector('button[role="heart"]')
                 await this._heartIcon.toggleTrackLiked(row)

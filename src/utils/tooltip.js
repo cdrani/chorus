@@ -4,10 +4,7 @@ export function updateToolTip(element) {
 
     if (!toolTip || !ariaLabel) return
 
-    if (['heart', 'settings', 'skip', 'ff', 'rw', 'loop'].includes(role))
-        toolTip.textContent = ariaLabel
-
-    toolTip.style.display = 'inline-block'
+    toolTip.textContent = ariaLabel
     const rect = element.getBoundingClientRect()
     const toolTipRect = toolTip.getBoundingClientRect()
 
