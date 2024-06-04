@@ -4,6 +4,7 @@ import TrackList from './tracklist/track-list.js'
 import NowPlayingIcons from './now-playing-icons.js'
 
 import Chorus from './chorus.js'
+import ToolTip from './tooltip.js'
 import QueueObserver from '../observers/queue.js'
 import SongTracker from '../observers/song-tracker.js'
 import TrackListObserver from '../observers/track-list.js'
@@ -23,6 +24,7 @@ export default class App {
     }
 
     #init() {
+        this._toolTip = new ToolTip()
         this._songTracker = new SongTracker()
         this._chorus = new Chorus(this._songTracker)
         this._snip = new CurrentSnip(this._songTracker)
@@ -52,6 +54,7 @@ export default class App {
         this._active = false
         this._video.reset()
 
+        this._toolTip.removeUI()
         this._nowPlayingIcons.clearIcons()
 
         this._queueObserver.disconnect()
@@ -68,6 +71,7 @@ export default class App {
         this._active = true
         this._chorus.init()
 
+        this._toolTip.placeUI()
         this._nowPlayingIcons.placeIcons()
 
         this._queueObserver.observe()

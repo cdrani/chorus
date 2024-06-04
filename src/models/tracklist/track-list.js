@@ -2,12 +2,14 @@ import SkipIcon from './skip-icon.js'
 import SnipIcon from './snip-icon.js'
 import HeartIcon from './heart-icon.js'
 
+import ToolTip from '../tooltip.js'
 import Chorus from '../chorus.js'
 import TrackSnip from '../snip/track-snip.js'
 import Dispatcher from '../../events/dispatcher.js'
 
 import { store } from '../../stores/data.js'
 import { getTrackId, trackSongInfo } from '../../utils/song.js'
+import { updateToolTip } from '../../utils/tooltip.js'
 
 export default class TrackList {
     constructor(songTracker) {
@@ -17,6 +19,7 @@ export default class TrackList {
         this._heartIcon = new HeartIcon(store)
         this._snipIcon = new SnipIcon(store)
         this._trackSnip = new TrackSnip(store)
+        this._toolTip = new ToolTip()
 
         this._visibleEvents = ['mouseenter']
         this._events = ['mouseenter', 'mouseleave']
@@ -200,6 +203,7 @@ export default class TrackList {
                 const icon = row.querySelector('button[role="skip"]')
                 await this._skipIcon._saveTrack(row)
                 this._skipIcon._animate(icon)
+                updateToolTip(icon)
             } else {
                 const icon = row.querySelector('button[role="heart"]')
                 await this._heartIcon.toggleTrackLiked(row)
@@ -236,6 +240,7 @@ export default class TrackList {
                 icon.setInitialState(row)
             })
             this.#setMouseEvents(row)
+            this._toolTip.setupTrackListListeners(row)
         })
     }
 }

@@ -15,7 +15,7 @@ export const SNIP_ICON = {
 
 export const SKIP_ICON = {
     role: 'skip',
-    ariaLabel: 'Skip Song'
+    ariaLabel: 'Block Track'
 }
 
 export const NOW_PLAYING_SKIP_ICON = {

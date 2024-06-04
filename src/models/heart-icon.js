@@ -5,6 +5,7 @@ import { store } from '../stores/data.js'
 import Dispatcher from '../events/dispatcher.js'
 import { currentData } from '../data/current.js'
 import { createIcon, HEART_ICON } from '../components/icons/icon.js'
+import { updateToolTip } from '../utils/tooltip.js'
 
 export default class HeartIcon {
     constructor() {
@@ -13,7 +14,6 @@ export default class HeartIcon {
 
     init() {
         this.#placeIcon()
-        this.#setupListener()
     }
 
     removeIcon() {
@@ -22,10 +22,21 @@ export default class HeartIcon {
     }
 
     #placeIcon() {
-        const heartButton = parseNodeString(this.#createHeartIcon)
-        const refNode = this.#nowPlayingButton
-        refNode.parentElement.insertBefore(heartButton, refNode)
-        this.#toggleNowPlayingButton(false)
+        this._interval = setInterval(() => {
+            if (!this._interval) return
+
+            const refNode = document.getElementById('chorus')
+            if (!refNode) return
+
+            const heartButton = parseNodeString(this.#createHeartIcon)
+            const settingsButton = document.getElementById('chorus-icon')
+            refNode.insertBefore(heartButton, settingsButton)
+            this.#toggleNowPlayingButton(false)
+            this.#setupListener()
+
+            clearInterval(this._interval)
+            this._interval = null
+        }, 25)
     }
 
     #toggleNowPlayingButton(show) {
@@ -44,7 +55,7 @@ export default class HeartIcon {
     }
 
     #setupListener() {
-        this.#heartIcon?.addEventListener('click', async () => this.#handleClick())
+        this.#heartIcon?.addEventListener('click', async () => await this.#handleClick())
     }
 
     async #dispatchIsInCollection(ids) {
@@ -192,5 +203,6 @@ export default class HeartIcon {
     #updateIconLabel(highlight) {
         const text = `${highlight ? 'Remove from' : 'Save to'} Liked`
         this.#heartIcon?.setAttribute('aria-label', text)
+        updateToolTip(this.#heartIcon)
     }
 }
