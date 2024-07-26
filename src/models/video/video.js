@@ -1,9 +1,10 @@
 import VideoOverride from './video-override.js'
 
 export default class VideoElement {
-    constructor({ video, reverb }) {
+    constructor({ video, reverb, equalizer }) {
         this._video = video
         this._reverb = reverb
+        this._equalizer = equalizer
         this._video.crossOrigin = 'anonymous'
         this._videoOverride = new VideoOverride(this)
     }
@@ -14,8 +15,10 @@ export default class VideoElement {
 
         const effect = sessionStorage.getItem('reverb') ?? 'none'
         const reverbEffect = this._reverb.isAPreset(effect) ? effect : 'none'
-
         this._reverb.setReverbEffect(value ? reverbEffect : 'none')
+
+        const eqEffect = sessionStorage.getItem('eq') ?? 'none'
+        this._equalizer.setEQEffect(value ? eqEffect : 'none')
     }
 
     get active() {
