@@ -6,6 +6,7 @@ import { playback } from '../utils/playback.js'
 const DO_NOT_INCLUDE = [
     'connection_id',
     'reverb',
+    'equalizer',
     'now-playing',
     'device_id',
     'auth_token',
@@ -121,13 +122,28 @@ class DataStore {
         return this.#cache.getValue({ key: 'reverb', value: 'none' })
     }
 
+    getEqualizer() {
+        return this.#cache.getValue({ key: 'equalizer', value: 'none' })
+    }
+
     async saveReverb(effect) {
+        const key = 'reverb'
         await this.#dispatcher.sendEvent({
             eventType: 'storage.set',
-            detail: { key: 'reverb', values: effect }
+            detail: { key, values: effect }
         })
-        this.#cache.update({ key: 'reverb', value: effect })
-        return this.#cache.getKey(id)
+        this.#cache.update({ key, value: effect })
+        return this.#cache.getKey(key)
+    }
+
+    async saveEqualizer(effect) {
+        const key = 'equalizer'
+        await this.#dispatcher.sendEvent({
+            eventType: 'storage.set',
+            detail: { key, values: effect }
+        })
+        this.#cache.update({ key, value: effect })
+        return this.#cache.getKey(key)
     }
 
     async saveTrack({ id, value }) {
