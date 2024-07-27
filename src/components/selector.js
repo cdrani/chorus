@@ -8,7 +8,7 @@ const createOptions = (optionNames) =>
         )
         .join('')
 
-export const createEffectsSelector = ({ labelName, name, optionNames }) => `
+export const createSelector = ({ labelName, name, optionNames }) => `
     <div style="display:flex;position:relative;justify-content:space-between;min-height:24px;">
         <label style="color:#b3b3b3;font-size:">${labelName}</label>
 
