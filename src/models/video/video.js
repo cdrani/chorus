@@ -13,12 +13,19 @@ export default class VideoElement {
         this._active = value
         if (navigator.userAgent.includes('Firefox')) return
 
-        const effect = sessionStorage.getItem('reverb') ?? 'none'
-        const reverbEffect = this._reverb.isAPreset(effect) ? effect : 'none'
-        this._reverb.setReverbEffect(value ? reverbEffect : 'none')
+        const eqEffect = sessionStorage.getItem('equalizer') ?? 'none'
+        const reverbEffect = sessionStorage.getItem('reverb') ?? 'none'
 
-        const eqEffect = sessionStorage.getItem('eq') ?? 'none'
-        this._equalizer.setEQEffect(value ? eqEffect : 'none')
+        if ([eqEffect, reverbEffect].every((effect) => effect == 'none')) {
+            this._reverb.disconnect()
+            this._equalizer.disconnect()
+            return
+        }
+
+        const isReverb = this._reverb.isAPreset(reverbEffect)
+        isReverb
+            ? this._reverb.setReverbEffect(reverbEffect)
+            : this._equalizer.setEQEffect(eqEffect)
     }
 
     get active() {
