@@ -1,5 +1,6 @@
 import Reverb from '../models/reverb/reverb.js'
 import VideoElement from '../models/video/video.js'
+import AudioManager from '../models/audio-manager.js'
 import Equalizer from '../models/equalizer/equalizer.js'
 
 class SpotifyVideo {
@@ -21,8 +22,9 @@ class SpotifyVideo {
             const element = self._originalCreateElement.apply(this, arguments)
 
             if (tagName === 'video') {
-                self._reverb = new Reverb(element)
-                self._equalizer = new Equalizer(element)
+                const audioManager = new AudioManager(element)
+                self._reverb = new Reverb(audioManager)
+                self._equalizer = new Equalizer(audioManager)
                 self._video = new VideoElement({
                     video: element,
                     reverb: self._reverb,

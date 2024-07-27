@@ -1,22 +1,19 @@
 import { EQ_PRESETS, EQ_FILTERS } from '../../lib/equalizer/presets'
 
 export default class Equalizer {
+    _effect
     _filters
 
-    constructor(video) {
-        this._video = video
+    constructor(audioManager) {
         this._filters = []
-    }
-
-    #setup() {
-        this._audioContext = this._audioContext ?? new AudioContext({ latencyHint: 'playback' })
-        this._source = this._source ?? this._audioContext.createMediaElementSource(this._video)
+        this._audioManager = audioManager
+        this._audioContext = audioManager.audioContext
     }
 
     async setEQEffect(effect) {
-        this.#setup()
+        this._effect = effect
 
-        if (effect == 'none') return this.#disconnect()
+        if (effect == 'none') return this.disconnect()
 
         try {
             this.#applyEQFilters(effect)
@@ -38,32 +35,28 @@ export default class Equalizer {
     }
 
     #applyEQFilters(effect) {
-        this.#disconnect()
+        this.disconnect()
         EQ_FILTERS.forEach((setting, index) => {
             const filter = this.#createBiquadFilter({ setting, index, effect })
             this._filters.push(filter)
         })
 
         // connect filters
-        this._audioNode = this._source
+        this._audioNode = this._audioManager.source
         this._filters.forEach((filter) => {
             this._audioNode.connect(filter)
             this._audioNode = filter
         })
 
-        this._audioNode.connect(this._audioContext.destination)
+        this._audioManager.connectEqualizer(this._audioNode)
     }
 
-    #disconnect() {
-        if (!this._filters.length) return
-
+    disconnect() {
         this._filters.forEach((filter) => {
             filter.disconnect()
         })
 
         this._filters = []
-
-        this._source?.disconnect()
-        this._source?.connect(this._audioContext.destination)
+        this._audioManager.disconnect()
     }
 }

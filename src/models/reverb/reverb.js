@@ -1,8 +1,11 @@
 import { roomPresets, convolverPresets, getParamsListForEffect } from '../../lib/reverb/presets.js'
 
 export default class Reverb {
-    constructor(video) {
-        this._video = video
+    _effect
+
+    constructor(audioManager) {
+        this._audioManager = audioManager
+        this._audioContext = audioManager.audioContext
     }
 
     #isDigital(effect) {
@@ -14,8 +17,10 @@ export default class Reverb {
     }
 
     async setReverbEffect(effect) {
+        this._effect = effect
+
         this.#setup()
-        if (effect == 'none') return this.#disconnect()
+        if (effect == 'none') return this.disconnect()
 
         const isDigital = this.#isDigital(effect)
         await (isDigital ? this.#createDigitalReverb(effect) : this.#createImpulseReverb(effect))
@@ -26,16 +31,11 @@ export default class Reverb {
     }
 
     #setup() {
-        this._audioContext = this._audioContext ?? new AudioContext({ latencyHint: 'playback' })
-        this._source = this._source ?? this._audioContext.createMediaElementSource(this._video)
         this._gain = this._gain ?? this._audioContext.createGain()
     }
 
     #connect() {
-        this._source.disconnect()
-        this._source.connect(this._gain)
-        this._gain.connect(this._reverb)
-        this._reverb.connect(this._audioContext.destination)
+        this._audioManager.connectReverb({ gain: this._gain, reverb: this._reverb })
     }
 
     async #createDigitalReverb() {
@@ -58,18 +58,17 @@ export default class Reverb {
         const arraybuffer = await response.arrayBuffer()
         this._convolverNode.buffer = await this._audioContext.decodeAudioData(arraybuffer)
 
-        this._source.connect(this._convolverNode)
+        this._audioManager.source.connect(this._convolverNode)
         this._convolverNode.connect(this._gain)
         this._gain.connect(this._audioContext.destination)
     }
 
-    #disconnect() {
-        this._source?.disconnect()
-        this._source?.connect(this._audioContext.destination)
+    disconnect() {
+        this._audioManager.disconnect()
     }
 
     async #applyReverbEffect(effect) {
-        if (effect == 'none') return this.#disconnect()
+        if (effect == 'none') return this.disconnect()
 
         try {
             this.#applyReverbEffectParams(effect)
