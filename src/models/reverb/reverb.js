@@ -1,8 +1,6 @@
 import { roomPresets, convolverPresets, getParamsListForEffect } from '../../lib/reverb/presets.js'
 
 export default class Reverb {
-    _effect
-
     constructor(audioManager) {
         this._audioManager = audioManager
         this._audioContext = audioManager.audioContext
@@ -17,8 +15,6 @@ export default class Reverb {
     }
 
     async setReverbEffect(effect) {
-        this._effect = effect
-
         this.#setup()
         if (effect == 'none') return this.disconnect()
 

@@ -1,7 +1,6 @@
 import { EQ_PRESETS, EQ_FILTERS } from '../../lib/equalizer/presets'
 
 export default class Equalizer {
-    _effect
     _filters
 
     constructor(audioManager) {
@@ -11,8 +10,6 @@ export default class Equalizer {
     }
 
     async setEQEffect(effect) {
-        this._effect = effect
-
         if (effect == 'none') return this.disconnect()
 
         try {
