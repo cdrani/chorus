@@ -65,10 +65,10 @@ export default class App {
 
         this.#resetInterval()
 
-        if (navigator.userAgent.includes('Firefox')) {
-            this._reverb.setReverbEffect('none')
-            this._equalizer.setEQEffect('none')
-        }
+        if (navigator.userAgent.includes('Firefox')) return
+
+        this._reverb.setReverbEffect('none')
+        this._equalizer.setEQEffect('none')
     }
 
     connect() {

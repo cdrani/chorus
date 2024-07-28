@@ -6,10 +6,15 @@ export default class Equalizer {
     constructor(audioManager) {
         this._filters = []
         this._audioManager = audioManager
-        this._audioContext = audioManager.audioContext
+    }
+
+    #setup() {
+        this._audioManager.init()
+        this._audioContext = this._audioManager.audioContext
     }
 
     async setEQEffect(effect) {
+        this.#setup()
         if (effect == 'none') return this.disconnect()
 
         try {

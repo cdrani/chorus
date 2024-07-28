@@ -1,8 +1,11 @@
 export default class AudioManager {
     constructor(video) {
         this._video = video
-        this._audioContext = new AudioContext({ latencyHint: 'playback' })
-        this._source = this._audioContext.createMediaElementSource(video)
+    }
+
+    init() {
+        this._audioContext = this._audioContext ?? new AudioContext({ latencyHint: 'playback' })
+        this._source = this._source ?? this._audioContext.createMediaElementSource(this._video)
         this._destination = this._audioContext.destination
     }
 

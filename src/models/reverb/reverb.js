@@ -3,7 +3,6 @@ import { roomPresets, convolverPresets, getParamsListForEffect } from '../../lib
 export default class Reverb {
     constructor(audioManager) {
         this._audioManager = audioManager
-        this._audioContext = audioManager.audioContext
     }
 
     #isDigital(effect) {
@@ -27,6 +26,8 @@ export default class Reverb {
     }
 
     #setup() {
+        this._audioManager.init()
+        this._audioContext = this._audioManager.audioContext
         this._gain = this._gain ?? this._audioContext.createGain()
     }
 
