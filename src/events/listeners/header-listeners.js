@@ -8,20 +8,21 @@ export default class HeaderListeners extends Listeners {
         this._setup = false
         this._viewInFocus = null
         this._video = spotifyVideo.element
-        this._VIEWS = ['snip', 'speed', 'fx', 'seek']
+        this._VIEWS = ['snip', 'speed', 'fx', 'eq', 'seek']
     }
 
     init() {
-        if (this._viewInFocus == 'fx' && this._setup) {
-            return this._reverb.init()
+        if (this._setup) {
+            this._viewInFocus == 'fx' && this._reverb.init()
+            this._viewInFocus == 'eq' && this._equalizer.init()
+            return
         }
-
-        if (this._setup) return
 
         this.#snipViewToggle()
         this.#seekViewToggle()
         this.#speedViewToggle()
         this.#effectsViewToggle()
+        this.#equalizerViewToggle()
         this.#closeModalListener()
 
         this.currentView = 'snip'
@@ -45,6 +46,7 @@ export default class HeaderListeners extends Listeners {
         this._viewInFocus = selectedView
         if (selectedView != 'snip') this._video.resetTempTimes()
         this._reverb.destroyClickHandlers()
+        this._equalizer.destroyClickHandlers()
 
         this._VIEWS.forEach((view) => {
             const viewButton = document.getElementById(`chorus-${view}-button`)
@@ -77,6 +79,14 @@ export default class HeaderListeners extends Listeners {
         effectsButton?.addEventListener('click', () => {
             this.currentView = 'fx'
             this._reverb.init()
+        })
+    }
+
+    #equalizerViewToggle() {
+        const effectsButton = document.getElementById('chorus-eq-button')
+        effectsButton?.addEventListener('click', () => {
+            this.currentView = 'eq'
+            this._equalizer.init()
         })
     }
 
