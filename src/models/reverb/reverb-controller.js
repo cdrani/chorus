@@ -119,7 +119,7 @@ export default class ReverbController {
             convolverList: document.getElementById('convolver-effect-list'),
             convolverEffect: document.getElementById('convolver-effect-selected'),
 
-            presetSelection: document.getElementById('preset-selection')
+            presetSelection: document.getElementById('reverb-preset-selection')
         }
     }
 

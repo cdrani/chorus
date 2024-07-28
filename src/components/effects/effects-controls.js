@@ -11,7 +11,7 @@ export const createEffectsControls = () => `
             <hr/>
             <div style="font-size:1rem;color:#b3b3b3;">
                 <p style="display:flex;justify-content:space-between;width:100%;padding-right:.125rem;">
-                    effect <span id="preset-selection" style="color:#fff"></span>
+                    effect <span id="reverb-preset-selection" style="color:#fff"></span>
                 </p>
             </div>
         </div>
