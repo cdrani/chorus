@@ -1,6 +1,7 @@
 import { store } from '../../stores/data.js'
 import { spotifyVideo } from '../../actions/overload.js'
 import { clickOutside } from '../../utils/click-outside.js'
+import { spotifyPresets } from '../../lib/equalizer/presets.js'
 
 export default class EqualizerController {
     constructor() {
@@ -25,30 +26,38 @@ export default class EqualizerController {
         button.addEventListener('mouseleave', this.#setBtnBackground)
     }
 
-    #highlightFirstVisibleBtn() {
-        const { eqList, eqEffect } = this.elements
-        const selectedBtn = eqList.querySelector(`button[value="${eqEffect.textContent}"]`)
-        eqList.scrollTop = selectedBtn.offsetTop - eqList.offsetTop
+    #highlightFirstVisibleBtn({ isSpotify, effectList }) {
+        const { spotifyEffect, customEffect } = this.elements
+        const selectedEffect = isSpotify ? spotifyEffect.textContent : customEffect.textContent
+        const selectedBtn = effectList.querySelector(`button[value="${selectedEffect}"]`)
+
+        effectList.scrollTop = selectedBtn.offsetTop - effectList.offsetTop
         selectedBtn.style.background = '#3e3d3d'
     }
 
     #resetBtnBackgrounds() {
-        const { eqList } = this.elements
+        const { spotifyList, customList } = this.elements
         const reset = (btn) => (btn.style.background = '#171717')
-        ;[...eqList.children].forEach(reset)
+        ;[...spotifyList.children].forEach(reset)
+        ;[...customList.children].forEach(reset)
     }
 
     #toggleListView = (e) => {
         e.preventDefault()
-        const { eqList } = this.elements
+        const { spotifyList, customList } = this.elements
 
-        const isShowing = eqList.style.display == 'flex'
-        eqList.style.display = isShowing ? 'none' : 'flex'
+        const isSpotify = e.target.id.startsWith('spotify')
+        const effectList = isSpotify ? spotifyList : customList
+        const otherList = isSpotify ? customList : spotifyList
 
-        if (eqList.style.display !== 'flex') return
+        const isShowing = effectList.style.display == 'flex'
+        effectList.style.display = isShowing ? 'none' : 'flex'
+        otherList.style.display = 'none'
+
+        if (effectList.style.display !== 'flex') return
 
         this.#resetBtnBackgrounds()
-        this.#highlightFirstVisibleBtn()
+        this.#highlightFirstVisibleBtn({ isSpotify, effectList })
     }
 
     #setupToggleBtnEvents(btn) {
@@ -69,27 +78,32 @@ export default class EqualizerController {
     }
 
     #closeLists() {
-        const { eqList } = this.elements
-        if (!eqList) return
+        const { spotifyList, customList } = this.elements
+        if (!spotifyList || !customList) return
 
-        eqList.style.display = 'none'
+        customList.style.display = 'none'
+        spotifyList.style.display = 'none'
     }
 
     #setupSelectEvents() {
-        const { eqBtn, eqList } = this.elements
+        const { spotifyBtn, spotifyList, customBtn, customList } = this.elements
 
-        this.#setupToggleBtnEvents(eqBtn)
-        ;[...eqList.children].forEach(this.#setupButtonListeners)
+        this.#setupToggleBtnEvents(spotifyBtn)
+        ;[...spotifyList.children].forEach(this.#setupButtonListeners)
+
+        this.#setupToggleBtnEvents(customBtn)
+        ;[...customList.children].forEach(this.#setupButtonListeners)
     }
 
     #setupEvents(effect) {
-        const { eqEffect, eqPresetSelection } = this.elements
+        const { spotifyEffect, customEffect, presetSelection } = this.elements
 
         if (effect == 'none') {
             this.setValuesToNone()
         } else {
-            eqPresetSelection.textContent = effect
-            eqEffect.textContent = effect
+            presetSelection.textContent = effect
+            const selectedElement = spotifyPresets.includes(effect) ? spotifyEffect : customEffect
+            selectedElement.textContent = effect
         }
 
         this.#setupSelectEvents()
@@ -97,34 +111,45 @@ export default class EqualizerController {
 
     get elements() {
         return {
-            eqBtn: document.getElementById('equalizer-effect-btn'),
-            eqList: document.getElementById('equalizer-effect-list'),
-            eqEffect: document.getElementById('equalizer-effect-selected'),
-            eqPresetSelection: document.getElementById('equalizer-preset-selection')
+            spotifyBtn: document.getElementById('spotify-equalizer-btn'),
+            spotifyList: document.getElementById('spotify-equalizer-list'),
+            spotifyEffect: document.getElementById('spotify-equalizer-selected'),
+
+            customBtn: document.getElementById('custom-equalizer-btn'),
+            customList: document.getElementById('custom-equalizer-list'),
+            customEffect: document.getElementById('custom-equalizer-selected'),
+
+            presetSelection: document.getElementById('equalizer-preset-selection')
         }
     }
 
     #handleSelection = async (e) => {
         e.preventDefault()
 
-        const effect = e.target.value
+        const value = e.target.value
 
-        await this._equalizer.setEQEffect(effect)
+        await this._equalizer.setEQEffect(value)
 
-        this.elements.eqEffect.textContent = effect
-        this.elements.eqPresetSelection.textContent = effect
+        const { presetSelection, spotifyEffect, customEffect } = this.elements
+        const spotifyPresetUpdate = e.target?.parentElement?.id?.startsWith('spotify')
+
+        customEffect.textContent = spotifyPresetUpdate ? 'none' : value
+        spotifyEffect.textContent = spotifyPresetUpdate ? value : 'none'
+
+        presetSelection.textContent = value
 
         this.#closeLists()
     }
 
     async saveSelection() {
-        await this._store.saveEqualizer(this.elements.eqPresetSelection.textContent)
+        await this._store.saveEqualizer(this.elements.presetSelection.textContent)
     }
 
     setValuesToNone() {
-        const { eqPresetSelection, eqEffect } = this.elements
-        eqPresetSelection.textContent = 'none'
-        eqEffect.textContent = 'none'
+        const { presetSelection, spotifyEffect, customEffect } = this.elements
+        customEffect.textContent = 'none'
+        spotifyEffect.textContent = 'none'
+        presetSelection.textContent = 'none'
     }
 
     async clearEqualizer() {

@@ -1,11 +1,12 @@
 import { createSelector } from '../selector.js'
-import { eqPresetLabels } from '../../lib/equalizer/presets.js'
 import { createEqualizerButtons } from './equalizer-buttons.js'
+import { customPresets, spotifyPresets } from '../../lib/equalizer/presets.js'
 
 export const createEqualizerControls = () => `
     <div id="chorus-eq-controls" style="display: none">
         <div style="display:flex;flex-direction:column;justify-content:space-between;height:5.5rem;">
-            ${createSelector({ name: 'equalizer-effect', labelName: 'Equalizer Preset', optionNames: eqPresetLabels })}
+            ${createSelector({ name: 'spotify-equalizer', labelName: 'Spotify EQ Presets', optionNames: spotifyPresets })}
+            ${createSelector({ name: 'custom-equalizer', labelName: 'Custom EQ Presets', optionNames: customPresets })}
 
             <hr/>
             <div style="font-size:1rem;color:#b3b3b3;">
