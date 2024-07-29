@@ -343,7 +343,6 @@ hr {
 }
 
 .container {
-    max-width: 282px;
     overflow: hidden;
     white-space: nowrap;
 }
