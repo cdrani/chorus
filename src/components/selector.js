@@ -1,5 +1,5 @@
 const btnStyles =
-    'text-align:end;cursor:pointer;background:#171717;padding:2px;padding-right:12px;color:#fff;font-size:1rem;'
+    'text-align:end;cursor:pointer;background:#171717;padding:2px;padding-right:16px;color:#fff;font-size:1rem;'
 
 const createOptions = (optionNames) =>
     optionNames
@@ -24,10 +24,19 @@ export const createSelector = ({ labelName, name, optionNames }) => `
 
             <div
                 id="${name}-list"
-                style="margin-top:4px;min-width:120px;border:1px solid #b3b3b3;border-radius:4px;right:0;overflow-y:auto;background:#171717;flex-direction:column;max-height:110px;z-index:100;position:absolute;display:none"
+                style="margin-top:4px;min-width:140px;border:1px solid #b3b3b3;border-radius:4px;right:0;overflow-y:auto;background:#171717;flex-direction:column;max-height:110px;z-index:100;position:absolute;display:none"
             >
                 ${createOptions(['none', ...optionNames])}
             </div>
         </form>
+    </div>
+`
+
+export const createSelectorPreset = ({ id, text }) => `
+    <hr/>
+    <div style="font-size:1rem;color:#b3b3b3;">
+        <p style="display:flex;justify-content:space-between;width:100%;padding-right:.125rem;">
+            ${text} <span id="${id}-preset-selection" style="color:#fff;margin-right:20px"></span>
+        </p>
     </div>
 `
