@@ -1,28 +1,28 @@
 {
-    "name": "chorus",
-    "license": "MIT",
-    "private": true,
-    "type": "module",
-    "version": "1.23.3",
-    "scripts": {
-        "build": "rollup -c",
-        "watch": "rollup -c -w",
-        "prepare": "node .husky/install.mjs",
-        "format": "prettier --write ."
-    },
-    "devDependencies": {
-        "husky": "9.0.11",
-        "lint-staged": "15.2.2",
-        "prettier": "3.2.5",
-        "rollup": "3.28.1",
-        "rollup-plugin-chrome-extension": "3.6.12"
-    },
-    "lint-staged": {
-        "*.{js,jsx,json,css,md}": "prettier --write"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "pnpm lint-staged"
-        }
+  "name": "chorus",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "version": "1.24.0",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "prepare": "node .husky/install.mjs",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "husky": "9.0.11",
+    "lint-staged": "15.2.2",
+    "prettier": "3.2.5",
+    "rollup": "3.28.1",
+    "rollup-plugin-chrome-extension": "3.6.12"
+  },
+  "lint-staged": {
+    "*.{js,jsx,json,css,md}": "prettier --write"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pnpm lint-staged"
     }
+  }
 }
