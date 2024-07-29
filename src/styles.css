@@ -57,7 +57,7 @@
     left: 80px;
     bottom: 80px;
     background-color: #171717;
-    width: 320px;
+    width: 350px;
     height: 246px;
 }
 
@@ -343,7 +343,6 @@ hr {
 }
 
 .container {
-    max-width: 282px;
     overflow: hidden;
     white-space: nowrap;
 }

@@ -22,6 +22,9 @@ export default class ActionListeners extends Listeners {
         this.#resetReverbListener()
         this.#saveReverbListener()
 
+        this.#resetEqualizerListener()
+        this.#saveEqualizerListener()
+
         this._setup = true
     }
 
@@ -56,6 +59,22 @@ export default class ActionListeners extends Listeners {
     #resetReverbListener() {
         const reverbResetButton = document.getElementById('chorus-effects-reset-button')
         reverbResetButton?.addEventListener('click', async () => await this._reverb.clearReverb())
+    }
+
+    #saveEqualizerListener() {
+        const equalizerSaveButton = document.getElementById('chorus-equalizer-save-button')
+        equalizerSaveButton?.addEventListener(
+            'click',
+            async () => await this._equalizer.saveSelection()
+        )
+    }
+
+    #resetEqualizerListener() {
+        const equalizerResetButton = document.getElementById('chorus-equalizer-reset-button')
+        equalizerResetButton?.addEventListener(
+            'click',
+            async () => await this._equalizer.clearEqualizer()
+        )
     }
 
     #saveSeekListener() {

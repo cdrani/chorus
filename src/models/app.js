@@ -12,10 +12,11 @@ import NowPlayingObserver from '../observers/now-playing.js'
 import ArtistDiscoObserver from '../observers/artist-disco.js'
 
 export default class App {
-    constructor({ video, reverb }) {
+    constructor(spotifyVideo) {
         this._store = store
-        this._video = video
-        this._reverb = reverb
+        this._video = spotifyVideo.element
+        this._reverb = spotifyVideo.reverb
+        this._equalizer = spotifyVideo.equalizer
 
         this._active = true
         this._intervalId = null
@@ -64,7 +65,10 @@ export default class App {
 
         this.#resetInterval()
 
-        navigator.userAgent.includes('Firefox') && this._reverb.setReverbEffect('none')
+        if (navigator.userAgent.includes('Firefox')) return
+
+        this._reverb.setReverbEffect('none')
+        this._equalizer.setEQEffect('none')
     }
 
     connect() {

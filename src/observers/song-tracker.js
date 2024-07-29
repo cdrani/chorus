@@ -12,6 +12,7 @@ import Dispatcher from '../events/dispatcher.js'
 export default class SongTracker {
     constructor() {
         this._init = true
+        this._eqSet = false
         this._reverbSet = false
         this._currentSongState = null
         this._video = spotifyVideo.element
@@ -76,6 +77,7 @@ export default class SongTracker {
     #mute() {
         if (!this.#isMute) this.#muteButton?.click()
     }
+
     #unMute() {
         if (this.#isMute) this.#muteButton?.click()
     }
@@ -90,6 +92,14 @@ export default class SongTracker {
         const effect = sessionStorage.getItem('reverb') ?? 'none'
         await spotifyVideo.reverb.setReverbEffect(effect)
         this._reverbSet = true
+    }
+
+    async #setEQ() {
+        if (this._eqSet) return
+
+        const effect = sessionStorage.getItem('equalizer') ?? 'none'
+        await spotifyVideo.equalizer.setEQEffect(effect)
+        this._eqSet = true
     }
 
     #setupListeners() {
@@ -182,7 +192,10 @@ export default class SongTracker {
     }
 
     #handleTimeUpdate = async () => {
-        if (this.#isPlaying && this.#isFirefox && !this._reverbSet) await this.#setReverb()
+        if (this.#isPlaying && this.#isFirefox) {
+            !this._reverbSet && (await this.#setReverb())
+            !this._eqSet && (await this.#setEQ())
+        }
 
         if (!this._currentSongState) return
 
