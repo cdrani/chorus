@@ -7,7 +7,7 @@ export const createEffectsControls = () => `
         <div style="display:flex;flex-direction:column;justify-content:space-between;height:5.5rem;">
             ${createSelector({ name: 'room-effect', labelName: 'room-sized reverb', optionNames: roomPresets })}
             ${createSelector({ name: 'convolver-effect', labelName: 'impulse reverb', optionNames: convolverPresets })}
-            ${createSelectorPreset({ id: 'reverb', text: 'Active Reverb Preset' })}
+            ${createSelectorPreset({ id: 'reverb', text: 'active reverb preset' })}
         </div>
         ${createEffectsButtons()}
     </div>
