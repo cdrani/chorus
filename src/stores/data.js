@@ -94,7 +94,7 @@ class DataStore {
 
     async setNowPlaying(track) {
         const { id, cover } = currentSongInfo()
-        const [title, artists] = id.split(' by ')
+        const [title, artists] = id?.split(' by ')
 
         const duration = playback.duration()
         await this.#dispatcher.sendEvent({
@@ -109,6 +109,7 @@ class DataStore {
             key: 'now-playing',
             value: { id, duration, title, artists, cover, autoLoop: false, ...track }
         })
+
         return this.#cache.getKey(id)
     }
 
