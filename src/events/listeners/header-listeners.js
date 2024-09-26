@@ -54,7 +54,7 @@ export default class HeaderListeners extends Listeners {
             if (!viewButton || !viewInFocusContainer) return
 
             viewButton.style.background = view == selectedView ? 'green' : '#535353'
-            viewInFocusContainer.style.display = view == selectedView ? 'block' : 'none'
+            viewInFocusContainer.style.display = view == selectedView ? 'flex' : 'none'
         })
     }
 
