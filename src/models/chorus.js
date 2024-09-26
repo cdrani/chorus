@@ -54,17 +54,15 @@ export default class Chorus {
     #insertIntoDOM() {
         if (this.#hasSnipControls) return
 
-        const snipControlsEl = parseNodeString(createSnipControls())
-        const speedControlsEl = parseNodeString(createSpeedControls())
-        const seekControlsEl = parseNodeString(createSeekControls())
-        const effectsControlsEl = parseNodeString(createEffectsControls())
-        const equalizerControlsEl = parseNodeString(createEqualizerControls())
+        const controls = [
+            createSnipControls(),
+            createSpeedControls(),
+            createSeekControls(),
+            createEffectsControls(),
+            createEqualizerControls()
+        ].map(parseNodeString)
 
-        this.chorusControls.appendChild(snipControlsEl)
-        this.chorusControls.appendChild(speedControlsEl)
-        this.chorusControls.appendChild(effectsControlsEl)
-        this.chorusControls.appendChild(equalizerControlsEl)
-        this.chorusControls.appendChild(seekControlsEl)
+        controls.forEach((control) => this.chorusControls.appendChild(control))
     }
 
     #cleanUpOutsideHandler() {
