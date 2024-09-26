@@ -99,7 +99,7 @@ export default class ReverbController {
         const { roomEffect, convolverEffect, presetSelection } = this.elements
 
         if (effect == 'none') {
-            this.setValuesToNone()
+            this.clearReverb()
         } else {
             presetSelection.textContent = effect
             const selectedElement = roomPresets.includes(effect) ? roomEffect : convolverEffect

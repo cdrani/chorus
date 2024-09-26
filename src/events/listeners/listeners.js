@@ -1,3 +1,4 @@
+import { store } from '../../stores/data.js'
 import Seek from '../../models/seek/seek.js'
 import Speed from '../../models/speed/speed.js'
 import { spotifyVideo } from '../../actions/overload.js'
@@ -7,6 +8,7 @@ import EqualizerController from '../../models/equalizer/equalizer-controller.js'
 
 export default class Listeners {
     constructor(songTracker) {
+        this._store = store
         this._video = spotifyVideo.element
         this._seek = new Seek()
         this._speed = new Speed()

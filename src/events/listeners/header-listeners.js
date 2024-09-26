@@ -13,8 +13,10 @@ export default class HeaderListeners extends Listeners {
 
     init() {
         if (this._setup) {
+            this._viewInFocus == 'seek' && this._seek.init()
             this._viewInFocus == 'fx' && this._reverb.init()
             this._viewInFocus == 'eq' && this._equalizer.init()
+            this._viewInFocus == 'speed' && this._speed.init()
             return
         }
 
@@ -29,7 +31,19 @@ export default class HeaderListeners extends Listeners {
         this._setup = true
     }
 
+    #clearReverb() {
+        const reverb = this._store.getReverb() || 'none'
+        if (reverb == 'none') this._reverb.clearReverb()
+    }
+
+    #clearEqualizer() {
+        const equalizer = this._store.getEqualizer() || 'none'
+        if (equalizer == 'none') this._equalizer.clearEqualizer()
+    }
+
     async hide() {
+        if (this._viewInFocus == 'fx') this.#clearReverb()
+        if (this._viewInFocus == 'eq') this.#clearEqualizer()
         if (this._viewInFocus == 'speed') this._speed.clearCurrentSpeed()
         this._hide()
     }
