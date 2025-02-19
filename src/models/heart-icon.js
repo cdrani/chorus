@@ -41,9 +41,12 @@ export default class HeartIcon {
 
     #toggleNowPlayingButton(show) {
         const button = this.#nowPlayingButton
+        if (!button) return
+
         button.style.visibility = show ? 'visible' : 'hidden'
         button.style.padding = show ? '0.5rem' : 0
         button.style.width = show ? '1rem' : 0
+        button.parentElement.style.margin = show ? '0.5rem' : 0
     }
 
     get #createHeartIcon() {
@@ -112,7 +115,7 @@ export default class HeartIcon {
 
     get #nowPlayingButton() {
         return document.querySelector(
-            'div[data-testid="now-playing-widget"] > button[data-encore-id="buttonTertiary"]'
+            'div[data-testid="now-playing-widget"] > div > button[data-encore-id="buttonTertiary"]'
         )
     }
 
